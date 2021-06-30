@@ -5,6 +5,7 @@ import { useLoading, useSmartPrototype, useToken } from 'hooks'
 import React from 'react'
 import { BrowserRouter } from 'react-router-dom'
 import { ToastProvider } from 'react-toast-notifications'
+import 'rsuite/dist/styles/rsuite-default.css'
 
 const App = props => {
   useSmartPrototype()

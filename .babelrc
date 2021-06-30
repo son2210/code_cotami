@@ -1,6 +1,7 @@
 {
   "plugins": ["syntax-dynamic-import", "@babel/plugin-transform-runtime"],
   "presets": [
+    "rsuite",
     [
       "@babel/preset-env",
       {
