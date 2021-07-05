@@ -6,17 +6,29 @@ import { Routers } from 'utils'
 const LoginPage = lazy(() => import('pages/Login'))
 const DashboardPage = lazy(() => import('pages/Dashboard'))
 
+const PreviewsPage = lazy(() => import('pages/Previews'))
+
 const Routes = ({ isLoggedIn, ...rest }) => {
   const _renderPrivateRoute = React.useCallback(() => {
     return (
-      <Route
-        {...rest}
-        exact
-        path={Routers.DASHBOARD}
-        render={props => {
-          return <DashboardPage {...rest} {...props} />
-        }}
-      />
+      <>
+        <Route
+          {...rest}
+          exact
+          path={Routers.PREVIEWS}
+          render={props => {
+            return <PreviewsPage {...rest} {...props} />
+          }}
+        />
+        <Route
+          {...rest}
+          exact
+          path={Routers.DASHBOARD}
+          render={props => {
+            return <DashboardPage {...rest} {...props} />
+          }}
+        />
+      </>
     )
   }, [isLoggedIn])
 

@@ -1,6 +1,9 @@
 const Routers = {
   LOGIN: '/',
-  DASHBOARD: '/'
+  DASHBOARD: '/',
+  LOGIN: '/login',
+
+  PREVIEWS: '/previews',
 }
 
 export default Routers
