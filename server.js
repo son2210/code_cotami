@@ -9,7 +9,7 @@ app.use((_, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'))
 })
 
-// start express server on port 5000
-app.listen(5000, () => {
-  console.log('Server started on port 5000')
+// start express server on port 5050
+app.listen(5050, () => {
+  console.log('Server started on port 5050')
 })

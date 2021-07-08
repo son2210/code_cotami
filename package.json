@@ -60,7 +60,9 @@
     "build:dev": "webpack --mode=development",
     "build:prod": "webpack --mode=production",
     "watch": "webpack --watch",
-    "serve": "webpack serve"
+    "serve": "webpack serve",
+    "deploy-prod": "docker-compose -f prod.docker-compose.yml up -d --build",
+    "deploy-stag": "docker-compose -f stag.docker-compose.yml up -d --build"
   },
   "eslintConfig": {
     "extends": [

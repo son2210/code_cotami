@@ -25,7 +25,7 @@ module.exports = webpackMerge.smart(baseConfig, {
   devServer: {
     contentBase: path.join(__dirname, './public'),
     compress: true,
-    port: 5000,
+    port: 5050,
     historyApiFallback: true,
     stats: 'minimal'
   },

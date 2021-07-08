@@ -1,0 +1,23 @@
+version: '3.9'
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: ./nginx.Dockerfile
+    environment:
+      - NGINX_DOMAIN=cotami-admin.its-global.vn
+    ports:
+      - 80:80
+
+  web:
+    build:
+      context: .
+      args:
+        build_command: build-stag
+    stdin_open: true
+    tty: true
+    ports:
+      - 5050:5050
+    environment:
+      - NODE_ENV=production
+      - NGINX_DOMAIN=cotami-admin.its-global.vn
