@@ -2,10 +2,9 @@ import React from 'react'
 import { Wrapper } from './styled'
 import { BaseButton } from 'atoms'
 import BaseToggle from '../../atoms/BaseToggle'
-import { RadioForm ,CheckboxGroup } from '../../molecules'
+import { RadioForm, CheckBoxGroup } from '../../molecules'
 import InputGroup from '../../molecules/InputGroup'
-import {  Icon } from 'rsuite'
-
+import { Icon } from 'rsuite'
 
 // https://rsuitejs.com/tools/icons
 
@@ -86,10 +85,9 @@ const Previews = () => {
       />
       <InputGroup placeholder='futsu input' />
       <br />
-      CheckboxGroupInput form xx  ===========
+      CheckBoxGroupInput form xx ===========
       <br />
-      
-      <CheckboxGroup
+      <CheckBoxGroup
         options={[
           { content: 'abcv', id: 1 },
           { content: 'abcvasdas', id: 2 },
