@@ -4,15 +4,19 @@ services:
     build:
       context: .
       dockerfile: ./nginx.Dockerfile
-      ports:
-        - 80:80
-      env_file:
-        - .config/prod.env
+    args:
+      nginx_domain: admn.cotami.jp
+    ports:
+      - 80:80
+
   web:
-    build: .
+    build:
+      context: .
+      args:
+        build_command: build
     stdin_open: true
     tty: true
     ports:
       - 5050:5050
-    env_file:
-      - .config/prod.env
+    environment:
+      - NODE_ENV=production

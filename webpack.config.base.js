@@ -33,6 +33,7 @@ module.exports = {
       pages: path.resolve(BASE_DIR, 'src/features/pages'),
       atoms: path.resolve(BASE_DIR, 'src/features/atoms'),
       molecules: path.resolve(BASE_DIR, 'src/features/molecules'),
+      organisms: path.resolve(BASE_DIR, 'src/features/organisms'),
       templates: path.resolve(BASE_DIR, 'src/features/templates'),
       api: path.resolve(BASE_DIR, 'src/config/api'),
       routes: path.resolve(BASE_DIR, 'src/config/routes'),
@@ -57,20 +58,8 @@ module.exports = {
         use: ['style-loader', 'css-loader']
       },
       {
-        test: /\.(ttf|woff|woff2|eot|png|jpg|jpeg|gif|ico)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-        loader: 'file-loader?name=assets/[name].[ext]',
-        exclude: /node_modules/
-      },
-      {
-        test: /\.svg$/,
-        use: [
-          {
-            loader: '@svgr/webpack',
-            options: {
-              minimize: true
-            }
-          }
-        ],
+        test: /\.(ttf|woff|woff2|eot|svg|png|jpg|jpeg|gif|ico)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+        loader: 'file-loader',
         exclude: /node_modules/
       },
       {
@@ -81,19 +70,15 @@ module.exports = {
             options: {
               limit: 10000
             }
-          }
-        ]
-      },
-      {
-        test: /\.svg$/,
-        use: [
+          },
           {
             loader: 'svg-sprite-loader',
             options: {
               symbolId: 'icon-[name]'
             }
           }
-        ]
+        ],
+        exclude: /assets/
       },
       {
         test: /\.less$/,

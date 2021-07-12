@@ -1,28 +1,26 @@
-FROM node:12.20.0 AS cotami-build
+FROM registry.gitlab.com/its-global/cotami/cotami-admin/base as build
 
 LABEL MAINTAINER="Tai Nguyen<tainv@its-global.vn>"
-ARG build_command
+ARG BUILD_COMMAND
 
-ENV INSTALL_PATH=/home/cotami-admin
 ENV GENERATE_SOURCEMAP false
 ENV NODE_ENV production
-
-WORKDIR $INSTALL_PATH
-
-COPY package.json yarn.lock ./
-ENV PATH $INSTALL_PATH/node_modules/.bin:$PATH
-RUN yarn install
-
-COPY . ./
-
-FROM cotami-build
+ENV INSTALL_PATH=/home/cotami-admin
 
 WORKDIR $INSTALL_PATH
 
 ADD package.json $INSTALL_PATH
 ADD yarn.lock $INSTALL_PATH
 
-RUN yarn $build_command
+RUN cd $INSTALL_PATH && \
+  yarn install
+
+COPY . .
+
+RUN ls $INSTALL_PATH
+
+RUN yarn $BUILD_COMMAND
+
 EXPOSE 5050
 
 CMD [ "npm", "run", "server"]

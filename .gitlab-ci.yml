@@ -1,0 +1,139 @@
+image: ${CI_BASE_IMAGE}:latest
+
+stages:
+  - coding_convention
+  - build_staging
+  - deploy_staging
+  - clean_staging
+  - build_prod
+  - deploy_prod
+  - clean_prod
+
+coding_convention:
+  stage: coding_convention
+  script:
+    - yarn install
+    - yarn lint
+  when: always
+  except:
+    - staging
+    - master
+
+.docker_setup:
+  before_script:
+    - docker login -u "${CI_REGISTRY_USER}" -p "${CI_REGISTRY_PASSWORD}" ${CI_REGISTRY}
+
+.ssh_setup:
+  before_script:
+    - eval "$(ssh-agent -s)"
+    - ssh-add <(echo "${SSH_PRIVATE_KEY}" | base64 -d)
+
+.build_setup:
+  script:
+    - docker build --pull -t "${REGISTRY_IMAGE}" . -f $CI_DOCKER_FILE --build-arg BUILD_COMMAND=$BUILD_COMMAND
+    - docker push "${REGISTRY_IMAGE}"
+    - echo "Registry image:" ${REGISTRY_IMAGE}
+
+.deployment_setup:
+  script:
+    - ssh -o StrictHostKeyChecking=no ${SERVER_USERNAME}@${SERVER_IP} "docker pull ${REGISTRY_IMAGE}"
+    - ssh -o StrictHostKeyChecking=no ${SERVER_USERNAME}@${SERVER_IP} "docker rm -f cotami-admin || true"
+    - ssh -o StrictHostKeyChecking=no ${SERVER_USERNAME}@${SERVER_IP} "docker run -p ${EXPOSE_PORT}:5050 -d --name cotami-admin ${REGISTRY_IMAGE}"
+
+.unused_script:
+  script:
+    - ssh -o StrictHostKeyChecking=no ${SERVER_USERNAME}@${SERVER_IP} "docker system prune -a -f"
+
+build_staging:
+  stage: build_staging
+  image: docker:latest
+  variables:
+    REGISTRY_IMAGE: ${CI_REGISTRY_IMAGE}/staging
+    CI_DOCKER_FILE: stag.Dockerfile
+    BUILD_COMMAND: build-stag
+  services:
+    - name: docker:19.03.8-dind
+  before_script:
+    - !reference [.docker_setup, before_script]
+  script:
+    - !reference [.build_setup, script]
+  when: on_success
+  only:
+    - staging
+
+deploy_staging:
+  stage: deploy_staging
+  image: kroniak/ssh-client
+  variables:
+    REGISTRY_IMAGE: ${CI_REGISTRY_IMAGE}/staging
+    SERVER_IP: ${STAGING_IP_ADDRESS}
+    SERVER_USERNAME: ${STAGING_USERNAME}
+    EXPOSE_PORT: 5050
+  before_script:
+    - !reference [.ssh_setup, before_script]
+  script:
+    - !reference [.deployment_setup, script]
+  when: on_success
+  only:
+    - staging
+
+clean_staging:
+  stage: clean_staging
+  image: kroniak/ssh-client
+  variables:
+    SERVER_IP: ${STAGING_IP_ADDRESS}
+    SERVER_USERNAME: ${STAGING_USERNAME}
+  before_script:
+    - !reference [.ssh_setup, before_script]
+  script:
+    - !reference [.unused_script, script]
+  when: on_success
+  only:
+    - staging
+
+build_prod:
+  stage: build_prod
+  image: docker:latest
+  variables:
+    REGISTRY_IMAGE: ${CI_REGISTRY_IMAGE}/prod
+    CI_DOCKER_FILE: prod.Dockerfile
+    BUILD_COMMAND: build
+  services:
+    - name: docker:19.03.8-dind
+  before_script:
+    - !reference [.docker_setup, before_script]
+  script:
+    - !reference [.build_setup, script]
+  when: on_success
+  only:
+    - master
+
+deploy_prod:
+  stage: deploy_prod
+  image: kroniak/ssh-client
+  variables:
+    REGISTRY_IMAGE: ${CI_REGISTRY_IMAGE}
+    SERVER_IP: ${FRONTEND_PROD_IP}
+    SERVER_USERNAME: ${PROD_USERNAME}
+    EXPOSE_PORT: 5050
+  before_script:
+    - !reference [.ssh_setup, before_script]
+  script:
+    - !reference [.deployment_setup, script]
+  when: on_success
+  only:
+    - master
+
+clean_prod:
+  stage: clean_prod
+  image: kroniak/ssh-client
+  variables:
+    SERVER_IP: ${FRONTEND_PROD_IP}
+    SERVER_USERNAME: ${PROD_USERNAME}
+  before_script:
+    - !reference [.ssh_setup, before_script]
+  script:
+    - !reference [.unused_script, script]
+  when: on_success
+  only:
+    - master

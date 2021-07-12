@@ -26,6 +26,39 @@ const Previews = () => {
       <BaseButton bold>bold</BaseButton>
       <BaseButton blue>blue</BaseButton>
       <BaseButton tertiary>bold</BaseButton>
+      <BaseButton bold>bold</BaseButton>
+      <BaseButton blue>blue</BaseButton>
+      <BaseButton tertiary>bold</BaseButton>
+      <BaseButton bold>bold</BaseButton>
+      <BaseButton blue>blue</BaseButton>
+      <BaseButton tertiary>bold</BaseButton>
+      <BaseButton bold>bold</BaseButton>
+      <BaseButton blue>blue</BaseButton>
+      <BaseButton tertiary>bold</BaseButton>
+      <BaseButton bold>bold</BaseButton>
+      <BaseButton blue>blue</BaseButton>
+      <BaseButton tertiary>bold</BaseButton>
+      <BaseButton bold>bold</BaseButton>
+      <BaseButton blue>blue</BaseButton>
+      <BaseButton tertiary>bold</BaseButton>
+      <BaseButton bold>bold</BaseButton>
+      <BaseButton blue>blue</BaseButton>
+      <BaseButton tertiary>bold</BaseButton>
+      <BaseButton bold>bold</BaseButton>
+      <BaseButton blue>blue</BaseButton>
+      <BaseButton tertiary>bold</BaseButton>
+      <BaseButton bold>bold</BaseButton>
+      <BaseButton blue>blue</BaseButton>
+      <BaseButton tertiary>bold</BaseButton>
+      <BaseButton bold>bold</BaseButton>
+      <BaseButton blue>blue</BaseButton>
+      <BaseButton tertiary>bold</BaseButton>
+      <BaseButton bold>bold</BaseButton>
+      <BaseButton blue>blue</BaseButton>
+      <BaseButton tertiary>bold</BaseButton>
+      <BaseButton bold>bold</BaseButton>
+      <BaseButton blue>blue</BaseButton>
+      <BaseButton tertiary>bold</BaseButton>
       <br />
       BaseToggle ===========
       <br />

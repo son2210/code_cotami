@@ -1,9 +1,78 @@
 const Routers = {
-  LOGIN: '/',
   DASHBOARD: '/',
   LOGIN: '/login',
+  REGISTER: '/register',
+  RESET_PASSWORD: '/reset-password/:token',
+  FORGOT_PASSWORD: '/forgot-password',
+  NORMAL_ADMIN: {
+    MENU: [
+      {
+        URL: '/admin/dashboard',
+        NAME: 'Dashboard'
+      },
+      {
+        URL: '/admin/static',
+        NAME: 'Static'
+      },
+      {
+        URL: '/admin/history-management',
+        NAME: 'History management'
+      },
+      {
+        URL: '/admin/check-in-request-management',
+        NAME: 'Check in request management'
+      },
+      {
+        URL: '/admin/checklist',
+        NAME: 'Check list'
+      },
+      {
+        URL: '/admin/staff-management',
+        NAME: 'Staff management'
+      }
+    ],
 
-  PREVIEWS: '/previews',
+    PROFILE: {
+      URL: '/admin/profile',
+      NAME: 'Profile',
+      CHILD: [
+        {
+          URL: '/admin/profile/change-password',
+          NAME: 'Change password'
+        },
+        {
+          URL: '/admin/profile/update',
+          NAME: 'Update password'
+        }
+      ]
+    }
+  },
+  SUPER_ADMIN: {
+    MENU: [
+      {
+        URL: '/super-admin/templates-management',
+        NAME: 'Templates Managements'
+      },
+      {
+        URL: '/super-admin/companies',
+        NAME: 'Companies managements'
+      },
+      {
+        URL: '/super-admin/account',
+        NAME: 'Accounts managements'
+      },
+      {
+        URL: '/super-admin/system-logs',
+        NAME: 'System logs'
+      },
+      {
+        URL: '/super-admin/payment',
+        NAME: 'Payment System'
+      }
+    ]
+  },
+
+  PREVIEWS: '/previews'
 }
 
 export default Routers

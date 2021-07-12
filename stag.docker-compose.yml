@@ -4,8 +4,8 @@ services:
     build:
       context: .
       dockerfile: ./nginx.Dockerfile
-    environment:
-      - NGINX_DOMAIN=cotami-admin.its-global.vn
+      args:
+        nginx_domain: cotami-admin.its-global.vn
     ports:
       - 80:80
 
@@ -20,4 +20,3 @@ services:
       - 5050:5050
     environment:
       - NODE_ENV=production
-      - NGINX_DOMAIN=cotami-admin.its-global.vn
