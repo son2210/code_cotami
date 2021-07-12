@@ -4,7 +4,7 @@ import { Img } from './styled'
 import { IMAGES } from 'assets'
 
 const BaseImage = ({ source, style, alt, ...others }) => {
-  const DEFAULT_IMAGE = React.useMemo(() => IMAGES.DEFAULT.default, [])
+  const DEFAULT_IMAGE = React.useMemo(() => IMAGES.DEFAULT, [])
 
   const ims = React.useMemo(() => source || DEFAULT_IMAGE, [source])
 

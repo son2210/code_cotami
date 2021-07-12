@@ -3,15 +3,33 @@ import PropTypes from 'prop-types'
 import React, { lazy, Suspense } from 'react'
 import { Route, Switch } from 'react-router-dom'
 import { Routers } from 'utils'
-const LoginPage = lazy(() => import('pages/Login'))
-const DashboardPage = lazy(() => import('pages/Dashboard'))
+import { PublicTemplate, PrivateTemplate } from 'templates'
+
+//  public page
+const LoginPage = lazy(() => import('pages/UnAuthPages/Login'))
+const RegisterPage = lazy(() => import('pages/UnAuthPages/Register'))
+const ForgotPasswordPage = lazy(() =>
+  import('pages/UnAuthPages/ForgotPassword')
+)
+const ResetPasswordPage = lazy(() => import('pages/UnAuthPages/ResetPassword'))
+
+// private page
+const DashboardPage = lazy(() => import('pages/AuthPages/Dashboard'))
+
+const ProfilePage = lazy(() => import('pages/AuthPages/Profile'))
+const ProfileUpdatePage = lazy(() =>
+  import('pages/AuthPages/Profile/UpdateProfile')
+)
+const UpdatePasswordPage = lazy(() =>
+  import('pages/AuthPages/Profile/UpdatePassword')
+)
 
 const PreviewsPage = lazy(() => import('pages/Previews'))
 
 const Routes = ({ isLoggedIn, ...rest }) => {
-  const _renderPrivateRoute = React.useCallback(() => {
+  const _renderPrivateNormalAdminRoute = React.useCallback(() => {
     return (
-      <>
+      <PrivateTemplate menuList={Routers.NORMAL_ADMIN.MENU}>
         <Route
           {...rest}
           exact
@@ -23,32 +41,83 @@ const Routes = ({ isLoggedIn, ...rest }) => {
         <Route
           {...rest}
           exact
-          path={Routers.DASHBOARD}
+          path={Routers.NORMAL_ADMIN.MENU[0].URL}
           render={props => {
             return <DashboardPage {...rest} {...props} />
           }}
         />
-      </>
+        <Route
+          {...rest}
+          exact
+          path={Routers.NORMAL_ADMIN.PROFILE.URL}
+          render={props => {
+            return <ProfilePage {...rest} {...props} />
+          }}
+        />
+        <Route
+          {...rest}
+          exact
+          path={Routers.NORMAL_ADMIN.PROFILE.CHILD[0].URL}
+          render={props => {
+            return <UpdatePasswordPage {...rest} {...props} />
+          }}
+        />
+        <Route
+          {...rest}
+          exact
+          path={Routers.NORMAL_ADMIN.PROFILE.CHILD[1].URL}
+          render={props => {
+            return <ProfileUpdatePage {...rest} {...props} />
+          }}
+        />
+      </PrivateTemplate>
     )
   }, [isLoggedIn])
 
   const _renderPublicRoute = React.useCallback(() => {
     return (
-      <Route
-        {...rest}
-        exact
-        path={Routers.LOGIN}
-        render={props => {
-          return <LoginPage {...rest} {...props} />
-        }}
-      />
+      <PublicTemplate>
+        <Route
+          {...rest}
+          exact
+          path={Routers.LOGIN}
+          render={props => {
+            return <LoginPage {...rest} {...props} />
+          }}
+        />
+        <Route
+          {...rest}
+          exact
+          path={Routers.REGISTER}
+          render={props => {
+            return <RegisterPage {...rest} {...props} />
+          }}
+        />
+        <Route
+          {...rest}
+          exact
+          path={Routers.FORGOT_PASSWORD}
+          render={props => {
+            return <ForgotPasswordPage {...rest} {...props} />
+          }}
+        />
+        <Route
+          {...rest}
+          path={Routers.RESET_PASSWORD}
+          render={props => {
+            return <ResetPasswordPage {...rest} {...props} />
+          }}
+        />
+      </PublicTemplate>
     )
   }, [isLoggedIn])
 
   return (
     <Suspense fallback={<Loading />}>
       <Switch>
-        {isLoggedIn ? _renderPrivateRoute() : _renderPublicRoute()}
+        {/* {isLoggedIn ? _renderPrivateNormalAdminRoute() : _renderPublicRoute()} */}
+        {/* {_renderPublicRoute()} */}
+        {_renderPrivateNormalAdminRoute()}
       </Switch>
     </Suspense>
   )

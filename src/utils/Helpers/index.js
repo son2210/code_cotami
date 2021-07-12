@@ -1,3 +1,3 @@
-const Helpers = {}
+import modifyPropsOfState from './modifyPropsOfState'
 
-export default Helpers
+export { modifyPropsOfState }

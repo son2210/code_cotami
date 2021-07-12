@@ -8,7 +8,6 @@ import {
   WrapperButton
 } from './styled'
 import { BaseHelpText } from 'atoms'
-import { useTheme } from 'styled-components'
 
 const InputGroup = ({
   LeftSide,
@@ -19,15 +18,10 @@ const InputGroup = ({
   onChange,
   ...others
 }) => {
-  const theme = useTheme()
   return (
     <WrapperContainer>
       <WrapperInputGroup
-        style={{
-          borderColor: isError
-            ? theme.colors.error
-            : theme.colors.primary[5]
-        }}
+        $isError={isError}
       >
         {LeftSide && <WrapperAddon>{LeftSide}</WrapperAddon>}
         <WrapperInput
@@ -36,7 +30,7 @@ const InputGroup = ({
           {...others}
         ></WrapperInput>
         {RightSide && (
-          <WrapperButton onClick={RightSide.onClick}>
+          <WrapperButton onClick={RightSide.onClick} disabled={!RightSide.onClick} >
             {RightSide.icon}
           </WrapperButton>
         )}
@@ -55,7 +49,7 @@ InputGroup.propTypes = {
     onClick: PropTypes.func
   }),
   isError: PropTypes.bool,
-  tooltip: PropTypes.string
+  helpText: PropTypes.string,
 }
 
 export default React.memo(InputGroup)
