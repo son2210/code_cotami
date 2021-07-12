@@ -2,7 +2,7 @@ image: ${CI_BASE_IMAGE}:latest
 
 stages:
   - coding_convention
-  - build_staging
+  # - build_staging
   - deploy_staging
   - clean_staging
   - build_prod
@@ -36,29 +36,29 @@ coding_convention:
 
 .deployment_setup:
   script:
-    - ssh -o StrictHostKeyChecking=no ${SERVER_USERNAME}@${SERVER_IP} "docker pull ${REGISTRY_IMAGE}"
-    - ssh -o StrictHostKeyChecking=no ${SERVER_USERNAME}@${SERVER_IP} "docker rm -f cotami-admin || true"
-    - ssh -o StrictHostKeyChecking=no ${SERVER_USERNAME}@${SERVER_IP} "docker run -p ${EXPOSE_PORT}:5050 -d --name cotami-admin ${REGISTRY_IMAGE}"
+    - ssh -o StrictHostKeyChecking=no ${SERVER_USERNAME}@${SERVER_IP} -p $SERVER_PORT "docker pull ${REGISTRY_IMAGE}"
+    - ssh -o StrictHostKeyChecking=no ${SERVER_USERNAME}@${SERVER_IP} -p $SERVER_PORT "docker rm -f cotami-admin || true"
+    - ssh -o StrictHostKeyChecking=no ${SERVER_USERNAME}@${SERVER_IP} -p $SERVER_PORT "docker run -p ${EXPOSE_PORT}:5050 -d --name cotami-admin ${REGISTRY_IMAGE}"
 
 .unused_script:
   script:
     - ssh -o StrictHostKeyChecking=no ${SERVER_USERNAME}@${SERVER_IP} "docker system prune -a -f"
 
-build_staging:
-  stage: build_staging
-  image: docker:latest
-  variables:
-    REGISTRY_IMAGE: ${CI_REGISTRY_IMAGE}/staging
-    BUILD_COMMAND: build-stag
-  services:
-    - name: docker:19.03.8-dind
-  before_script:
-    - !reference [.docker_setup, before_script]
-  script:
-    - !reference [.build_setup, script]
-  when: on_success
-  only:
-    - staging
+# build_staging:
+#   stage: build_staging
+#   image: docker:latest
+#   variables:
+#     REGISTRY_IMAGE: ${CI_REGISTRY_IMAGE}/staging
+#     BUILD_COMMAND: build-stag
+#   services:
+#     - name: docker:19.03.8-dind
+#   before_script:
+#     - !reference [.docker_setup, before_script]
+#   script:
+#     - !reference [.build_setup, script]
+#   when: on_success
+#   only:
+#     - staging
 
 deploy_staging:
   stage: deploy_staging
@@ -68,6 +68,7 @@ deploy_staging:
     SERVER_IP: ${STAGING_IP_ADDRESS}
     SERVER_USERNAME: ${STAGING_USERNAME}
     EXPOSE_PORT: 5050
+    SERVER_PORT: 2025
   before_script:
     - !reference [.ssh_setup, before_script]
   script:
@@ -96,6 +97,7 @@ build_prod:
   variables:
     REGISTRY_IMAGE: ${CI_REGISTRY_IMAGE}/prod
     BUILD_COMMAND: build
+    SERVER_PORT: 22
   services:
     - name: docker:19.03.8-dind
   before_script:
