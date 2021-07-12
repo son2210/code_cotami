@@ -30,7 +30,7 @@ coding_convention:
 
 .build_setup:
   script:
-    - docker build --pull -t "${REGISTRY_IMAGE}" . -f $CI_DOCKER_FILE --build-arg BUILD_COMMAND=$BUILD_COMMAND
+    - docker build --pull -t "${REGISTRY_IMAGE}" . --build-arg BUILD_COMMAND=$BUILD_COMMAND
     - docker push "${REGISTRY_IMAGE}"
     - echo "Registry image:" ${REGISTRY_IMAGE}
 
@@ -49,7 +49,6 @@ build_staging:
   image: docker:latest
   variables:
     REGISTRY_IMAGE: ${CI_REGISTRY_IMAGE}/staging
-    CI_DOCKER_FILE: stag.Dockerfile
     BUILD_COMMAND: build-stag
   services:
     - name: docker:19.03.8-dind
@@ -96,7 +95,6 @@ build_prod:
   image: docker:latest
   variables:
     REGISTRY_IMAGE: ${CI_REGISTRY_IMAGE}/prod
-    CI_DOCKER_FILE: prod.Dockerfile
     BUILD_COMMAND: build
   services:
     - name: docker:19.03.8-dind
