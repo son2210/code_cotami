@@ -38,8 +38,8 @@ const TableAction = ({
   }
 
   return (
-    <Wrapper>
-      {hasSummary && <HrWrapper style={{ width: width }}></HrWrapper>}
+    <Wrapper style={{ width: width }}>
+      {hasSummary && <HrWrapper></HrWrapper>}
       <TableWrapper
         width={width}
         headerHeight={hasSummary ? 60 : 35}
@@ -47,7 +47,11 @@ const TableAction = ({
         {...others}
       >
         {columns.map((col, index) => (
-          <ColumnWrapper align='left' width={col?.width || 60} key={index}>
+          <ColumnWrapper
+            align={col?.align || 'left'}
+            width={col?.width || 60}
+            key={index}
+          >
             <HeaderCellWrapper
               style={
                 (col.header.style && col.header.style) || { paddingLeft: 10 }
@@ -103,6 +107,7 @@ TableAction.propTypes = {
   columns: PropTypes.arrayOf(
     PropTypes.shape({
       width: PropTypes.number,
+      align: PropTypes.string,
       header: PropTypes.shape({
         label: PropTypes.string,
         style: PropTypes.any,
@@ -115,7 +120,7 @@ TableAction.propTypes = {
       cell: {
         value: PropTypes.any,
         onClick: PropTypes.func,
-        style: PropTypes.any
+        style: PropTypes.any,
       }
     })
   )

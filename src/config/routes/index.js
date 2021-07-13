@@ -16,6 +16,7 @@ const ResetPasswordPage = lazy(() => import('pages/UnAuthPages/ResetPassword'))
 // private page
 const DashboardPage = lazy(() => import('pages/AuthPages/Dashboard'))
 const StatisticsPage = lazy(() => import('pages/AuthPages/Statistics'))
+const HistoryPage = lazy(() => import('pages/AuthPages/History'))
 
 const ProfilePage = lazy(() => import('pages/AuthPages/Profile'))
 const ProfileUpdatePage = lazy(() =>
@@ -53,6 +54,14 @@ const Routes = ({ isLoggedIn, ...rest }) => {
           path={Routers.NORMAL_ADMIN.MENU[1].URL}
           render={props => {
             return <StatisticsPage {...rest} {...props} />
+          }}
+        />
+        <Route
+          {...rest}
+          exact
+          path={Routers.NORMAL_ADMIN.MENU[2].URL}
+          render={props => {
+            return <HistoryPage {...rest} {...props} />
           }}
         />
         <Route

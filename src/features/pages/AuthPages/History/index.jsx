@@ -1,12 +1,11 @@
 import React from 'react'
-import { Wrapper, RowImageWrapper, LogoImageWrapper } from './styled'
+import { Wrapper } from './styled'
 import { TableAction, FilterBar, UserPicker } from 'molecules'
-import { BaseButton, BaseCheckPicker, BaseDatePicker } from 'atoms'
-
-import { IMAGES } from 'assets'
+import { BaseButton, BaseDatePicker } from 'atoms'
 import { usePaginate } from 'hooks'
+import { useTheme } from 'styled-components'
 
-const Statistics = () => {
+const History = () => {
   const [
     activePage,
     displayLength,
@@ -15,114 +14,78 @@ const Statistics = () => {
     onChangePage,
     onChangeLength
   ] = usePaginate()
+  const theme = useTheme()
 
   const columns = [
     {
       width: 200,
       header: {
-        label: '　　　　',
-        style: { height: 100 },
-        subLabel: 'Progress'
+        label: 'Last update time'
       },
       cell: {
-        value: rowData => rowData.name
+        value: rowData => rowData.update
       }
     },
     {
+      width: 100,
       header: {
-        subLabel: '80%',
-        label: 'C1'
+        label: 'Staff'
       },
       cell: {
         // eslint-disable-next-line react/display-name
-        value: () => {
-          return <LogoImageWrapper source={IMAGES.LOGO.CHECKED} />
+        value: rowData => {
+          return rowData.staff
+        },
+        style: {
+          color: theme.colors.tertiary
         }
       }
     },
     {
+      width: 100,
       header: {
-        subLabel: '80%',
-        label: 'C2'
+        label: 'Checklist'
       },
       cell: {
         // eslint-disable-next-line react/display-name
-        value: () => {
-          return <LogoImageWrapper source={IMAGES.LOGO.MINUS} />
+        value: rowData => {
+          return rowData.checklist
+        },
+        style: {
+          color: theme.colors.tertiary
         }
       }
     },
     {
-      width: 70,
+      width: 100,
+      align: 'center',
       header: {
-        subLabel: '80%',
         style: {
           textAlign: 'center'
         },
-        label: 'C3'
+        label: 'Action'
       },
       cell: {
         // eslint-disable-next-line react/display-name
         value: rowData => {
-          return <RowImageWrapper source={rowData.c3} />
+          return rowData.action
+        },
+        style: {
+          color: theme.colors.tertiary
         }
       }
-    },
-    {
-      header: {
-        subLabel: '80%',
-        label: 'C4'
-      },
-      cell: {
-        // eslint-disable-next-line react/display-name
-        value: () => {
-          return <LogoImageWrapper source={IMAGES.LOGO.MINUS} />
-        }
-      }
-    },
-    {
-      header: {
-        subLabel: '80%',
-        label: 'C5'
-      },
-      cell: {
-        // eslint-disable-next-line react/display-name
-        value: () => {
-          return <LogoImageWrapper source={IMAGES.LOGO.MESSAGE} />
-        }
-      }
-    },
-    {
-      width: 40,
-      header: {
-        subLabel: '80%',
-        label: 'C6'
-      },
-      cell: {
-        value: rowData => {
-          return rowData.c6
-        }
-      }
-    }
-  ]
-
-  const data = [
-    {
-      value: '1',
-      label: '四川'
-    },
-    {
-      value: '2',
-      label: '川'
     }
   ]
 
   return (
     <Wrapper>
       <FilterBar hasButton={false} style={{ marginBottom: 20 }}>
-        <BaseCheckPicker data={data} />
         <BaseDatePicker style={{ marginLeft: 10 }} />
-        <UserPicker style={{ marginLeft: 10 }} data={userPicker} />
+        <UserPicker
+          style={{ marginLeft: 10 }}
+          data={userPicker}
+          placeholder={'Select user'}
+        />
         <BaseButton style={{ marginLeft: 10 }} secondary bold>
           Filter
         </BaseButton>
@@ -133,7 +96,6 @@ const Statistics = () => {
         width={550}
         data={testData}
         columns={columns}
-        hasSummary={true}
         paginateProps={{
           activePage,
           displayLength,
@@ -160,58 +122,34 @@ const Statistics = () => {
 
 const testData = [
   {
-    name: 'Jadon Sancho',
-    c1: true,
-    c2: true,
-    c3: IMAGES.AVATAR,
-    c4: true,
-    c5: true,
-    c6: 7
+    update: '2021/06/25 09:21',
+    staff: 'Salad',
+    checklist: 'Check list 1',
+    action: 'Update'
   },
   {
-    name: 'Marcus Rashford',
-    c1: true,
-    c2: true,
-    c3: IMAGES.AVATAR,
-    c4: true,
-    c5: true,
-    c6: 7
+    update: '2021/06/25 09:21',
+    staff: 'Mane',
+    checklist: 'Check list 1',
+    action: 'Update'
   },
   {
-    name: 'Bukayo Saka',
-    c1: true,
-    c2: true,
-    c3: IMAGES.AVATAR,
-    c4: true,
-    c5: true,
-    c6: 7
+    update: '2021/06/25 09:21',
+    staff: 'Firmino',
+    checklist: 'Check list 1',
+    action: 'Update'
   },
   {
-    name: 'Mount  Mason',
-    c1: true,
-    c2: true,
-    c3: IMAGES.AVATAR,
-    c4: true,
-    c5: true,
-    c6: 7
+    update: '2021/06/25 09:21',
+    staff: 'Trend',
+    checklist: 'Check list 1',
+    action: 'Update'
   },
   {
-    name: 'Mount  Mason',
-    c1: true,
-    c2: true,
-    c3: IMAGES.AVATAR,
-    c4: true,
-    c5: true,
-    c6: 7
-  },
-  {
-    name: 'Mount  Mason',
-    c1: true,
-    c2: true,
-    c3: IMAGES.AVATAR,
-    c4: true,
-    c5: true,
-    c6: 7
+    update: '2021/06/25 09:21',
+    staff: 'Alision',
+    checklist: 'Check list 1',
+    action: 'Update'
   }
 ]
 
@@ -260,4 +198,4 @@ const userPicker = [
   }
 ]
 
-export default Statistics
+export default History
