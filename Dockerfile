@@ -15,7 +15,7 @@ ADD yarn.lock $INSTALL_PATH
 RUN cd $INSTALL_PATH && \
   yarn install
 
-RUN yarn $BUILD_COMMAND
+RUN yarn "$BUILD_COMMAND"
 
 COPY . .
 
