@@ -67,15 +67,15 @@ UnAuthForm.propTypes = {
   formTitle: PropTypes.string,
   primaryBtn: PropTypes.shape({
     name: PropTypes.string,
-    onCLick: PropTypes.node
+    onClick: PropTypes.node
   }),
   secondaryBtn: PropTypes.shape({
     name: PropTypes.string,
-    onCLick: PropTypes.node
+    onClick: PropTypes.node
   }),
   tertiaryBtn: PropTypes.shape({
     name: PropTypes.string,
-    onCLick: PropTypes.node
+    onClick: PropTypes.node
   })
 }
 

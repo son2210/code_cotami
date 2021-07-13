@@ -28,7 +28,7 @@ const PrivateHeader = ({ paths, ...others }) => {
 
 PrivateHeader.propTypes = {
   others: PropTypes.any,
-  path: PropTypes.arrayOf(PropTypes.string)
+  paths: PropTypes.arrayOf(PropTypes.string)
 }
 
 export default React.memo(PrivateHeader)

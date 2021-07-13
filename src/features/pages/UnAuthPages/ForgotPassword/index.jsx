@@ -10,12 +10,11 @@ import { Routers } from 'utils'
 
 const ForgotPassword = () => {
   const history = useHistory()
-  const [showPassword, setShowPassword] = useState(false)
   const [data, setData] = useState({
-    email: '',
+    email: ''
   })
   const [error, setError] = useState({
-    email: '',
+    email: ''
   })
   const handleForgotPassword = () => {
     console.log('submit data', data)
@@ -65,7 +64,6 @@ const ForgotPassword = () => {
           helpText={error['email']}
           isError={!error['email'] ? false : true}
         />
-        
       </UnAuthForm>
     </Wrapper>
   )

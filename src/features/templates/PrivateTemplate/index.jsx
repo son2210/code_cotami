@@ -21,7 +21,7 @@ const PrivateTemplate = ({ menuList, children, ...others }) => {
   }, [window.location.pathname])
 
   return (
-    <ContainerWrapper>
+    <ContainerWrapper {...others}>
       <LeftSideBar>
         <SideBar menuList={menuList} />
       </LeftSideBar>
@@ -36,6 +36,7 @@ const PrivateTemplate = ({ menuList, children, ...others }) => {
   )
 }
 PrivateTemplate.propTypes = {
+  menuList: PropTypes.any,
   children: PropTypes.any
 }
 export default React.memo(PrivateTemplate)

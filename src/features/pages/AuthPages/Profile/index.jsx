@@ -10,8 +10,8 @@ const Profile = ({ ...others }) => {
   const history = useHistory()
   const goToPage = useCallback(route => history.push(route), [])
   return (
-    <ContainerWrapper justify='start'>
-      <ColWrapper colspan={9} >
+    <ContainerWrapper justify='start' {...others}>
+      <ColWrapper colspan={9}>
         <AvatarBlock hasUpload={false} />
         <DisplayField title={'Company id'} content={'B0001'} />
         <DisplayField title={'Company name'} content={'Its Global'} />
@@ -19,7 +19,7 @@ const Profile = ({ ...others }) => {
         <DisplayField title={'First name'} content={'minakata'} />
         <DisplayField title={'Last Name'} content={'jin'} />
         <DisplayField title={'Email'} content={'jin@its-global.jp'} />
-        <br/>
+        <br />
         <BaseButton
           primary
           bold

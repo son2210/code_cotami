@@ -11,7 +11,7 @@ import { ProfileBlock } from 'molecules'
 
 const SideBar = ({ menuList, ...others }) => {
   return (
-    <ContainerWrapper>
+    <ContainerWrapper {...others}>
       <LogoWrapper></LogoWrapper>
       <MenuWrapper>
         {menuList.map((item, index) => (

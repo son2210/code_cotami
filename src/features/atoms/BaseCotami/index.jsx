@@ -5,7 +5,10 @@ import { IMAGES } from 'assets'
 
 const BaseCotami = ({ children, ...others }) => {
   return (
-    <CotamiWrapper source={IMAGES.COTAMI}>{/* C<u>O</u>TAMI */}</CotamiWrapper>
+    <CotamiWrapper source={IMAGES.COTAMI} {...others}>
+      {/* C<u>O</u>TAMI */}
+      {children}
+    </CotamiWrapper>
   )
 }
 

@@ -6,31 +6,62 @@ import {
   HeaderCellWrapper,
   Wrapper,
   ColumnWrapper,
-  PaginationWrapper
+  PaginationWrapper,
+  MainHeaderCellWrapper,
+  SubHeaderWrapper,
+  HrWrapper
 } from './styled'
 
+import { Constant } from 'utils'
+
 const TableAction = ({
-  hasPaginate=true,
+  hasPaginate = true,
+  hasSummary = false,
   paginateProps,
   data,
+  width,
   columns,
   ...others
 }) => {
+  const headerSummary = (main, sub, index, customStyle) => {
+    const firstCol = index === 0 ? true : false
+    return (
+      <div>
+        <MainHeaderCellWrapper H6>
+          <span style={{ ...customStyle?.main }}>{main}</span>
+        </MainHeaderCellWrapper>
+        <SubHeaderWrapper style={{ ...customStyle?.sub }} firstCol={firstCol}>
+          {sub}
+        </SubHeaderWrapper>
+      </div>
+    )
+  }
+
   return (
     <Wrapper>
-      <TableWrapper data={data} {...others}>
+      {hasSummary && <HrWrapper style={{ width: width }}></HrWrapper>}
+      <TableWrapper
+        width={width}
+        headerHeight={hasSummary ? 60 : 35}
+        data={data}
+        {...others}
+      >
         {columns.map((col, index) => (
-          <ColumnWrapper width={200} key={index}>
+          <ColumnWrapper align='left' width={col?.width || 60} key={index}>
             <HeaderCellWrapper
-              minWidth={200}
-              style={col.header.style && col.header.style}
+              style={
+                (col.header.style && col.header.style) || { paddingLeft: 10 }
+              }
             >
-              {col.header.label}
+              {hasSummary
+                ? headerSummary(col.header.label, col.header.subLabel, index)
+                : col.header.label}
             </HeaderCellWrapper>
             <CellWrapper
-              minWidth={200}
+              minWidth={50}
+              minHeight={50}
               onClick={col.cell.onClick}
-              style={col.cell.style && col.cell.style}
+              style={col.cell.style}
             >
               {col.cell.value}
             </CellWrapper>
@@ -40,12 +71,16 @@ const TableAction = ({
 
       {hasPaginate && (
         <PaginationWrapper
-          lengthMenu={paginateProps.lengthMenu}
-          activePage={paginateProps.activePage}
-          displayLength={paginateProps.displayLength}
-          total={paginateProps.total}
-          onChangePage={paginateProps.onChangePage}
-          onChangeLength={paginateProps.onChangeLength}
+          lengthMenu={
+            paginateProps?.lengthMenu
+              ? paginateProps.lengthMenu
+              : Constant.paginateLengthMenu
+          }
+          activePage={paginateProps?.activePage}
+          displayLength={paginateProps?.displayLength}
+          total={paginateProps?.total}
+          onChangePage={paginateProps?.onChangePage}
+          onChangeLength={paginateProps?.onChangeLength}
         />
       )}
     </Wrapper>
@@ -54,6 +89,7 @@ const TableAction = ({
 
 TableAction.propTypes = {
   hasPaginate: PropTypes.bool,
+  width: PropTypes.number,
   paginateProps: PropTypes.shape({
     lengthMenu: PropTypes.number,
     total: PropTypes.number,
@@ -63,11 +99,18 @@ TableAction.propTypes = {
     onChangePage: PropTypes.func
   }),
   data: PropTypes.any,
+  hasSummary: PropTypes.bool,
   columns: PropTypes.arrayOf(
     PropTypes.shape({
+      width: PropTypes.number,
       header: PropTypes.shape({
         label: PropTypes.string,
-        style: PropTypes.any
+        style: PropTypes.any,
+        subLabel: PropTypes.string,
+        customStyle: PropTypes.shape({
+          main: PropTypes.object,
+          sub: PropTypes.object
+        })
       }),
       cell: {
         value: PropTypes.any,
