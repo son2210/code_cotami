@@ -42,7 +42,8 @@ coding_convention:
 
 .unused_script:
   script:
-    - ssh -o StrictHostKeyChecking=no ${SERVER_USERNAME}@${SERVER_IP} "docker system prune -a -f"
+    - ssh -o StrictHostKeyChecking=no ${SERVER_USERNAME}@${SERVER_IP} -p $SERVER_PORT
+ "docker system prune -a -f"
 
 build_staging:
   stage: build_staging
@@ -83,6 +84,7 @@ clean_staging:
   variables:
     SERVER_IP: ${STAGING_IP_ADDRESS}
     SERVER_USERNAME: ${STAGING_USERNAME}
+    SERVER_PORT: 2025
   before_script:
     - !reference [.ssh_setup, before_script]
   script:
@@ -130,6 +132,7 @@ clean_prod:
   variables:
     SERVER_IP: ${FRONTEND_PROD_IP}
     SERVER_USERNAME: ${PROD_USERNAME}
+    SERVER_PORT: 22
   before_script:
     - !reference [.ssh_setup, before_script]
   script:
