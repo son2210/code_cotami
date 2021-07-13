@@ -17,7 +17,7 @@ RUN cd $INSTALL_PATH && \
 
 RUN yarn $BUILD_COMMAND
 
-COPY . .
+COPY . ./
 
 EXPOSE 5050
 
