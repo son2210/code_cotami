@@ -11,7 +11,12 @@ import { IMAGES } from 'assets'
 import { useHistory } from 'react-router-dom'
 import Routers from 'utils/Routers'
 
-const PrivateHeader = ({ imageUrl, name, role, onClick, ...others }) => {
+const PrivateHeader = ({ 
+  // imageUrl,
+  //  name, 
+  //  role, 
+  //  onClick,
+   ...others }) => {
   const history = useHistory()
   return (
     <ContainerWrapper

@@ -11,8 +11,8 @@ const Routers = {
         NAME: 'Dashboard'
       },
       {
-        URL: '/admin/static',
-        NAME: 'Static'
+        URL: '/admin/statistics',
+        NAME: 'Statistics'
       },
       {
         URL: '/admin/history-management',

@@ -1,9 +1,9 @@
 import React from 'react'
 import { Wrapper } from './styled'
-import { TableAction, TableActionButton } from 'molecules'
-import { BaseIcon, BaseImage } from 'atoms'
+import { TableAction, FilterBar } from 'molecules'
+import { BaseButton, BaseCheckPicker } from 'atoms'
 
-import { IMAGES } from 'assets'
+// import { IMAGES } from 'assets'
 
 const testData = [
   { checkListName: 'checklist1', timestamp: '13/2/2002' },
@@ -13,16 +13,18 @@ const testData = [
 const Dashboard = () => {
   const columns = [
     {
+      width: 100,
       header: {
-        label: ' '
+        label: 'Checklist name'
       },
       cell: {
         value: rowData => rowData.checkListName
       }
     },
     {
+      width: 100,
       header: {
-        label: 'time stame'
+        label: 'Last update time'
       },
       cell: {
         value: rowData => {
@@ -31,46 +33,39 @@ const Dashboard = () => {
         }
       }
     }
-    // {
-    //   header: {
-    //     label: 'Action'
-    //   },
-    //   cell: {
-    //     value: rowData => <TableActionButton></TableActionButton>
-    //   }
-    // }
   ]
 
-  console.log(IMAGES.EYE)
+  const data = [
+    {
+      value: '1',
+      label: '四川'
+    },
+    {
+      value: '2',
+      label: '四川'
+    }
+  ]
+
   return (
     <Wrapper>
-      <TableActionButton />
-      {/* <BaseIcon icon="eye"/> */}
-      {/* <Eye></Eye> */}
-      <img src={IMAGES.EYE} />
-      <BaseImage source={IMAGES.EYE}></BaseImage>
-      {/* <Eye/> */}
+      <FilterBar hasButton={false} style={{ marginBottom: 20 }}>
+        <BaseCheckPicker data={data} />
+        <BaseButton style={{ marginLeft: 10 }} secondary bold>
+          Filter
+        </BaseButton>
+      </FilterBar>
       <TableAction
+        width={400}
         data={testData}
         columns={columns}
         hasPaginate={false}
-        paginateProps={{
-          lengthMenu: [
-            {
-              value: 10,
-              label: 10
-            },
-            {
-              value: 20,
-              label: 20
-            }
-          ],
-          activePage: 1,
-          displayLength: 2,
-          total: 10,
-          onChangePage: () => null,
-          onChangeLength: () => null
-        }}
+        // paginateProps={{
+        //   activePage: 1,
+        //   displayLength: 10,
+        //   total: 100,
+        //   onChangePage: num => console.log(num),
+        //   onChangeLength: num => console.log(num)
+        // }}
       />
     </Wrapper>
   )

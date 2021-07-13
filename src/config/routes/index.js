@@ -15,6 +15,7 @@ const ResetPasswordPage = lazy(() => import('pages/UnAuthPages/ResetPassword'))
 
 // private page
 const DashboardPage = lazy(() => import('pages/AuthPages/Dashboard'))
+const StatisticsPage = lazy(() => import('pages/AuthPages/Statistics'))
 
 const ProfilePage = lazy(() => import('pages/AuthPages/Profile'))
 const ProfileUpdatePage = lazy(() =>
@@ -49,6 +50,14 @@ const Routes = ({ isLoggedIn, ...rest }) => {
         <Route
           {...rest}
           exact
+          path={Routers.NORMAL_ADMIN.MENU[1].URL}
+          render={props => {
+            return <StatisticsPage {...rest} {...props} />
+          }}
+        />
+        <Route
+          {...rest}
+          exact
           path={Routers.NORMAL_ADMIN.PROFILE.URL}
           render={props => {
             return <ProfilePage {...rest} {...props} />
@@ -74,6 +83,7 @@ const Routes = ({ isLoggedIn, ...rest }) => {
     )
   }, [isLoggedIn])
 
+  // eslint-disable-next-line no-unused-vars
   const _renderPublicRoute = React.useCallback(() => {
     return (
       <PublicTemplate>

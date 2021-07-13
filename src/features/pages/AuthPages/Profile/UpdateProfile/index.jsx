@@ -45,7 +45,7 @@ const UpdateProfile = ({ ...others }) => {
   }, [])
 
   return (
-    <ContainerWrapper justify='start'>
+    <ContainerWrapper justify='start' {...others}>
       <ColWrapper colspan={9}>
         <FormWrapper
           formValue={data}

@@ -6,8 +6,8 @@ import { RadioForm ,CheckboxGroup } from '../../molecules'
 import InputGroup from '../../molecules/InputGroup'
 import {  Icon } from 'rsuite'
 import BaseTitle from '../../atoms/BaseTitle'
-import { BaseImage } from '../../atoms'
-import { IMAGES } from 'assets'
+// import { BaseImage } from '../../atoms'
+// import { IMAGES } from 'assets'
 
 // https://rsuitejs.com/tools/icons
 

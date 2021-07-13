@@ -4,9 +4,10 @@ import PropTypes from 'prop-types'
 import { IMAGES } from 'assets'
 import { BaseButton } from 'atoms'
 
+// eslint-disable-next-line no-unused-vars
 const AvatarBlock = ({ hasUpload = true, url, ...others }) => {
   return (
-    <ContainerWrapper>
+    <ContainerWrapper {...others}>
       <AvatarWrapper source={IMAGES.AVATAR} />
       {hasUpload && (
         <UploaderWrapper UpdateFile listType='picture-text'>
@@ -18,7 +19,9 @@ const AvatarBlock = ({ hasUpload = true, url, ...others }) => {
 }
 
 AvatarBlock.propTypes = {
-  children: PropTypes.node
+  children: PropTypes.node,
+  hasUpload: PropTypes.bool,
+  url: PropTypes.string
 }
 
 export default React.memo(AvatarBlock)

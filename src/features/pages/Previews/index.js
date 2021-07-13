@@ -6,12 +6,78 @@ import { RadioForm, CheckBoxGroup } from '../../molecules'
 import InputGroup from '../../molecules/InputGroup'
 import { Icon } from 'rsuite'
 
+import { TableAction, ActionButtonTable } from 'molecules'
+
 // https://rsuitejs.com/tools/icons
 
 const Previews = () => {
+  const testData = [
+    { checkListName: 'checklist1', timestamp: '13/2/2002' },
+    { checkListName: 'checklist1', timestamp: '13/2/2002' }
+  ]
+
+  const columns = [
+    {
+      header: {
+        label: 'Checklist name',
+        subLabel: 'Process'
+      },
+      cell: {
+        value: rowData => rowData.checkListName
+      }
+    },
+    {
+      header: {
+        label: 'Last update time',
+        subLabel: '80%'
+      },
+      cell: {
+        value: rowData => {
+          console.log(testData.indexOf(rowData))
+          return rowData.timestamp
+        }
+      }
+    },
+    {
+      header: {
+        label: 'Action'
+      },
+      cell: {
+        // eslint-disable-next-line react/display-name
+        value: () => <ActionButtonTable style={{ padding: 0 }} />,
+        style: {
+          padding: 0
+        }
+      }
+    }
+  ]
+
   return (
     <Wrapper>
       <h1> Preview</h1>
+      <TableAction
+        hasSummary={true}
+        data={testData}
+        columns={columns}
+        hasPaginate={true}
+        paginateProps={{
+          lengthMenu: [
+            {
+              value: 10,
+              label: 10
+            },
+            {
+              value: 20,
+              label: 20
+            }
+          ],
+          activePage: 3,
+          displayLength: 10,
+          total: 100,
+          onChangePage: () => null,
+          onChangeLength: () => null
+        }}
+      />
       <br />
       ===========
       <br />
