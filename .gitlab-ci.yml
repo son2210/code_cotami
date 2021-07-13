@@ -42,8 +42,7 @@ coding_convention:
 
 .unused_script:
   script:
-    - ssh -o StrictHostKeyChecking=no ${SERVER_USERNAME}@${SERVER_IP} -p $SERVER_PORT
- "docker system prune -a -f"
+    - ssh -o StrictHostKeyChecking=no ${SERVER_USERNAME}@${SERVER_IP} -p $SERVER_PORT "docker system prune -a -f"
 
 build_staging:
   stage: build_staging
