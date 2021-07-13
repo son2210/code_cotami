@@ -15,11 +15,9 @@ ADD yarn.lock $INSTALL_PATH
 RUN cd $INSTALL_PATH && \
   yarn install
 
-COPY . .
-
-RUN ls $INSTALL_PATH
-
 RUN yarn $BUILD_COMMAND
+
+COPY . .
 
 EXPOSE 5050
 
