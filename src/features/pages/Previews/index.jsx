@@ -1,6 +1,6 @@
 import React from 'react'
 import { Wrapper } from './styled'
-import { BaseButton } from 'atoms'
+import { BaseButton, } from 'atoms'
 import BaseToggle from '../../atoms/BaseToggle'
 import { RadioForm ,CheckboxGroup } from '../../molecules'
 import InputGroup from '../../molecules/InputGroup'

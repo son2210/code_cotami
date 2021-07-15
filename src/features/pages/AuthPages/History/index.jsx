@@ -18,24 +18,23 @@ const History = () => {
 
   const columns = [
     {
+      align: 'left',
       width: 200,
       header: {
         label: 'Last update time'
       },
       cell: {
-        value: rowData => rowData.update
+        id: 'update'
       }
     },
     {
+      align: 'left',
       width: 100,
       header: {
         label: 'Staff'
       },
       cell: {
-        // eslint-disable-next-line react/display-name
-        value: rowData => {
-          return rowData.staff
-        },
+        id: 'staff',
         style: {
           color: theme.colors.tertiary
         }
@@ -43,14 +42,12 @@ const History = () => {
     },
     {
       width: 100,
+      align: 'left',
       header: {
         label: 'Checklist'
       },
       cell: {
-        // eslint-disable-next-line react/display-name
-        value: rowData => {
-          return rowData.checklist
-        },
+        id: 'checklist',
         style: {
           color: theme.colors.tertiary
         }
@@ -66,10 +63,7 @@ const History = () => {
         label: 'Action'
       },
       cell: {
-        // eslint-disable-next-line react/display-name
-        value: rowData => {
-          return rowData.action
-        },
+        id: 'action',
         style: {
           color: theme.colors.tertiary
         }

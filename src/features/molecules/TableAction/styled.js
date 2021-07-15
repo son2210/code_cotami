@@ -5,8 +5,12 @@ import {
   BasePagination,
   BaseHeaderCell,
   BaseColumn,
-  BaseTitle
+  BaseImage,
+  BaseTitle,
+  BaseToggle
 } from 'atoms'
+
+import { RadioForm } from 'molecules'
 
 export const Wrapper = styled.div`
   position: relative;
@@ -16,7 +20,7 @@ export const HrWrapper = styled.div`
   left: 0;
   top: 20px;
   border-bottom: 1px solid #f2f2f5;
-  z-index: 99;
+  z-index: 7;
   width: 100%;
 `
 export const PaginationWrapper = styled(BasePagination)``
@@ -24,7 +28,18 @@ export const TableWrapper = styled(BaseTable)``
 export const CellWrapper = styled(BaseCell)`
   padding: 0px;
   text-align: left;
+  & div {
+    padding-left: 0px;
+    padding-right: 0px;
+  }
 `
+
+export const ActionCellWrapper = styled.div`
+  &:hover {
+    cursor: pointer;
+  }
+`
+
 export const ColumnWrapper = styled(BaseColumn)`
   padding-left: 0px;
   & .rs-table-cell-content {
@@ -32,11 +47,28 @@ export const ColumnWrapper = styled(BaseColumn)`
   }
 `
 export const HeaderCellWrapper = styled(BaseHeaderCell)`
-  // padding-left: 10px;
   width: 100%;
   & .rs-table-cell-content {
     padding: 0px;
   }
+`
+
+export const ImageCellWrapper = styled(BaseImage)`
+  height: 16x;
+  width: 14px;
+`
+
+export const RadioCellWrapper = styled(RadioForm)`
+  height: 16x;
+  width: 14px;
+`
+
+export const ToggleCellWrapper = styled(BaseToggle)``
+
+export const DateTimeCellWrapper = styled.div`
+  // &:hover {
+  //   cursor: pointer;
+  // }
 `
 
 export const MainHeaderCellWrapper = styled(BaseTitle)`

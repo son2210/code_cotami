@@ -9,10 +9,17 @@ import {
   PaginationWrapper,
   MainHeaderCellWrapper,
   SubHeaderWrapper,
-  HrWrapper
+  HrWrapper,
+  ActionCellWrapper,
+  ImageCellWrapper,
+  RadioCellWrapper,
+  ToggleCellWrapper,
+  DateTimeCellWrapper
 } from './styled'
-
 import { Constant } from 'utils'
+import { ActionButtonGroup } from 'molecules'
+import { BaseTag } from 'atoms'
+import moment from 'moment'
 
 const TableAction = ({
   hasPaginate = true,
@@ -23,19 +30,71 @@ const TableAction = ({
   columns,
   ...others
 }) => {
-  const headerSummary = (main, sub, index, customStyle) => {
+  const {
+    ACTION_BUTTON_GROUP,
+    IMAGE,
+    RADIO_GROUP,
+    GROUP,
+    TOGGLE,
+    DATE_TIME,
+    ACTION_CELL
+  } = Constant.CellType
+
+  const _renderCell = React.useCallback((type, cellValue, others) => {
+    switch (type) {
+      case IMAGE:
+        return <ImageCellWrapper source={cellValue} {...others} />
+      case TOGGLE:
+        return <ToggleCellWrapper {...others} />
+      case RADIO_GROUP:
+        return <RadioCellWrapper {...others} />
+      case DATE_TIME: {
+        const format = others?.format ? others.format : 'YYYY/MM/DD'
+        const value = moment(cellValue).format(format)
+        const isToday = moment(value).isSame(moment(), 'day')
+        console.log(moment(value).isSame(moment(), 'day'))
+        return (
+          <DateTimeCellWrapper>
+            {value}
+            {isToday && (
+              <BaseTag size={10} color='red' style={{ marginLeft: 10 }}>
+                Today
+              </BaseTag>
+            )}
+          </DateTimeCellWrapper>
+        )
+      }
+      case GROUP:
+        return
+      case ACTION_BUTTON_GROUP:
+        return <ActionButtonGroup {...others} />
+      case ACTION_CELL:
+        return (
+          <ActionCellWrapper
+            onClick={e => others.handleOnClick(e, cellValue)}
+            {...others}
+          >
+            {cellValue}
+          </ActionCellWrapper>
+        )
+      default:
+        return cellValue
+    }
+  }, [])
+
+  const headerSummary = React.useCallback((main, sub, index, customStyle) => {
     const firstCol = index === 0 ? true : false
     return (
-      <div>
+      <>
         <MainHeaderCellWrapper H6>
           <span style={{ ...customStyle?.main }}>{main}</span>
         </MainHeaderCellWrapper>
         <SubHeaderWrapper style={{ ...customStyle?.sub }} firstCol={firstCol}>
           {sub}
         </SubHeaderWrapper>
-      </div>
+      </>
     )
-  }
+  }, [])
 
   return (
     <Wrapper style={{ width: width }}>
@@ -52,22 +111,19 @@ const TableAction = ({
             width={col?.width || 60}
             key={index}
           >
-            <HeaderCellWrapper
-              style={
-                (col.header.style && col.header.style) || { paddingLeft: 10 }
-              }
-            >
+            <HeaderCellWrapper style={col?.header?.style && col.header.style}>
               {hasSummary
                 ? headerSummary(col.header.label, col.header.subLabel, index)
                 : col.header.label}
             </HeaderCellWrapper>
-            <CellWrapper
-              minWidth={50}
-              minHeight={50}
-              onClick={col.cell.onClick}
-              style={col.cell.style}
-            >
-              {col.cell.value}
+            <CellWrapper minWidth={50} minHeight={50} style={col.cell.style}>
+              {rowData =>
+                _renderCell(
+                  col.cell.type,
+                  rowData[col.cell.id],
+                  col.cell.others
+                )
+              }
             </CellWrapper>
           </ColumnWrapper>
         ))}
@@ -78,7 +134,7 @@ const TableAction = ({
           lengthMenu={
             paginateProps?.lengthMenu
               ? paginateProps.lengthMenu
-              : Constant.paginateLengthMenu
+              : Constant.PaginateLengthMenu
           }
           activePage={paginateProps?.activePage}
           displayLength={paginateProps?.displayLength}
@@ -119,8 +175,10 @@ TableAction.propTypes = {
       }),
       cell: {
         value: PropTypes.any,
-        onClick: PropTypes.func,
+        id: PropTypes.string,
         style: PropTypes.any,
+        others: PropTypes.object,
+        type: PropTypes.string
       }
     })
   )
