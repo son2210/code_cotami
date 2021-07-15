@@ -6,7 +6,7 @@ import { RadioForm, CheckBoxGroup } from '../../molecules'
 import InputGroup from '../../molecules/InputGroup'
 import { Icon } from 'rsuite'
 
-import { TableAction, ActionButtonTable } from 'molecules'
+import { TableAction, ActionButtonGroup } from 'molecules'
 
 // https://rsuitejs.com/tools/icons
 
@@ -44,7 +44,7 @@ const Previews = () => {
       },
       cell: {
         // eslint-disable-next-line react/display-name
-        value: () => <ActionButtonTable style={{ padding: 0 }} />,
+        value: () => <ActionButtonGroup style={{ padding: 0 }} />,
         style: {
           padding: 0
         }

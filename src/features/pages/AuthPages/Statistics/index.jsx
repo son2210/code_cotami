@@ -1,10 +1,11 @@
 import React from 'react'
-import { Wrapper, RowImageWrapper, LogoImageWrapper } from './styled'
+import { Wrapper } from './styled'
 import { TableAction, FilterBar, UserPicker } from 'molecules'
 import { BaseButton, BaseCheckPicker, BaseDatePicker } from 'atoms'
 
 import { IMAGES } from 'assets'
 import { usePaginate } from 'hooks'
+import { Constant } from 'utils'
 
 const Statistics = () => {
   const [
@@ -25,7 +26,7 @@ const Statistics = () => {
         subLabel: 'Progress'
       },
       cell: {
-        value: rowData => rowData.name
+        id: 'name'
       }
     },
     {
@@ -34,10 +35,8 @@ const Statistics = () => {
         label: 'C1'
       },
       cell: {
-        // eslint-disable-next-line react/display-name
-        value: () => {
-          return <LogoImageWrapper source={IMAGES.LOGO.CHECKED} />
-        }
+        type: Constant.CellType.IMAGE,
+        id: 'c1'
       }
     },
     {
@@ -46,25 +45,30 @@ const Statistics = () => {
         label: 'C2'
       },
       cell: {
-        // eslint-disable-next-line react/display-name
-        value: () => {
-          return <LogoImageWrapper source={IMAGES.LOGO.MINUS} />
-        }
+        type: Constant.CellType.IMAGE,
+        id: 'c2'
       }
     },
     {
-      width: 70,
+      width: 100,
+      align: 'center',
       header: {
         subLabel: '80%',
-        style: {
-          textAlign: 'center'
-        },
         label: 'C3'
       },
       cell: {
-        // eslint-disable-next-line react/display-name
-        value: rowData => {
-          return <RowImageWrapper source={rowData.c3} />
+        type: Constant.CellType.IMAGE,
+        id: 'c3',
+        style: {
+          padding: 0
+        },
+        others: {
+          style: {
+            width: 46,
+            height: 27,
+            borderRadius: 4,
+            padding: 0
+          }
         }
       }
     },
@@ -74,10 +78,8 @@ const Statistics = () => {
         label: 'C4'
       },
       cell: {
-        // eslint-disable-next-line react/display-name
-        value: () => {
-          return <LogoImageWrapper source={IMAGES.LOGO.MINUS} />
-        }
+        type: Constant.CellType.IMAGE,
+        id: 'c4'
       }
     },
     {
@@ -86,10 +88,8 @@ const Statistics = () => {
         label: 'C5'
       },
       cell: {
-        // eslint-disable-next-line react/display-name
-        value: () => {
-          return <LogoImageWrapper source={IMAGES.LOGO.MESSAGE} />
-        }
+        type: Constant.CellType.IMAGE,
+        id: 'c5'
       }
     },
     {
@@ -99,9 +99,7 @@ const Statistics = () => {
         label: 'C6'
       },
       cell: {
-        value: rowData => {
-          return rowData.c6
-        }
+        id: 'c6'
       }
     }
   ]
@@ -130,7 +128,7 @@ const Statistics = () => {
 
       <TableAction
         height={600}
-        width={550}
+        width={700}
         data={testData}
         columns={columns}
         hasSummary={true}
@@ -139,17 +137,7 @@ const Statistics = () => {
           displayLength,
           total: 100,
           onChangePage,
-          onChangeLength,
-          lengthMenu: [
-            {
-              value: 10,
-              label: 10
-            },
-            {
-              value: 20,
-              label: 20
-            }
-          ]
+          onChangeLength
         }}
       />
     </Wrapper>
@@ -161,56 +149,56 @@ const Statistics = () => {
 const testData = [
   {
     name: 'Jadon Sancho',
-    c1: true,
-    c2: true,
+    c1: IMAGES.LOGO.CHECKED,
+    c2: IMAGES.LOGO.MINUS,
     c3: IMAGES.AVATAR,
-    c4: true,
-    c5: true,
+    c4: IMAGES.LOGO.MINUS,
+    c5: IMAGES.LOGO.MESSAGE,
     c6: 7
   },
   {
     name: 'Marcus Rashford',
-    c1: true,
-    c2: true,
+    c1: IMAGES.LOGO.CHECKED,
+    c2: IMAGES.LOGO.MINUS,
     c3: IMAGES.AVATAR,
-    c4: true,
-    c5: true,
+    c4: IMAGES.LOGO.MINUS,
+    c5: IMAGES.LOGO.MESSAGE,
     c6: 7
   },
   {
     name: 'Bukayo Saka',
-    c1: true,
-    c2: true,
+    c1: IMAGES.LOGO.CHECKED,
+    c2: IMAGES.LOGO.MINUS,
     c3: IMAGES.AVATAR,
-    c4: true,
-    c5: true,
+    c4: IMAGES.LOGO.MINUS,
+    c5: IMAGES.LOGO.MESSAGE,
     c6: 7
   },
   {
     name: 'Mount  Mason',
-    c1: true,
-    c2: true,
+    c1: IMAGES.LOGO.CHECKED,
+    c2: IMAGES.LOGO.MINUS,
     c3: IMAGES.AVATAR,
-    c4: true,
-    c5: true,
+    c4: IMAGES.LOGO.MINUS,
+    c5: IMAGES.LOGO.MESSAGE,
     c6: 7
   },
   {
     name: 'Mount  Mason',
-    c1: true,
-    c2: true,
+    c1: IMAGES.LOGO.CHECKED,
+    c2: IMAGES.LOGO.MINUS,
     c3: IMAGES.AVATAR,
-    c4: true,
-    c5: true,
+    c4: IMAGES.LOGO.MINUS,
+    c5: IMAGES.LOGO.MESSAGE,
     c6: 7
   },
   {
     name: 'Mount  Mason',
-    c1: true,
-    c2: true,
+    c1: IMAGES.LOGO.CHECKED,
+    c2: IMAGES.LOGO.MINUS,
     c3: IMAGES.AVATAR,
-    c4: true,
-    c5: true,
+    c4: IMAGES.LOGO.MINUS,
+    c5: IMAGES.LOGO.MESSAGE,
     c6: 7
   }
 ]

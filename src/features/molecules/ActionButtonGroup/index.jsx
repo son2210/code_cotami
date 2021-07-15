@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import { ContainerWrapper, ButtonWrapper, IconWrapper } from './styled'
 import { IMAGES } from 'assets'
 
-const ActionButtonTable = ({
+const ActionButtonGroup = ({
   onClickView,
   onClickDelete,
   onClickEdit,
@@ -21,10 +21,10 @@ const ActionButtonTable = ({
   )
 }
 
-ActionButtonTable.propTypes = {
+ActionButtonGroup.propTypes = {
   onClickView: PropTypes.func,
   onClickEdit: PropTypes.func,
   onClickDelete: PropTypes.func
 }
 
-export default React.memo(ActionButtonTable)
+export default React.memo(ActionButtonGroup)

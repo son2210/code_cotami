@@ -23,8 +23,8 @@ const Routers = {
         NAME: 'Check in request management'
       },
       {
-        URL: '/admin/checklist',
-        NAME: 'Check list'
+        URL: '/admin/checklist-management',
+        NAME: 'Checklist management'
       },
       {
         URL: '/admin/staff-management',

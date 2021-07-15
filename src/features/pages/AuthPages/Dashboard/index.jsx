@@ -13,24 +13,21 @@ const testData = [
 const Dashboard = () => {
   const columns = [
     {
-      width: 100,
+      width: 200,
       header: {
         label: 'Checklist name'
       },
       cell: {
-        value: rowData => rowData.checkListName
+        id: 'checkListName'
       }
     },
     {
-      width: 100,
+      width: 200,
       header: {
         label: 'Last update time'
       },
       cell: {
-        value: rowData => {
-          console.log(testData.indexOf(rowData))
-          return rowData.timestamp
-        }
+        id: 'timestamp'
       }
     }
   ]
@@ -59,13 +56,6 @@ const Dashboard = () => {
         data={testData}
         columns={columns}
         hasPaginate={false}
-        // paginateProps={{
-        //   activePage: 1,
-        //   displayLength: 10,
-        //   total: 100,
-        //   onChangePage: num => console.log(num),
-        //   onChangeLength: num => console.log(num)
-        // }}
       />
     </Wrapper>
   )
