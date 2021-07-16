@@ -10,7 +10,7 @@ import {
   BaseToggle
 } from 'atoms'
 
-import { RadioForm } from 'molecules'
+import RadioForm from '../RadioForm'
 
 export const Wrapper = styled.div`
   position: relative;
@@ -28,10 +28,17 @@ export const TableWrapper = styled(BaseTable)``
 export const CellWrapper = styled(BaseCell)`
   padding: 0px;
   text-align: left;
-  & div {
-    padding-left: 0px;
-    padding-right: 0px;
-  }
+
+  ${props => console.log(props)}
+  ${props =>
+    props.isCheckbox &&
+    css`
+      & .rs-table-cell-content {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    `};
 `
 
 export const ActionCellWrapper = styled.div`
@@ -58,17 +65,14 @@ export const ImageCellWrapper = styled(BaseImage)`
   width: 14px;
 `
 
-export const RadioCellWrapper = styled(RadioForm)`
-  height: 16x;
-  width: 14px;
-`
+export const RadioCellWrapper = styled(RadioForm)``
 
 export const ToggleCellWrapper = styled(BaseToggle)``
 
 export const DateTimeCellWrapper = styled.div`
-  // &:hover {
-  //   cursor: pointer;
-  // }
+  &:hover {
+    cursor: pointer;
+  }
 `
 
 export const MainHeaderCellWrapper = styled(BaseTitle)`
@@ -90,3 +94,4 @@ export const SubHeaderWrapper = styled.div`
       font-weight: 700;
     `};
 `
+export const RadioGroup = styled(RadioForm)``

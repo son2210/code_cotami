@@ -8,6 +8,7 @@ import TRASH from './trash.svg'
 import CHECKED from './logo/checked.svg'
 import MESSAGE from './logo/message.svg'
 import MINUS from './logo/minus.svg'
+import MONITOR from './logo/monitor.svg'
 
 export default {
   DEFAULT: DEFAULT_IMAGE,
@@ -19,6 +20,7 @@ export default {
   LOGO: {
     CHECKED: CHECKED,
     MESSAGE: MESSAGE,
-    MINUS: MINUS
+    MINUS: MINUS,
+    MONITOR: MONITOR
   }
 }

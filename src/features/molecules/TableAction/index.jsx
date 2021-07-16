@@ -14,10 +14,11 @@ import {
   ImageCellWrapper,
   RadioCellWrapper,
   ToggleCellWrapper,
-  DateTimeCellWrapper
+  DateTimeCellWrapper,
+  RadioGroup
 } from './styled'
 import { Constant } from 'utils'
-import { ActionButtonGroup } from 'molecules'
+import ActionButtonGroup from '../ActionButtonGroup'
 import { BaseTag } from 'atoms'
 import moment from 'moment'
 
@@ -37,22 +38,23 @@ const TableAction = ({
     GROUP,
     TOGGLE,
     DATE_TIME,
-    ACTION_CELL
+    ACTION_CELL,
+    ICON_BUTTON,
+    DISPLAY
   } = Constant.CellType
 
-  const _renderCell = React.useCallback((type, cellValue, others) => {
+  const _renderCell = React.useCallback((type, id, rowData, others) => {
     switch (type) {
       case IMAGE:
-        return <ImageCellWrapper source={cellValue} {...others} />
+        return <ImageCellWrapper source={rowData[id]} {...others} />
       case TOGGLE:
         return <ToggleCellWrapper {...others} />
       case RADIO_GROUP:
         return <RadioCellWrapper {...others} />
       case DATE_TIME: {
         const format = others?.format ? others.format : 'YYYY/MM/DD'
-        const value = moment(cellValue).format(format)
+        const value = moment(rowData[id]).format(format)
         const isToday = moment(value).isSame(moment(), 'day')
-        console.log(moment(value).isSame(moment(), 'day'))
         return (
           <DateTimeCellWrapper>
             {value}
@@ -66,19 +68,31 @@ const TableAction = ({
       }
       case GROUP:
         return
+      case ICON_BUTTON:
+        return (
+          <ActionCellWrapper
+            onClick={e => others.handleOnClick(e, rowData[id])}
+            {...others}
+          >
+            <ImageCellWrapper source={others.source} />
+            {others.label}
+          </ActionCellWrapper>
+        )
       case ACTION_BUTTON_GROUP:
         return <ActionButtonGroup {...others} />
       case ACTION_CELL:
         return (
           <ActionCellWrapper
-            onClick={e => others.handleOnClick(e, cellValue)}
+            onClick={e => others.handleOnClick(e, rowData[id])}
             {...others}
           >
-            {cellValue}
+            {rowData[id]}
           </ActionCellWrapper>
         )
+      case DISPLAY:
+        return <RadioGroup checked={rowData[id]} className={'form__radio'} />
       default:
-        return cellValue
+        return rowData[id]
     }
   }, [])
 
@@ -116,11 +130,17 @@ const TableAction = ({
                 ? headerSummary(col.header.label, col.header.subLabel, index)
                 : col.header.label}
             </HeaderCellWrapper>
-            <CellWrapper minWidth={50} minHeight={50} style={col.cell.style}>
+            <CellWrapper
+              minWidth={50}
+              minHeight={50}
+              style={col.cell.style}
+              isCheckbox={col?.cell?.isCheckbox}
+            >
               {rowData =>
                 _renderCell(
                   col.cell.type,
-                  rowData[col.cell.id],
+                  col.cell.id,
+                  rowData,
                   col.cell.others
                 )
               }

@@ -18,6 +18,7 @@ const DashboardPage = lazy(() => import('pages/AuthPages/Dashboard'))
 const StatisticsPage = lazy(() => import('pages/AuthPages/Statistics'))
 const HistoryPage = lazy(() => import('pages/AuthPages/History'))
 const CheckInRequestPage = lazy(() => import('pages/AuthPages/CheckInRequest'))
+const CheckListPage = lazy(() => import('pages/AuthPages/CheckList'))
 
 const ProfilePage = lazy(() => import('pages/AuthPages/Profile'))
 const ProfileUpdatePage = lazy(() =>
@@ -71,6 +72,14 @@ const Routes = ({ isLoggedIn, ...rest }) => {
           path={Routers.NORMAL_ADMIN.MENU[3].URL}
           render={props => {
             return <CheckInRequestPage {...rest} {...props} />
+          }}
+        />
+        <Route
+          {...rest}
+          exact
+          path={Routers.NORMAL_ADMIN.MENU[4].URL}
+          render={props => {
+            return <CheckListPage {...rest} {...props} />
           }}
         />
         <Route

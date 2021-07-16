@@ -16,7 +16,9 @@ const Constant = {
     RADIO_GROUP: 'RADIO_GROUP',
     GROUP: 'GROUP',
     TOGGLE: 'TOGGLE',
-    DATE_TIME: 'DATE_TIME'
+    DATE_TIME: 'DATE_TIME',
+    ICON_BUTTON: 'ICON_BUTTON',
+    DISPLAY: 'DISPLAY'
   }
 }
 
