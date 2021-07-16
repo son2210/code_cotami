@@ -7,7 +7,7 @@ import {
   ModalButtonWrapper
 } from './styled'
 import { TableAction, FilterBar } from 'molecules'
-import { BaseButton, BaseDatePicker, BaseCheckPicker, BaseTag } from 'atoms'
+import { BaseButton, BaseDatePicker, BaseCheckPicker } from 'atoms'
 import { usePaginate } from 'hooks'
 import { useTheme } from 'styled-components'
 import { Constant } from 'utils'

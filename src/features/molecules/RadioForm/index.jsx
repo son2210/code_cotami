@@ -1,12 +1,34 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { RadioGroup } from 'rsuite'
+import { Wrapper } from './styled'
 import { BaseRadio } from 'atoms'
 
-const RadioForm = ({ inline = true, value, onChange, options, ...others }) => {
+const DEFAULT_OPTIONS = [
+  {
+    value: 'auto',
+    label: 'auto'
+  },
+  {
+    value: 'manual',
+    label: 'manual'
+  },
+  {
+    value: 'hide',
+    label: 'hide'
+  }
+]
+
+const RadioForm = ({
+  inline = true,
+  value,
+  onChange,
+  options = DEFAULT_OPTIONS,
+  ...others
+}) => {
+  if (!options || options.length < 1) return null
   return (
-    <RadioGroup inline={inline} value={value} onChange={onChange} {...others}>
-      {options.map((item, index) => (
+    <Wrapper inline={inline} value={value} onChange={onChange} {...others}>
+      {options?.map((item, index) => (
         <BaseRadio
           key={index}
           value={item.value}
@@ -14,7 +36,7 @@ const RadioForm = ({ inline = true, value, onChange, options, ...others }) => {
           {...item.others}
         />
       ))}
-    </RadioGroup>
+    </Wrapper>
   )
 }
 
