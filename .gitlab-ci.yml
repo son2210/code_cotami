@@ -38,7 +38,7 @@ coding_convention:
   script:
     - ssh -o StrictHostKeyChecking=no ${SERVER_USERNAME}@${SERVER_IP} -p $SERVER_PORT "docker pull ${REGISTRY_IMAGE}"
     - ssh -o StrictHostKeyChecking=no ${SERVER_USERNAME}@${SERVER_IP} -p $SERVER_PORT "docker rm -f cotami-admin || true"
-    - ssh -o StrictHostKeyChecking=no ${SERVER_USERNAME}@${SERVER_IP} -p $SERVER_PORT "docker run --network host -d --name cotami-admin ${REGISTRY_IMAGE}"
+    - ssh -o StrictHostKeyChecking=no ${SERVER_USERNAME}@${SERVER_IP} -p $SERVER_PORT "docker run --network host -d --restart always --name cotami-admin ${REGISTRY_IMAGE}"
 
 .unused_script:
   script:
