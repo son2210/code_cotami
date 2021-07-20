@@ -11,35 +11,44 @@ import { IMAGES } from 'assets'
 import { useHistory } from 'react-router-dom'
 import Routers from 'utils/Routers'
 
-const PrivateHeader = ({ 
+const ProfileBlock = ({
   // imageUrl,
-  //  name, 
-  //  role, 
+  //  name,
+  //  role,
   //  onClick,
-   ...others }) => {
+  name = 'Sizuka',
+  subText = 'admin',
+  canNavigate = true,
+  ...others
+}) => {
   const history = useHistory()
   return (
     <ContainerWrapper
-      onClick={() => history.push(Routers.NORMAL_ADMIN.PROFILE.URL)}
+      onClick={() =>
+        canNavigate && history.push(Routers.NORMAL_ADMIN.PROFILE.URL)
+      }
+      canNavigate={canNavigate}
       {...others}
     >
       <AvatarWrapper source={IMAGES.AVATAR} />
       <UserWrapper>
         <BaseTitle bold h5>
-          Sizuka
+          {name}
         </BaseTitle>
-        <BaseTitle h6> admin</BaseTitle>
+        <BaseTitle h6> {subText}</BaseTitle>
       </UserWrapper>
-      <ButtonWrapper> {'>'} </ButtonWrapper>
+      {canNavigate && <ButtonWrapper> {'>'} </ButtonWrapper>}
     </ContainerWrapper>
   )
 }
 
-PrivateHeader.propTypes = {
+ProfileBlock.propTypes = {
   onClick: PropTypes.func,
   imageUrl: PropTypes.string,
   name: PropTypes.string,
-  role: PropTypes.string
+  subText: PropTypes.string,
+  role: PropTypes.string,
+  canNavigate: PropTypes.bool
 }
 
-export default React.memo(PrivateHeader)
+export default React.memo(ProfileBlock)

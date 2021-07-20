@@ -28,8 +28,24 @@ export const TableWrapper = styled(BaseTable)``
 export const CellWrapper = styled(BaseCell)`
   padding: 0px;
   text-align: left;
+  // & div {
+  //   padding-left: 0px;
+  //   padding-right: 0px;
+  // }
+  ${props =>
+    props.hoverPointer &&
+    `&:hover {
+    cursor: pointer;
+  }`}
+  ${props =>
+    props.isAvatar &&
+    css`
+      & .rs-table-cell-content {
+        padding-top: 0;
+        padding-bottom: 0;
+      }
+    `}
 
-  ${props => console.log(props)}
   ${props =>
     props.isCheckbox &&
     css`
@@ -92,6 +108,13 @@ export const SubHeaderWrapper = styled.div`
     css`
       color: ${props.theme.colors.secondary[2]};
       font-weight: 700;
+    `};
+`
+export const CustomizeColorCell = styled.span`
+  ${props =>
+    props.color &&
+    css`
+      color: ${props.color};
     `};
 `
 export const RadioGroup = styled(RadioForm)``

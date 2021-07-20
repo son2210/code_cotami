@@ -18,8 +18,15 @@ const Constant = {
     TOGGLE: 'TOGGLE',
     DATE_TIME: 'DATE_TIME',
     ICON_BUTTON: 'ICON_BUTTON',
-    DISPLAY: 'DISPLAY'
-  }
+    COLOR_VIA_VALUE: 'COLOR_VIA_VALUE',
+    DISPLAY: 'DISPLAY',
+  },
+  
+  
+  CellColor: {
+    ACTIVE: 'ACTIVE',
+    INACTIVE: 'INACTIVE'
+  },
 }
 
 export default Constant
