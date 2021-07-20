@@ -89,7 +89,7 @@ const CheckList = () => {
     },
     {
       width: 200,
-      align: 'center',
+      align: 'left',
       header: {
         style: {
           textAlign: 'center'

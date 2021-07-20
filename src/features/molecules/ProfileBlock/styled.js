@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { BaseWrapper, BaseImage } from 'atoms'
 
 export const ContainerWrapper = styled.div`
@@ -11,10 +11,14 @@ export const ContainerWrapper = styled.div`
   border-radius: 8px;
   padding: 10px;
   align-items: center;
-  &:hover {
-    cursor: pointer;
-    box-shadow: 1px 1px 1px 1px #fffa;
-  }
+  ${props =>
+    props.canNavigate &&
+    css`
+      &:hover {
+        cursor: pointer;
+        box-shadow: 1px 1px 1px 1px #fffa;
+      }
+    `}
 `
 
 export const AvatarWrapper = styled(BaseImage)`
@@ -24,9 +28,8 @@ export const AvatarWrapper = styled(BaseImage)`
 `
 export const UserWrapper = styled.div`
   flex-grow: 1;
-  width:100%;
-  margin-left:15px;
+  width: 100%;
+  margin-left: 15px;
 `
 
-export const ButtonWrapper = styled(BaseWrapper)`
-`
+export const ButtonWrapper = styled(BaseWrapper)``

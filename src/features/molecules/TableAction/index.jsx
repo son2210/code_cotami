@@ -15,12 +15,15 @@ import {
   RadioCellWrapper,
   ToggleCellWrapper,
   DateTimeCellWrapper,
+  CustomizeColorCell,
   RadioGroup
 } from './styled'
 import { Constant } from 'utils'
 import ActionButtonGroup from '../ActionButtonGroup'
 import { BaseTag } from 'atoms'
 import moment from 'moment'
+import { setColorViaValue } from 'utils/Helpers'
+import { useTheme } from 'styled-components'
 
 const TableAction = ({
   hasPaginate = true,
@@ -31,24 +34,47 @@ const TableAction = ({
   columns,
   ...others
 }) => {
-  const {
-    ACTION_BUTTON_GROUP,
-    IMAGE,
-    RADIO_GROUP,
-    GROUP,
-    TOGGLE,
-    DATE_TIME,
-    ACTION_CELL,
-    ICON_BUTTON,
-    DISPLAY
-  } = Constant.CellType
-
+  const theme = useTheme()
   const _renderCell = React.useCallback((type, id, rowData, others) => {
+    const {
+      ACTION_BUTTON_GROUP,
+      IMAGE,
+      RADIO_GROUP,
+      GROUP,
+      TOGGLE,
+      DATE_TIME,
+      ACTION_CELL,
+      ICON_BUTTON,
+      COLOR_VIA_VALUE,
+      DISPLAY
+    } = Constant.CellType
     switch (type) {
+      case COLOR_VIA_VALUE:
+        return (
+          <CustomizeColorCell
+            onClick={e => others.handleOnClick(e, rowData)}
+            color={setColorViaValue(rowData[id], theme)}
+          >
+            {rowData[id]}
+          </CustomizeColorCell>
+        )
       case IMAGE:
-        return <ImageCellWrapper source={rowData[id]} {...others} />
+        return (
+          <ImageCellWrapper
+            onClick={e => others.handleOnClick(e, rowData)}
+            source={rowData[id]}
+            {...others}
+          />
+        )
       case TOGGLE:
-        return <ToggleCellWrapper {...others} />
+        return (
+          <ToggleCellWrapper
+            onChange={(checked, e) => {
+              others.handleOnChange(checked, e, rowData[id])
+            }}
+            {...others}
+          />
+        )
       case RADIO_GROUP:
         return <RadioCellWrapper {...others} />
       case DATE_TIME: {
@@ -56,7 +82,7 @@ const TableAction = ({
         const value = moment(rowData[id]).format(format)
         const isToday = moment(value).isSame(moment(), 'day')
         return (
-          <DateTimeCellWrapper>
+          <DateTimeCellWrapper onClick={e => others.handleOnClick(e, rowData)}>
             {value}
             {isToday && (
               <BaseTag size={10} color='red' style={{ marginLeft: 10 }}>
@@ -71,7 +97,7 @@ const TableAction = ({
       case ICON_BUTTON:
         return (
           <ActionCellWrapper
-            onClick={e => others.handleOnClick(e, rowData[id])}
+            onClick={e => others.handleOnClick(e, rowData)}
             {...others}
           >
             <ImageCellWrapper source={others.source} />
@@ -83,7 +109,7 @@ const TableAction = ({
       case ACTION_CELL:
         return (
           <ActionCellWrapper
-            onClick={e => others.handleOnClick(e, rowData[id])}
+            onClick={e => others.handleOnClick(e, rowData, id)}
             {...others}
           >
             {rowData[id]}
@@ -134,7 +160,9 @@ const TableAction = ({
               minWidth={50}
               minHeight={50}
               style={col.cell.style}
+              isAvatar={col?.cell?.isAvatar}
               isCheckbox={col?.cell?.isCheckbox}
+              hoverPointer={col?.cell?.hoverPointer && col?.cell?.hoverPointer}
             >
               {rowData =>
                 _renderCell(

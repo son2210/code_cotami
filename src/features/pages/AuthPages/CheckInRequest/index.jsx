@@ -49,10 +49,10 @@ const CheckInRequest = () => {
     }
   }, [modalRef])
 
-  const getOffSet = useCallback((event, value) => {
+  const getOffSet = useCallback((event, rowData, id) => {
     // console.log(event.pageX, event.pageY)
     setModalPosition({ x: event.pageX - 20, y: event.pageY - 20 })
-    setCell(value)
+    setCell(rowData[id])
     setModal(true)
   }, [])
 

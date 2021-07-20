@@ -6,7 +6,7 @@ import { InputGroup } from 'molecules'
 
 const InputBlock = ({ title, ...others }) => {
   return (
-    <ContainerWrapper>
+    <ContainerWrapper column={'column'}>
       <TitleWrapper>{title}</TitleWrapper>
       <InputGroup {...others} />
     </ContainerWrapper>
