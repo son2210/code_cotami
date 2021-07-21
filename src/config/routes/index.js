@@ -1,9 +1,14 @@
 import { Loading } from 'atoms'
 import PropTypes from 'prop-types'
 import React, { lazy, Suspense } from 'react'
-import { Route, Switch } from 'react-router-dom'
+import { Route, Switch, useLocation, useHistory } from 'react-router-dom'
 import { Routers } from 'utils'
 import { PublicTemplate, PrivateTemplate } from 'templates'
+
+import { useRequestManager } from 'hooks'
+import { globalUserState } from 'stores/profile/atom'
+import { EndPoint } from 'config/api'
+import { useSetRecoilState} from 'recoil'
 
 //  public page
 const LoginPage = lazy(() => import('pages/UnAuthPages/Login'))
@@ -35,6 +40,44 @@ const UpdatePasswordPage = lazy(() =>
 const PreviewsPage = lazy(() => import('pages/Previews'))
 
 const Routes = ({ isLoggedIn, ...rest }) => {
+  const location = useLocation()
+  const history = useHistory()
+  const { onGetExecute } = useRequestManager()
+  const  setUserState = useSetRecoilState(globalUserState)
+
+  const getUserInfor = async () => {
+    const response = await onGetExecute(EndPoint.ADMIN_PROFILE)
+    if (response) {
+      setUserState(response)
+    }
+  }
+
+  React.useEffect(() => {
+    if (isLoggedIn) {
+      getUserInfor()
+    }
+  }, [isLoggedIn])
+
+  React.useEffect(() => {
+    const { pathname } = location
+    const validNormalAdminUrls = [
+      ...Routers.NORMAL_ADMIN.MENU,
+      ...Routers.NORMAL_ADMIN.PROFILE.CHILD,
+      { URL: Routers.NORMAL_ADMIN.PROFILE.URL }
+    ]
+    if (isLoggedIn) {
+      let isValidPath = false
+      validNormalAdminUrls.forEach(item => {
+        if (item.URL === pathname) {
+          isValidPath = true
+        }
+      })
+      if (!isValidPath) {
+        history.push(Routers.NORMAL_ADMIN.MENU[0].URL)
+      }
+    }
+  }, [location])
+
   const _renderPrivateNormalAdminRoute = React.useCallback(() => {
     return (
       <PrivateTemplate menuList={Routers.NORMAL_ADMIN.MENU}>
@@ -172,9 +215,13 @@ const Routes = ({ isLoggedIn, ...rest }) => {
   return (
     <Suspense fallback={<Loading />}>
       <Switch>
-        {/* {isLoggedIn ? _renderPrivateNormalAdminRoute() : _renderPublicRoute()} */}
+        {isLoggedIn !== null
+          ? isLoggedIn
+            ? _renderPrivateNormalAdminRoute()
+            : _renderPublicRoute()
+          : null}
         {/* {_renderPublicRoute()} */}
-        {_renderPrivateNormalAdminRoute()}
+        {/* {_renderPrivateNormalAdminRoute()} */}
       </Switch>
     </Suspense>
   )

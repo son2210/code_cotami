@@ -7,11 +7,15 @@ import { modifyPropsOfState } from 'utils/Helpers'
 import validateModel from './validateModel'
 import { useHistory } from 'react-router-dom'
 import { Routers } from 'utils'
+import { useRequestManager, useAlert } from 'hooks'
+import { EndPoint } from 'config/api'
 
 const Register = () => {
+  const { showSuccess } = useAlert()
   const history = useHistory()
   const [showPassword, setShowPassword] = useState(false)
   const [showPasswordCf, setShowPasswordCf] = useState(false)
+  const { onPostExecute } = useRequestManager()
   const [data, setData] = useState({
     companyName: '',
     businessArea: '',
@@ -31,8 +35,12 @@ const Register = () => {
     cfPassword: ''
   })
 
-  const handleRegister = () => {
-    console.log('resiger', data)
+  const handleRegister = async () => {
+    const response = await onPostExecute(EndPoint.REGISTER_API, data, false)
+    if (response) {
+      showSuccess('Register Successfully')
+      goToPage(Routers.LOGIN)
+    }
   }
 
   const handleInput = useCallback(

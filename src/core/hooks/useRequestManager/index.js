@@ -2,6 +2,7 @@ import axios from 'axios'
 import React from 'react'
 import useToken from '../useToken'
 import useLoading from '../useLoading'
+import useAlert from '../useAlert/index'
 import { withNull } from 'exp-value'
 
 const instance = axios.create({
@@ -12,6 +13,7 @@ const instance = axios.create({
 const useRequestManager = () => {
   const { setLoading } = useLoading()
   const { token, onResetToken } = useToken()
+  const { showError } = useAlert()
   const [status, setStatus] = React.useState(null)
 
   const headers = React.useMemo(
@@ -28,11 +30,11 @@ const useRequestManager = () => {
         try {
           const { data } = await instance.get(url, { headers }, entity)
           setLoading(false)
-
           return data
         } catch (error) {
           setStatus(withNull('response.status', error))
           setLoading(false)
+          showError(withNull('response.data.message', error))
         }
       }
 
@@ -42,19 +44,21 @@ const useRequestManager = () => {
   )
 
   const onPostExecute = React.useCallback(
-    (url, entity = {}) => {
+    (url, entity = {}, hasHeader = true) => {
       const execute = async () => {
         setLoading(true)
         try {
-          const { data } = await instance.post(url, entity, {
-            headers
-          })
-
+          const { data } = await instance.post(
+            url,
+            entity,
+            hasHeader ? { headers } : {}
+          )
           setLoading(false)
           return data
         } catch (error) {
           setStatus(withNull('response.status', error))
           setLoading(false)
+          showError(withNull('response.data.message', error))
         }
       }
       return execute()

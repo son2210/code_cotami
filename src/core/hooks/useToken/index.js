@@ -26,7 +26,6 @@ const useToken = () => {
 
       if (jsonToken) onSaveToken(jsonToken)
     }
-
     execute()
   }, [token])
 

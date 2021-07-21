@@ -8,8 +8,11 @@ import {
 } from './styled'
 import PropTypes from 'prop-types'
 import { ProfileBlock } from 'molecules'
+import { useRecoilValue } from 'recoil'
+import { globalUserState } from 'stores/profile/atom'
 
 const SideBar = ({ menuList, ...others }) => {
+  const userState = useRecoilValue(globalUserState)
   return (
     <ContainerWrapper {...others}>
       <LogoWrapper></LogoWrapper>
@@ -21,7 +24,7 @@ const SideBar = ({ menuList, ...others }) => {
         ))}
       </MenuWrapper>
       <UserWrapper>
-        <ProfileBlock></ProfileBlock>
+        <ProfileBlock name={userState?.firstName || ''} />
       </UserWrapper>
     </ContainerWrapper>
   )

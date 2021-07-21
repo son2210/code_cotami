@@ -10,7 +10,7 @@ const useAuthorized = () => {
   const onGetToken = React.useCallback(() => {
     if (token) return
 
-    history.push(Routers.SIGN_IN_PAGE)
+    history.push(Routers.LOGIN)
   }, [token])
 
   React.useEffect(onGetToken, [token])
