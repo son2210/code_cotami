@@ -4,6 +4,7 @@ import COTAMI from './cotami.png'
 import EYE from './eye.svg'
 import NOTE from './note.svg'
 import TRASH from './trash.svg'
+import TRASH2 from './trash2.svg'
 
 import CHECKED from './logo/checked.svg'
 import MESSAGE from './logo/message.svg'
@@ -17,6 +18,7 @@ export default {
   EYE: EYE,
   NOTE: NOTE,
   TRASH: TRASH,
+  TRASH2: TRASH2,
   LOGO: {
     CHECKED: CHECKED,
     MESSAGE: MESSAGE,

@@ -30,7 +30,6 @@ const TableAction = ({
   hasSummary = false,
   paginateProps,
   data,
-  width,
   columns,
   ...others
 }) => {
@@ -116,7 +115,12 @@ const TableAction = ({
           </ActionCellWrapper>
         )
       case DISPLAY:
-        return <RadioGroup checked={rowData[id]} className={'form__radio'} />
+        return (
+          <RadioGroup
+            value={rowData[id]}
+            onClick={e => others.handleOnClick(e, rowData[id])}
+          />
+        )
       default:
         return rowData[id]
     }
@@ -137,10 +141,10 @@ const TableAction = ({
   }, [])
 
   return (
-    <Wrapper style={{ width: width }}>
+    <Wrapper>
       {hasSummary && <HrWrapper></HrWrapper>}
       <TableWrapper
-        width={width}
+        // width={width}
         headerHeight={hasSummary ? 60 : 35}
         data={data}
         {...others}

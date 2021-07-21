@@ -1,11 +1,10 @@
 import React, { useState, useCallback } from 'react'
-import { Wrapper } from './styled'
-import { TableAction, FilterBar } from 'molecules'
+import { Wrapper, FilterWrapper, Table } from './styled'
 import { BaseButton, BaseCheckPicker, BaseInput, BaseInputPicker } from 'atoms'
 import { usePaginate } from 'hooks'
 import { useTheme } from 'styled-components'
-import { Constant } from 'utils'
-
+import { Constant, Routers } from 'utils'
+import { useHistory } from 'react-router-dom'
 import { modifyPropsOfState } from 'utils/Helpers'
 import { IMAGES } from 'assets'
 
@@ -25,12 +24,17 @@ const CheckList = () => {
     display: '',
     status: ''
   })
+  const history = useHistory()
   const handleInput = useCallback(
     (name, value) => {
       modifyPropsOfState(searchTerm, setSearchTerm, name, value)
     },
     [data]
   )
+
+  const goToCreateChecklist = useCallback(() => {
+    history.push(Routers.NORMAL_ADMIN.CHECKLIST.CHILD[0].URL)
+  }, [])
 
   const columns = [
     {
@@ -116,7 +120,10 @@ const CheckList = () => {
 
   return (
     <Wrapper>
-      <FilterBar style={{ marginBottom: 20, width: '70%' }}>
+      <FilterWrapper
+        onClick={goToCreateChecklist}
+        style={{ marginBottom: 20, width: '70%' }}
+      >
         <BaseInput
           style={{ maxWidth: 170 }}
           placeholder='Keyword...'
@@ -145,8 +152,8 @@ const CheckList = () => {
         >
           Search
         </BaseButton>
-      </FilterBar>
-      <TableAction
+      </FilterWrapper>
+      <Table
         id='table3'
         height={600}
         width={800}

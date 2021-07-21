@@ -7,7 +7,6 @@ export const Wrapper = styled.div`
     `
     color: ${props.theme.colors.secondary[0]};
     font-weight: bold;
-    display:  inline-block;
     `};
 
   ${props =>

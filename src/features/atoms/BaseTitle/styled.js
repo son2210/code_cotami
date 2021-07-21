@@ -14,6 +14,7 @@ export const Wrapper = styled.div`
     `
     text-transform: uppercase;
   `}
+  ${props => props.light && `color: ${props.theme.colors.secondary[3]}`};
 
   ${props => props.H1 && `font-size: 24px`};
   ${props => props.H2 && `font-size: 20px`};

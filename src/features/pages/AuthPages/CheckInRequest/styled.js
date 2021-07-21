@@ -26,7 +26,7 @@ export const CellWrapper = styled.div`
 export const ModalWrapper = styled.div`
   display: block;
   position: fixed;
-  z-index: 999;
+  z-index: 999999;
   left: 0px;
   top: 0px;
   width: 100%;

@@ -32,6 +32,21 @@ const Routers = {
       }
     ],
 
+    CHECKLIST: {
+      URL: '/admin/checklist-management',
+      NAME: 'Checklist management',
+      CHILD: [
+        {
+          URL: '/admin/checklist-management/create',
+          NAME: 'Create a checklist'
+        },
+        {
+          URL: '/admin/checklist-management/template',
+          NAME: 'Templates management'
+        }
+      ]
+    },
+
     PROFILE: {
       URL: '/admin/profile',
       NAME: 'Profile',

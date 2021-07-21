@@ -1,5 +1,5 @@
-import styled, { css } from 'styled-components'
 import { Toggle } from 'rsuite'
+import styled from 'styled-components'
 
 export const Wrapper = styled(Toggle)`
   &.rs-btn-toggle-checked {
