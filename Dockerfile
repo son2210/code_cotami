@@ -7,6 +7,8 @@ ENV GENERATE_SOURCEMAP false
 ENV NODE_ENV production
 ENV INSTALL_PATH=/home/cotami-admin
 
+EXPOSE 5050
+
 WORKDIR $INSTALL_PATH
 
 ADD package.json $INSTALL_PATH
@@ -15,10 +17,8 @@ ADD yarn.lock $INSTALL_PATH
 RUN cd $INSTALL_PATH && \
   yarn install
 
-RUN yarn $BUILD_COMMAND
-
 COPY . ./
 
-EXPOSE 5050
+RUN yarn $BUILD_COMMAND
 
 CMD [ "npm", "run", "server"]
