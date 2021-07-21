@@ -38,4 +38,7 @@ export const Wrapper = styled(Button)`
       background: ${props => props.theme.colors.secondary[7]};
       color: ${props => props.theme.colors.secondary[3]};
     `};
+  ${props =>
+    props.dashed &&
+    `border: 1px dashed ${props.theme.colors.secondary[3]} !important;`};
 `

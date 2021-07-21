@@ -3,9 +3,9 @@ import { Checkbox } from 'rsuite'
 
 export const WrapperCheckbox = styled(Checkbox)`
   &.rs-checkbox .rs-checkbox-checker .rs-checkbox-wrapper:hover {
-    box-shadow: 1px 1px 6px 2px ${props => props.theme.colors.primary};
+    border: none;
     &.rs-checkbox-inner {
-      border-color: ${props => props.theme.colors.primary};
+      border-color: ${props => props.theme.colors.primary} !important;
     }
   }
   &.rs-checkbox-checked .rs-checkbox-wrapper .rs-checkbox-inner {

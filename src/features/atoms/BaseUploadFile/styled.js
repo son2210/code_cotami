@@ -1,5 +1,4 @@
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
 import { Uploader } from 'rsuite'
 
-export const UploadWrapper = styled(Uploader)`
-`
+export const UploadWrapper = styled(Uploader)``

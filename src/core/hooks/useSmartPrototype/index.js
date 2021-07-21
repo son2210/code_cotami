@@ -11,6 +11,7 @@ import localizedFormat from 'dayjs/plugin/localizedFormat'
 import minMax from 'dayjs/plugin/minMax'
 import utc from 'dayjs/plugin/utc'
 import React from 'react'
+import moment from 'moment'
 
 dayjs.extend(utc)
 dayjs.extend(advancedFormat)
@@ -79,12 +80,12 @@ const useSmartPrototype = () => {
       try {
         const _another =
           another instanceof String
-            ? another.toDateTime()
+            ? another.toDateTime(format)
             : another instanceof Date
             ? another
             : new Date()
 
-        const _self = this.toDateTime()
+        const _self = this.toDateTime(format)
         const _max = dayjs.max(_self, _another)
 
         return _self === _max

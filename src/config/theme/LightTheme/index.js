@@ -16,7 +16,9 @@ const LightTheme = {
     tertiary: '#2F80ED',
     status: ['#EB5757', '#27AE60'],
     border: '#E0E0E0',
-    error: '#EB5757'
+    error: '#EB5757',
+    background: ['#FDFDFD'],
+    progress: ['#6FCF97']
   },
   fontSizes: {},
   shadow: {

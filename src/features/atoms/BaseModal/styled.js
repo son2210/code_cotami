@@ -1,9 +1,13 @@
 import styled from 'styled-components'
 import { Modal, Container } from 'rsuite'
 
-export const Wrapper = styled(Container)``
+export const Wrapper = styled(Container)`
+  z-index: 99999;
+  border-radius: 20px;
+`
 export const WrapperModal = styled(Modal)`
   width: 100%;
+
   .rs-modal-content {
     @media screen and (max-width: 980px) {
       margin: 10px;
