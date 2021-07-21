@@ -5,7 +5,7 @@ const useStorage = () => {
     try {
       const execute = async () => {
         const jsonValue = JSON.stringify(value)
-
+        console.log('json value', jsonValue)
         await localStorage.setItem(key, jsonValue)
       }
 
@@ -18,8 +18,8 @@ const useStorage = () => {
   const getValue = React.useCallback(async key => {
     try {
       const jsonValue = await localStorage.getItem(key)
-
-      return jsonValue
+      const value = await JSON.parse(jsonValue)
+      return value
     } catch (error) {
       print('Error[useStorage-get]', error)
     }

@@ -1,5 +1,7 @@
 const EndPoint = {
-  LOGIN_API: 'api/v1/auth/login'
+  LOGIN_API: 'auth/login',
+  REGISTER_API: 'admins/register',
+  ADMIN_PROFILE: 'admins/profile',
 }
 
 export default EndPoint

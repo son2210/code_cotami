@@ -5,10 +5,16 @@ import { DisplayField, AvatarBlock } from 'molecules/ProfileChange'
 import { ContainerWrapper, ColWrapper } from './styled'
 import { BaseButton } from 'atoms'
 import { useHistory } from 'react-router-dom'
+import { useToken } from 'hooks'
+
+import { useRecoilState } from 'recoil'
+import { globalUserState } from 'stores/profile/atom'
 
 const Profile = ({ ...others }) => {
   const history = useHistory()
   const goToPage = useCallback(route => history.push(route), [])
+  const [userState, setUserState] = useRecoilState(globalUserState)
+  const { clearToken } = useToken()
   return (
     <ContainerWrapper justify='start' {...others}>
       <ColWrapper colspan={9}>
@@ -16,9 +22,12 @@ const Profile = ({ ...others }) => {
         <DisplayField title={'Company id'} content={'B0001'} />
         <DisplayField title={'Company name'} content={'Its Global'} />
         <DisplayField title={'Role'} content={'staff'} />
-        <DisplayField title={'First name'} content={'minakata'} />
-        <DisplayField title={'Last Name'} content={'jin'} />
-        <DisplayField title={'Email'} content={'jin@its-global.jp'} />
+        <DisplayField
+          title={'First name'}
+          content={userState?.firstName || ''}
+        />
+        <DisplayField title={'Last Name'} content={userState?.lastName || ''} />
+        <DisplayField title={'Email'} content={userState?.email || ''} />
         <br />
         <BaseButton
           primary
@@ -34,7 +43,16 @@ const Profile = ({ ...others }) => {
         >
           Change password
         </BaseButton>
-        <BaseButton bold>Logout</BaseButton>
+        <BaseButton
+          bold
+          onClick={async () => {
+            setUserState({})
+            await clearToken()
+            goToPage(Routers.LOGIN)
+          }}
+        >
+          Logout
+        </BaseButton>
       </ColWrapper>
     </ContainerWrapper>
   )

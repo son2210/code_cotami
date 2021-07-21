@@ -7,10 +7,15 @@ import validateModel from './validateModel'
 import { modifyPropsOfState } from 'utils/Helpers'
 import { useHistory } from 'react-router-dom'
 import { Routers } from 'utils'
+import { useRequestManager, useToken } from 'hooks'
+import { EndPoint } from 'config/api'
 
 const Login = () => {
   const history = useHistory()
   const [showPassword, setShowPassword] = useState(false)
+  const { onPostExecute } = useRequestManager()
+  const { saveToken } = useToken()
+
   const [data, setData] = useState({
     email: '',
     password: ''
@@ -19,9 +24,14 @@ const Login = () => {
     email: '',
     password: ''
   })
-  const handleLogin = () => {
-    console.log('submit data', data)
-  }
+
+  const handleLogin = useCallback(async () => {
+    const response = await onPostExecute(EndPoint.LOGIN_API, data, false)
+    if (response) {
+      await saveToken(response.accessToken)
+      goToPage(Routers.NORMAL_ADMIN.MENU[0].URL)
+    }
+  }, [data])
 
   const handleInput = useCallback(
     (name, value) => {
@@ -42,7 +52,7 @@ const Login = () => {
   const goToPage = useCallback(route => history.push(route), [])
 
   return (
-    <Wrapper>
+    <Wrapper column={true}>
       <UnAuthForm
         formTitle={'Login'}
         primaryBtn={{

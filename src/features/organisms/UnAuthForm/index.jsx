@@ -18,14 +18,14 @@ const UnAuthForm = ({
   ...others
 }) => {
   return (
-    <ContainerWrapper>
+    <ContainerWrapper column={true}>
       <BaseTitle H1 bold>
         {formTitle}
       </BaseTitle>
       <FormWrapper onChange={onChange} {...others}>
         {children}
 
-        <ActionButtonWrapper>
+        <ActionButtonWrapper column={true}> 
           {tertiaryBtn && (
             <LinkWrapper>
               <a onClick={tertiaryBtn.onClick}>{tertiaryBtn.name}</a>
@@ -38,7 +38,6 @@ const UnAuthForm = ({
               primary
               uppercase
               bold
-              onClick={primaryBtn.onClick}
               type='submit'
             >
               {primaryBtn.name}

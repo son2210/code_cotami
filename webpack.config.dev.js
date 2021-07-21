@@ -36,7 +36,7 @@ module.exports = webpackMerge.smart(baseConfig, {
   plugins: [
     new webpack.DefinePlugin({
       'process.env': {
-        BASE_API_URL: JSON.stringify('https://api-staging.cotami.com/'),
+        BASE_API_URL: JSON.stringify('http://cotami-api.its-globaltek.com/'),
         NODE_ENV: JSON.stringify('development'),
         ENCRYPTION_KEY: JSON.stringify(
           'cmsaZWC38bsPL9aHp+PXXfrHIKEhBqgNL5KwcKY74Qw='
