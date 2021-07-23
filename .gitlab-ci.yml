@@ -30,15 +30,24 @@ coding_convention:
 
 .build_setup:
   script:
-    - docker build --pull -t "${REGISTRY_IMAGE}" . --build-arg BUILD_COMMAND=$BUILD_COMMAND
+    - echo "${ENVIRONMENT_DATA}" >> .env
+    - docker build --pull -t "${REGISTRY_IMAGE}" .
     - docker push "${REGISTRY_IMAGE}"
     - echo "Registry image:" ${REGISTRY_IMAGE}
 
+.deploy_setup:
+  script:
+    - ssh -o StrictHostKeyChecking=no ${SERVER_USERNAME}@${SERVER_IP_ADDRESS} mkdir -p "${WORKSPACE}"
+    - sed -i "s/__REGISTRY_IMAGE__/${REGISTRY_IMAGE}/" docker-compose.yml
+    - sed -i "s/__REGISTRY_IMAGE__/${REGISTRY_IMAGE}/" docker-compose.yml
+    - sed -i "s/__NGINX_DOMAIN__/${NGINX_DOMAIN}/" nginx.conf
+    - scp -o StrictHostKeyChecking=no -r docker-compose.yml ${SERVER_USERNAME}@${SERVER_IP_ADDRESS}:${WORKSPACE}/
+    - scp -o StrictHostKeyChecking=no -r nginx.conf ${SERVER_USERNAME}@${SERVER_IP_ADDRESS}:${WORKSPACE}/
+    - scp -o StrictHostKeyChecking=no -r nginx.Dockerfile ${SERVER_USERNAME}@${SERVER_IP_ADDRESS}:${WORKSPACE}/
+
 .deployment_setup:
   script:
-    - ssh -o StrictHostKeyChecking=no ${SERVER_USERNAME}@${SERVER_IP} -p $SERVER_PORT "docker pull ${REGISTRY_IMAGE}"
-    - ssh -o StrictHostKeyChecking=no ${SERVER_USERNAME}@${SERVER_IP} -p $SERVER_PORT "docker rm -f cotami-admin || true"
-    - ssh -o StrictHostKeyChecking=no ${SERVER_USERNAME}@${SERVER_IP} -p $SERVER_PORT "docker run --network host -d --restart always --name cotami-admin ${REGISTRY_IMAGE}"
+    - ssh -o StrictHostKeyChecking=no ${SERVER_USERNAME}@${SERVER_IP} -p $SERVER_PORT "docker-compose -f ${WORKSPACE}/docker-compose.yml  up -d"
 
 .unused_script:
   script:
@@ -49,7 +58,7 @@ build_staging:
   image: docker:latest
   variables:
     REGISTRY_IMAGE: ${CI_REGISTRY_IMAGE}/staging
-    BUILD_COMMAND: build-stag
+    ENVIRONMENT_DATA: ${STAGING_ENVIRONMENT_DATA}
   services:
     - name: docker:19.03.8-dind
   before_script:
@@ -67,8 +76,9 @@ deploy_staging:
     REGISTRY_IMAGE: ${CI_REGISTRY_IMAGE}/staging
     SERVER_IP: ${STAGING_IP_ADDRESS}
     SERVER_USERNAME: ${STAGING_USERNAME}
-    EXPOSE_PORT: 5050
     SERVER_PORT: 2025
+    NGINX_DOMAIN: ${STAGING_NGINX_DOMAIN}
+    WORKSPACE: ${STAGING_USERNAME}/cotami-admin
   before_script:
     - !reference [.ssh_setup, before_script]
   script:
@@ -96,9 +106,8 @@ build_prod:
   stage: build_prod
   image: docker:latest
   variables:
-    REGISTRY_IMAGE: ${CI_REGISTRY_IMAGE}/prod
-    BUILD_COMMAND: build
-    SERVER_PORT: 22
+    REGISTRY_IMAGE: ${CI_REGISTRY_IMAGE}
+    ENVIRONMENT_DATA: ${PROD_ENVIRONMENT_DATA}
   services:
     - name: docker:19.03.8-dind
   before_script:
@@ -116,7 +125,9 @@ deploy_prod:
     REGISTRY_IMAGE: ${CI_REGISTRY_IMAGE}
     SERVER_IP: ${FRONTEND_PROD_IP}
     SERVER_USERNAME: ${PROD_USERNAME}
-    EXPOSE_PORT: 5050
+    SERVER_PORT: 22
+    NGINX_DOMAIN: ${PROD_NGINX_DOMAIN}
+    WORKSPACE: ${PROD_USERNAME}/cotami-admin
   before_script:
     - !reference [.ssh_setup, before_script]
   script:

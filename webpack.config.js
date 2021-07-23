@@ -2,6 +2,7 @@ const webpack = require('webpack')
 const webpackMerge = require('webpack-merge')
 const baseConfig = require('./webpack.config.base')
 const publicPath = '/'
+const Dotenv = require('dotenv-webpack')
 
 module.exports = webpackMerge.smart(baseConfig, {
   entry: './src/index.js',
@@ -12,20 +13,8 @@ module.exports = webpackMerge.smart(baseConfig, {
   mode: 'production',
   devtool: 'source-map',
   plugins: [
-    new webpack.DefinePlugin({
-      'process.env': {
-        BASE_API_URL: JSON.stringify('http://cotami-api.its-globaltek.com/'),
-        NODE_ENV: JSON.stringify('production'),
-        ENCRYPTION_KEY: JSON.stringify(
-          'cmsaZWC38bsPL9aHp+PXXfrHIKEhBqgNL5KwcKY74Qw='
-        ),
-        LOCAL_STORAGE_KEY: JSON.stringify('cotami-production'),
-        SECRET_TOKEN_KEY: JSON.stringify('production/SECRET_TOKEN_KEY'),
-        SECRET_USER_KEY: JSON.stringify('production/SECRET_USER_KEY'),
-        RESET_PASSWORD_TOKEN_KEY: JSON.stringify(
-          'production/RESET_PASSWORD_TOKEN_KEY'
-        )
-      }
+    new Dotenv({
+      path: '.env'
     }),
     new webpack.LoaderOptionsPlugin({
       options: {

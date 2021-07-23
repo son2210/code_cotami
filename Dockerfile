@@ -1,7 +1,6 @@
 FROM registry.gitlab.com/its-global/cotami/cotami-admin/base as build
 
 LABEL MAINTAINER="Tai Nguyen<tainv@its-global.vn>"
-ARG BUILD_COMMAND
 
 ENV GENERATE_SOURCEMAP false
 ENV NODE_ENV production
@@ -19,6 +18,6 @@ RUN cd $INSTALL_PATH && \
 
 COPY . ./
 
-RUN yarn $BUILD_COMMAND
+RUN yarn build
 
 CMD [ "npm", "run", "server"]
