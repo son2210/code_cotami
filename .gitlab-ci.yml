@@ -37,18 +37,18 @@ coding_convention:
 
 .deployment_setup:
   script:
-    - ssh -o StrictHostKeyChecking=no ${SERVER_USERNAME}@${SERVER_IP} mkdir -p "${WORKSPACE}"
+    - ssh -o StrictHostKeyChecking=no ${SERVER_USERNAME}@${SERVER_IP} -p ${SERVER_PORT} mkdir -p "${WORKSPACE}"
     - sed -i "s/__REGISTRY_IMAGE__/${REGISTRY_IMAGE}/" docker-compose.yml
     - sed -i "s/__REGISTRY_IMAGE__/${REGISTRY_IMAGE}/" docker-compose.yml
     - sed -i "s/__NGINX_DOMAIN__/${NGINX_DOMAIN}/" nginx.conf
-    - scp -o StrictHostKeyChecking=no -r docker-compose.yml ${SERVER_USERNAME}@${SERVER_IP}:${WORKSPACE}/
-    - scp -o StrictHostKeyChecking=no -r nginx.conf ${SERVER_USERNAME}@${SERVER_IP}:${WORKSPACE}/
-    - scp -o StrictHostKeyChecking=no -r nginx.Dockerfile ${SERVER_USERNAME}@${SERVER_IP}:${WORKSPACE}/
-    - ssh -o StrictHostKeyChecking=no ${SERVER_USERNAME}@${SERVER_IP} -p $SERVER_PORT "docker-compose -f ${WORKSPACE}/docker-compose.yml  up -d"
+    - scp -o StrictHostKeyChecking=no -P ${SERVER_PORT} -r docker-compose.yml ${SERVER_USERNAME}@${SERVER_IP}:${WORKSPACE}/
+    - scp -o StrictHostKeyChecking=no -P ${SERVER_PORT} -r nginx.conf ${SERVER_USERNAME}@${SERVER_IP}:${WORKSPACE}/
+    - scp -o StrictHostKeyChecking=no -P ${SERVER_PORT} -r nginx.Dockerfile ${SERVER_USERNAME}@${SERVER_IP}:${WORKSPACE}/
+    - ssh -o StrictHostKeyChecking=no ${SERVER_USERNAME}@${SERVER_IP} -p ${SERVER_PORT} "docker-compose -f ${WORKSPACE}/docker-compose.yml  up -d"
 
 .unused_script:
   script:
-    - ssh -o StrictHostKeyChecking=no ${SERVER_USERNAME}@${SERVER_IP} -p $SERVER_PORT "docker system prune -a -f"
+    - ssh -o StrictHostKeyChecking=no ${SERVER_USERNAME}@${SERVER_IP} -p ${SERVER_PORT} "docker system prune -a -f"
 
 # build_staging:
 #   stage: build_staging
