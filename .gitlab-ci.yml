@@ -28,10 +28,13 @@ coding_convention:
     - eval "$(ssh-agent -s)"
     - ssh-add <(echo "${SSH_PRIVATE_KEY}" | base64 -d)
 
-.build_setup:
+.env_setup:
   script:
     - echo "${ENVIRONMENT_DATA}" >> .env
-    - docker build --pull -t "${REGISTRY_IMAGE}" .
+
+.build_setup:
+  script:
+    - docker build -t "${REGISTRY_IMAGE}" .
     - docker push "${REGISTRY_IMAGE}"
     - echo "Registry image:" ${REGISTRY_IMAGE}
 
@@ -62,6 +65,7 @@ build_staging:
   before_script:
     - !reference [.docker_setup, before_script]
   script:
+    - !reference [.env_setup, script]
     - !reference [.build_setup, script]
   when: on_success
   only:
@@ -80,6 +84,7 @@ deploy_staging:
   before_script:
     - !reference [.ssh_setup, before_script]
   script:
+    - !reference [.env_setup, script]
     - !reference [.deployment_setup, script]
   when: on_success
   only:
@@ -111,6 +116,7 @@ build_prod:
   before_script:
     - !reference [.docker_setup, before_script]
   script:
+    - !reference [.env_setup, script]
     - !reference [.build_setup, script]
   when: on_success
   only:
@@ -129,6 +135,7 @@ deploy_prod:
   before_script:
     - !reference [.ssh_setup, before_script]
   script:
+    - !reference [.env_setup, script]
     - !reference [.deployment_setup, script]
   when: on_success
   only:
