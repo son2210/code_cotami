@@ -21,6 +21,7 @@
     "compression-webpack-plugin": "3.1.0",
     "css-loader": "^5.2.4",
     "dayjs": "^1.10.5",
+    "dotenv-webpack": "^7.0.3",
     "eslint-plugin-react": "^7.23.2",
     "eslint-plugin-react-hooks": "^4.2.0",
     "exp-value": "^1.0.4",
@@ -63,15 +64,13 @@
   "scripts": {
     "start": "webpack serve --config ./webpack.config.dev.js --inline --progress --mode development",
     "build": "rm -rf dist && webpack --mode=production && cp -r public/* dist",
-    "build-stag": "rm -rf dist && webpack --config ./webpack.config.stag.js --mode production && cp -r public/* dist",
     "server": "NODE_ENV=production node ./server.js",
     "lint": "eslint src/**/*.js src/**/*.jsx --ignore-pattern node_modules/",
     "build:dev": "webpack --mode=development",
     "build:prod": "webpack --mode=production",
     "watch": "webpack --watch",
     "serve": "webpack serve",
-    "deploy-prod": "docker-compose -f prod.docker-compose.yml up -d --build",
-    "deploy-stag": "docker-compose -f stag.docker-compose.yml up -d --build"
+    "deploy": "docker-compose -f docker-compose.yml up -d --build"
   },
   "eslintConfig": {
     "extends": [

@@ -1,10 +1,10 @@
 'use strict'
 
-const webpack = require('webpack')
 const webpackMerge = require('webpack-merge')
 const baseConfig = require('./webpack.config.base')
 const publicPath = '/'
 const path = require('path')
+const Dotenv = require('dotenv-webpack')
 
 module.exports = webpackMerge.smart(baseConfig, {
   entry: [
@@ -34,20 +34,8 @@ module.exports = webpackMerge.smart(baseConfig, {
     ignored: ['node_modules']
   },
   plugins: [
-    new webpack.DefinePlugin({
-      'process.env': {
-        BASE_API_URL: JSON.stringify('http://cotami-api.its-globaltek.com/'),
-        NODE_ENV: JSON.stringify('development'),
-        ENCRYPTION_KEY: JSON.stringify(
-          'cmsaZWC38bsPL9aHp+PXXfrHIKEhBqgNL5KwcKY74Qw='
-        ),
-        LOCAL_STORAGE_KEY: JSON.stringify('cotami-staging'),
-        SECRET_TOKEN_KEY: JSON.stringify('staging/SECRET_TOKEN_KEY'),
-        SECRET_USER_KEY: JSON.stringify('staging/SECRET_USER_KEY'),
-        RESET_PASSWORD_TOKEN_KEY: JSON.stringify(
-          'staging/RESET_PASSWORD_TOKEN_KEY'
-        )
-      }
+    new Dotenv({
+      path: '.env'
     })
   ]
 })
