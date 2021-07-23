@@ -35,8 +35,8 @@ coding_convention:
     - docker push "${REGISTRY_IMAGE}"
     - echo "Registry image:" ${REGISTRY_IMAGE}
 
-.deploy_setup:
-  before_script:
+.deployment_setup:
+  script:
     - ssh -o StrictHostKeyChecking=no ${SERVER_USERNAME}@${SERVER_IP} mkdir -p "${WORKSPACE}"
     - sed -i "s/__REGISTRY_IMAGE__/${REGISTRY_IMAGE}/" docker-compose.yml
     - sed -i "s/__REGISTRY_IMAGE__/${REGISTRY_IMAGE}/" docker-compose.yml
@@ -44,9 +44,6 @@ coding_convention:
     - scp -o StrictHostKeyChecking=no -r docker-compose.yml ${SERVER_USERNAME}@${SERVER_IP}:${WORKSPACE}/
     - scp -o StrictHostKeyChecking=no -r nginx.conf ${SERVER_USERNAME}@${SERVER_IP}:${WORKSPACE}/
     - scp -o StrictHostKeyChecking=no -r nginx.Dockerfile ${SERVER_USERNAME}@${SERVER_IP}:${WORKSPACE}/
-
-.deployment_setup:
-  script:
     - ssh -o StrictHostKeyChecking=no ${SERVER_USERNAME}@${SERVER_IP} -p $SERVER_PORT "docker-compose -f ${WORKSPACE}/docker-compose.yml  up -d"
 
 .unused_script:
@@ -81,7 +78,6 @@ deploy_staging:
     WORKSPACE: /home/${STAGING_USERNAME}/cotami-admin
   before_script:
     - !reference [.ssh_setup, before_script]
-    - !reference [.deploy_setup, before_script]
   script:
     - !reference [.deployment_setup, script]
   when: on_success
@@ -131,7 +127,6 @@ deploy_prod:
     WORKSPACE: /home/${PROD_USERNAME}/cotami-admin
   before_script:
     - !reference [.ssh_setup, before_script]
-    - !reference [.deploy_setup, before_script]
   script:
     - !reference [.deployment_setup, script]
   when: on_success
