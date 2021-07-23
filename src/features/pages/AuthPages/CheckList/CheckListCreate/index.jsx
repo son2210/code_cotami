@@ -1,33 +1,41 @@
-import React, { useState } from 'react'
+import { BaseInputPicker } from 'atoms'
+import { withEmpty } from 'exp-value'
+import { RadioForm } from 'molecules'
+import { CreateModule } from 'organisms'
+import React, { useEffect, useState } from 'react'
+import { useCallback } from 'react/cjs/react.development'
+import PreviewCheckList from '../PreviewCheckList'
 import {
-  Wrapper,
-  WrapperContent,
-  WrapperForm,
-  Title,
-  ThemeBlock,
-  Theme,
+  Button,
+  Content,
   FlexBlock,
   Form,
+  Icon,
+  Input,
+  Label,
+  Theme,
+  ThemeBlock,
+  Title,
+  Wrapper,
   WrapperBlock,
   WrapperButton,
-  Label,
-  Button,
-  WrapperItem,
-  Content,
-  Icon,
-  HeaderModule,
-  ModuleCount,
-  Modal
+  WrapperContent,
+  WrapperForm,
+  WrapperItem
 } from './styled'
-import { InputGroup, RadioForm, ModuleCheckList } from 'molecules'
-import { BaseInputPicker } from 'atoms'
-import { useCallback } from 'react/cjs/react.development'
-import { withNumber } from 'exp-value'
-import PreviewCheckList from '../PreviewCheckList'
 
 const CheckListCreate = () => {
   const [step, setStep] = useState(1)
   const [showPreview, setShowPreview] = useState(false)
+  const [formCheckList, setFormCheckList] = useState({
+    title: '',
+    description: '',
+    unit: '',
+    display: ''
+  })
+
+  const [modules, setModules] = useState([])
+
   const navigationPage = useCallback(
     type => {
       if (step < 1) return setStep(1)
@@ -37,9 +45,37 @@ const CheckListCreate = () => {
     },
     [step]
   )
-
   const hideModal = useCallback(() => setShowPreview(false), [showPreview])
   const showModal = useCallback(() => setShowPreview(true), [showPreview])
+  const handleChangeForm = useCallback(
+    (field, value) => {
+      setFormCheckList(prev => ({
+        ...prev,
+        [field]: value
+      }))
+    },
+    [formCheckList]
+  )
+
+  const handleUpdateModule = useCallback(
+    (type, idModule) => {
+      let temp = modules
+      if (type === 'addModule') {
+        temp.push([])
+        setModules(temp)
+      }
+
+      if (
+        type === 'removeModule' &&
+        idModule >= 0 &&
+        idModule < modules?.length
+      ) {
+        temp.splice(idModule, 1)
+        setModules(temp)
+      }
+    },
+    [modules]
+  )
   const _renderTheme = useCallback(() => {
     return (
       <FlexBlock>
@@ -53,13 +89,26 @@ const CheckListCreate = () => {
 
   const _renderModalPreviewCheckList = useCallback(() => {
     return (
-      <Modal
+      <PreviewCheckList
+        moduleName={'Checklist module name'}
+        modules={modules}
         show={showPreview}
         onHide={hideModal}
-        body={<PreviewCheckList modules={modules} />}
       />
     )
-  }, [showPreview])
+  }, [showPreview, modules])
+
+  const _renderModule = useCallback(() => {
+    return (
+      <WrapperContent>
+        <CreateModule
+          data={modules}
+          onRemoveModule={id => handleUpdateModule('removeModule', id)}
+          onCreateModule={() => handleUpdateModule('addModule')}
+        />
+      </WrapperContent>
+    )
+  }, [modules, step])
 
   const _renderContent = useCallback(() => {
     if (step == 1)
@@ -79,24 +128,8 @@ const CheckListCreate = () => {
           </ThemeBlock>
         </WrapperContent>
       )
-    return (
-      <WrapperContent>
-        <HeaderModule>
-          <Title H2 bold>
-            Choose a template
-          </Title>
-          <ModuleCount>
-            {`${withNumber('sections.length', null)} section`}
-            <Button dashed={1}>
-              <Icon name='feather-plus' size={16} />
-              New module
-            </Button>
-          </ModuleCount>
-        </HeaderModule>
-        <ModuleCheckList data={modules} />
-      </WrapperContent>
-    )
-  }, [step])
+    return _renderModule()
+  }, [step, modules])
 
   const _renderForm = useCallback(() => {
     if (step == 1)
@@ -107,29 +140,44 @@ const CheckListCreate = () => {
           </Title>
 
           <Form>
-            <InputGroup placeholder='Title' />
+            <Input
+              placeholder='Title'
+              name={'title'}
+              value={withEmpty('title', formCheckList)}
+              onChange={value => handleChangeForm('title', value)}
+            />
 
-            <InputGroup
+            <Input
               placeholder='Description'
               componentClass='textarea'
+              name='description'
               rows={3}
+              value={withEmpty('description', formCheckList)}
+              onChange={value => handleChangeForm('description', value)}
             />
 
             <WrapperBlock>
               <Label bold> Unit </Label>
-              <BaseInputPicker data={data} placeholder='All' block />
+              <BaseInputPicker
+                data={data}
+                placeholder='All'
+                block
+                value={withEmpty('unit', formCheckList)}
+                onChange={value => handleChangeForm('unit', value)}
+                name='unit'
+              />
             </WrapperBlock>
             <WrapperBlock>
               <Label bold> Display </Label>
-              <RadioForm />
+              <RadioForm
+                name='display'
+                value={withEmpty('display', formCheckList)}
+                onChange={value => handleChangeForm('display', value)}
+              />
             </WrapperBlock>
 
             <WrapperBlock>
-              <Button
-                primary
-                style={{ width: '100%' }}
-                onClick={() => navigationPage('next')}
-              >
+              <Button primary fluid onClick={() => navigationPage('next')}>
                 Next
               </Button>
             </WrapperBlock>
@@ -145,26 +193,29 @@ const CheckListCreate = () => {
 
         <WrapperItem>
           <Title>Title</Title>
-          <Content>Checklist info</Content>
+          <Content>
+            {withEmpty('title', formCheckList) || 'Checklist info'}
+          </Content>
         </WrapperItem>
 
         <WrapperItem>
           <Title>Description</Title>
           <Content>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum
+            {withEmpty('description', formCheckList) ||
+              `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum
             dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit
-            amet, consectetur adipiscing elit.
+            amet, consectetur adipiscing elit.`}
           </Content>
         </WrapperItem>
 
         <WrapperItem>
           <Title>Unit</Title>
-          <Content>All</Content>
+          <Content>{withEmpty('unit', formCheckList) || 'all'}</Content>
         </WrapperItem>
 
         <WrapperItem>
           <Title>Display</Title>
-          <Content>Auto</Content>
+          <Content>{withEmpty('display', formCheckList) || 'Auto'}</Content>
         </WrapperItem>
 
         <WrapperButton>
@@ -173,12 +224,14 @@ const CheckListCreate = () => {
             Preview
           </Button>
           <Button primary onClick={() => navigationPage('next')}>
-            Next
+            Submit
           </Button>
         </WrapperButton>
       </WrapperForm>
     )
-  }, [step])
+  }, [step, formCheckList])
+
+  useEffect(() => setModules(fakeModules), [])
 
   return (
     <Wrapper>
@@ -202,7 +255,7 @@ const data = [
   }
 ]
 
-const modules = [
+const fakeModules = [
   {
     id: 0,
     description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',

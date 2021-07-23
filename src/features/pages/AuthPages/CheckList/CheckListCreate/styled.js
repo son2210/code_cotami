@@ -5,9 +5,9 @@ import {
   BaseTitle,
   BaseForm,
   BaseButton,
-  BaseIcon,
-  BaseModal
+  BaseIcon
 } from 'atoms'
+import { InputGroup } from 'molecules'
 
 export const Wrapper = styled.div`
   display: flex;
@@ -51,6 +51,9 @@ export const FlexBlock = styled.div`
 `
 export const Form = styled(BaseForm)`
   display: block;
+  .rs-input-group {
+    display: block;
+  }
 `
 export const WrapperBlock = styled.div`
   display: block;
@@ -87,27 +90,5 @@ export const Content = styled.div`
   width: 100%;
 `
 export const Icon = styled(BaseIcon)``
-export const HeaderModule = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`
-export const ModuleCount = styled.div`
-  display: flex;
-  color: ${props => props.theme.colors.tertiary};
-  margin-bottom: -15px;
-  align-items: center;
-  button {
-    padding: 5px;
-    border-radius: 20px;
-    margin-left: 10px;
-  }
-`
 
-export const Modal = styled(BaseModal)`
-  width: 480px;
-  .rs-modal-content {
-    padding: 10px;
-    border-radius: 20px;
-  }
-`
+export const Input = styled(InputGroup)``

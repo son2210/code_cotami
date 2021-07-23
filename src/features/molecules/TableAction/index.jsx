@@ -146,12 +146,7 @@ const TableAction = ({
   return (
     <Wrapper>
       {hasSummary && <HrWrapper></HrWrapper>}
-      <TableWrapper
-        // width={width}
-        headerHeight={hasSummary ? 60 : 35}
-        data={data}
-        {...others}
-      >
+      <TableWrapper headerHeight={hasSummary ? 60 : 35} data={data} {...others}>
         {columns.map((col, index) => (
           <ColumnWrapper
             align={col?.align || 'left'}

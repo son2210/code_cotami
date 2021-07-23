@@ -1,30 +1,24 @@
 import styled, { css } from 'styled-components'
 import { BaseTitle, BaseButton, BaseIcon } from 'atoms'
 import { StepProgress } from 'molecules'
-import { Progress } from 'rsuite'
+import { Progress, Modal } from 'rsuite'
 
 export const Wrapper = styled.div`
-  overflow: auto;
-  overflow-x: hidden;
-  &::-webkit-scrollbar {
-    width: 0;
-  }
-  scrollbar-width: none;
-  position: relative;
+  height: 90vh;
 `
 export const Title = styled(BaseTitle)``
 export const LineProgress = styled(Progress.Line)``
+
 export const Button = styled(BaseButton)`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 0 10px;
+  margin: 0;
   ${props =>
-    props.next &&
+    props.hide &&
     css`
        {
-        position: absolute;
-        right: 10px;
+        visibility: hidden;
       }
     `};
 
@@ -36,16 +30,43 @@ export const Button = styled(BaseButton)`
       }
     `};
 `
-export const WrapperProgress = styled(StepProgress)``
+export const WrapperProgress = styled(StepProgress)`
+  margin: 20px 0;
+`
 export const WrapperFooter = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
   background: ${props => props.theme.colors.secondary[6]};
-
   border-radius: 20px;
-  position: absolute;
-  bottom: 0;
   width: 100%;
+  padding: 5px;
 `
 export const Icon = styled(BaseIcon)``
+export const WrapperModal = styled(Modal)`
+  width: 480px;
+  .rs-modal-content {
+    padding: 10px;
+    border-radius: 20px;
+  }
+  .rs-modal-header .rs-modal-header-close {
+    display: none !important;
+  }
+`
+export const Body = styled(Modal.Body)`
+  display: flex;
+  flex-direction: column;
+  min-width: 200px;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0 5px;
+  ::-webkit-scrollbar {
+    width: 3px;
+    height: 100px;
+  }
+  ::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px grey;
+    border-radius: 3px;
+  }
+`

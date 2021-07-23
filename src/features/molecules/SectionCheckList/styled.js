@@ -1,14 +1,13 @@
 import styled from 'styled-components'
-import { BaseTitle, BaseIcon, BaseUploadFile, BaseText } from 'atoms'
+import { BaseTitle, BaseIcon, BaseUploadFile, BaseText, BaseInput } from 'atoms'
 import { BaseCheckPicker, BaseInputPicker } from 'atoms'
 import CheckBoxGroup from '../CheckBoxGroup'
-import InputGroup from '../InputGroup'
 import RadioForm from '../RadioForm'
 
 export const Wrapper = styled.div`
   border-top: 2px solid ${props => props.theme.colors.secondary[6]};
   width: 100%;
-  padding: 20px;
+  padding: 20px 0;
   margin: 20px auto;
 `
 export const Title = styled(BaseTitle)``
@@ -83,11 +82,21 @@ export const InputPicker = styled(BaseInputPicker)`
 export const CheckBox = styled(CheckBoxGroup)`
   margin-left: -10px;
 `
-export const Input = styled(InputGroup)``
+export const Input = styled(BaseInput)`
+  ${props =>
+    props.borderNone &&
+    `border: none !important;    
+    padding: 10px 0 !important;`}
+  ${props => props.h2 && `font-size: 18px !important;`}
+  ${props => props.h3 && `font-size: 14px !important;`}
+`
 export const Radio = styled(RadioForm)`
   display: block !important;
   margin-left: -10px;
   & .rs-radio {
     margin-left: unset;
   }
+`
+export const Block = styled.div`
+  margin: 5px 0;
 `
