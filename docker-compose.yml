@@ -14,5 +14,7 @@ services:
     tty: true
     ports:
       - 5050:5050
+    env_file:
+      - .env
     environment:
       - NODE_ENV=production
