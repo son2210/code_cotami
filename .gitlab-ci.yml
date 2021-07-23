@@ -2,7 +2,7 @@ image: ${CI_BASE_IMAGE}:latest
 
 stages:
   - coding_convention
-  - build_staging
+  # - build_staging
   - deploy_staging
   - clean_staging
   - build_prod
@@ -53,21 +53,21 @@ coding_convention:
   script:
     - ssh -o StrictHostKeyChecking=no ${SERVER_USERNAME}@${SERVER_IP} -p $SERVER_PORT "docker system prune -a -f"
 
-build_staging:
-  stage: build_staging
-  image: docker:latest
-  variables:
-    REGISTRY_IMAGE: ${CI_REGISTRY_IMAGE}/staging
-    ENVIRONMENT_DATA: ${STAGING_ENVIRONMENT_DATA}
-  services:
-    - name: docker:19.03.8-dind
-  before_script:
-    - !reference [.docker_setup, before_script]
-  script:
-    - !reference [.build_setup, script]
-  when: on_success
-  only:
-    - staging
+# build_staging:
+#   stage: build_staging
+#   image: docker:latest
+#   variables:
+#     REGISTRY_IMAGE: ${CI_REGISTRY_IMAGE}/staging
+#     ENVIRONMENT_DATA: ${STAGING_ENVIRONMENT_DATA}
+#   services:
+#     - name: docker:19.03.8-dind
+#   before_script:
+#     - !reference [.docker_setup, before_script]
+#   script:
+#     - !reference [.build_setup, script]
+#   when: on_success
+#   only:
+#     - staging
 
 deploy_staging:
   stage: deploy_staging
@@ -78,7 +78,7 @@ deploy_staging:
     SERVER_USERNAME: ${STAGING_USERNAME}
     SERVER_PORT: 2025
     NGINX_DOMAIN: ${STAGING_NGINX_DOMAIN}
-    WORKSPACE: ${STAGING_USERNAME}/cotami-admin
+    WORKSPACE: /home/${STAGING_USERNAME}/cotami-admin
   before_script:
     - !reference [.ssh_setup, before_script]
     - !reference [.deploy_setup, before_script]
@@ -128,7 +128,7 @@ deploy_prod:
     SERVER_USERNAME: ${PROD_USERNAME}
     SERVER_PORT: 22
     NGINX_DOMAIN: ${PROD_NGINX_DOMAIN}
-    WORKSPACE: ${PROD_USERNAME}/cotami-admin
+    WORKSPACE: /home/${PROD_USERNAME}/cotami-admin
   before_script:
     - !reference [.ssh_setup, before_script]
     - !reference [.deploy_setup, before_script]
