@@ -37,13 +37,13 @@ coding_convention:
 
 .deploy_setup:
   before_script:
-    - ssh -o StrictHostKeyChecking=no ${SERVER_USERNAME}@${SERVER_IP_ADDRESS} mkdir -p "${WORKSPACE}"
+    - ssh -o StrictHostKeyChecking=no ${SERVER_USERNAME}@${SERVER_IP} mkdir -p "${WORKSPACE}"
     - sed -i "s/__REGISTRY_IMAGE__/${REGISTRY_IMAGE}/" docker-compose.yml
     - sed -i "s/__REGISTRY_IMAGE__/${REGISTRY_IMAGE}/" docker-compose.yml
     - sed -i "s/__NGINX_DOMAIN__/${NGINX_DOMAIN}/" nginx.conf
-    - scp -o StrictHostKeyChecking=no -r docker-compose.yml ${SERVER_USERNAME}@${SERVER_IP_ADDRESS}:${WORKSPACE}/
-    - scp -o StrictHostKeyChecking=no -r nginx.conf ${SERVER_USERNAME}@${SERVER_IP_ADDRESS}:${WORKSPACE}/
-    - scp -o StrictHostKeyChecking=no -r nginx.Dockerfile ${SERVER_USERNAME}@${SERVER_IP_ADDRESS}:${WORKSPACE}/
+    - scp -o StrictHostKeyChecking=no -r docker-compose.yml ${SERVER_USERNAME}@${SERVER_IP}:${WORKSPACE}/
+    - scp -o StrictHostKeyChecking=no -r nginx.conf ${SERVER_USERNAME}@${SERVER_IP}:${WORKSPACE}/
+    - scp -o StrictHostKeyChecking=no -r nginx.Dockerfile ${SERVER_USERNAME}@${SERVER_IP}:${WORKSPACE}/
 
 .deployment_setup:
   script:
