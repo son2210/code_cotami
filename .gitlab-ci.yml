@@ -36,7 +36,7 @@ coding_convention:
     - echo "Registry image:" ${REGISTRY_IMAGE}
 
 .deploy_setup:
-  script:
+  before_script:
     - ssh -o StrictHostKeyChecking=no ${SERVER_USERNAME}@${SERVER_IP_ADDRESS} mkdir -p "${WORKSPACE}"
     - sed -i "s/__REGISTRY_IMAGE__/${REGISTRY_IMAGE}/" docker-compose.yml
     - sed -i "s/__REGISTRY_IMAGE__/${REGISTRY_IMAGE}/" docker-compose.yml
@@ -81,6 +81,7 @@ deploy_staging:
     WORKSPACE: ${STAGING_USERNAME}/cotami-admin
   before_script:
     - !reference [.ssh_setup, before_script]
+    - !reference [.deploy_setup, before_script]
   script:
     - !reference [.deployment_setup, script]
   when: on_success
@@ -130,6 +131,7 @@ deploy_prod:
     WORKSPACE: ${PROD_USERNAME}/cotami-admin
   before_script:
     - !reference [.ssh_setup, before_script]
+    - !reference [.deploy_setup, before_script]
   script:
     - !reference [.deployment_setup, script]
   when: on_success
