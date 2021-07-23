@@ -120,10 +120,7 @@ const CheckList = () => {
 
   return (
     <Wrapper>
-      <FilterWrapper
-        onClick={goToCreateChecklist}
-        style={{ marginBottom: 20, width: '70%' }}
-      >
+      <FilterWrapper onClick={goToCreateChecklist} style={{ marginBottom: 20 }}>
         <BaseInput
           style={{ maxWidth: 170 }}
           placeholder='Keyword...'
@@ -155,8 +152,7 @@ const CheckList = () => {
       </FilterWrapper>
       <Table
         id='table3'
-        height={600}
-        width={800}
+        height={window.innerHeight - 200}
         data={testData}
         columns={columns}
         paginateProps={{

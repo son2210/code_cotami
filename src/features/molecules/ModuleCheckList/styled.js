@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
 import { BaseTitle, BaseButton, BaseIcon } from 'atoms'
 
 export const Wrapper = styled.div`
@@ -19,7 +19,8 @@ export const WrapperTop = styled.div``
 export const WrapperContent = styled.div``
 export const ButtonCreateSection = styled(BaseButton)`
   width: 100%;
-  padding: 40px;
+  padding: 10px;
+  margin: 20px 0;
   display: block;
   text-align: center;
   background: ${props => props.theme.colors.background[0]};
@@ -37,14 +38,37 @@ export const SectionCount = styled.div`
   color: ${props => props.theme.colors.tertiary};
   align-items: center;
   margin-bottom: -15px;
+  cursor: pointer;
 `
 export const Collapse = styled.div`
   display: block;
   transition: ease-in 1s;
   height: auto;
-  ${props =>
-    props.collapse &&
-    css`
-      height: 0;
-    `}
+  ${props => props.collapse && `display: none;`}
+`
+
+export const HeaderModule = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`
+
+export const ModuleCount = styled.div`
+  display: flex;
+  color: ${props => props.theme.colors.tertiary};
+  margin-bottom: -15px;
+  align-items: center;
+  button {
+    padding: 5px;
+    border-radius: 20px;
+    margin-left: 10px;
+  }
+`
+export const Button = styled(BaseButton)`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  & svg {
+    margin-right: 10px;
+  }
 `

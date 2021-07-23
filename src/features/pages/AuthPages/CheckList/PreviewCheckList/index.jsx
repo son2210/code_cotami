@@ -6,15 +6,19 @@ import {
   Button,
   WrapperProgress,
   WrapperFooter,
-  Icon
+  Icon,
+  WrapperModal,
+  Body
 } from './styled'
 import PropTypes from 'prop-types'
 import { withArray, withEmpty, withNumber } from 'exp-value'
 import { useTheme } from 'styled-components'
 import { SectionPreview } from 'molecules'
 
-const PreviewCheckList = ({ moduleName, modules, ...others }) => {
-  const moduleNumber = React.useMemo(() => withNumber('length', modules), [])
+const PreviewCheckList = ({ moduleName, modules, show, onHide, ...others }) => {
+  const moduleNumber = React.useMemo(() => withNumber('length', modules), [
+    modules
+  ])
   const [step, setStep] = useState(1)
   const theme = useTheme()
 
@@ -23,19 +27,13 @@ const PreviewCheckList = ({ moduleName, modules, ...others }) => {
       if (type === 'next' && step < moduleNumber) return setStep(step + 1)
       if (type === 'prev' && step > 1) return setStep(step - 1)
     },
-    [step]
+    [step, moduleNumber]
   )
 
   const renderModule = useCallback(
-    (module, step) => {
+    module => {
       return (
         <Wrapper>
-          <LineProgress
-            percent={(step * 100) / moduleNumber}
-            strokeColor={theme.colors.progress[0]}
-            showInfo={false}
-            strokeWidth={5}
-          />
           <WrapperProgress
             step={step}
             final={moduleNumber}
@@ -55,43 +53,68 @@ const PreviewCheckList = ({ moduleName, modules, ...others }) => {
         </Wrapper>
       )
     },
-    [step, modules]
+    [step, modules, moduleNumber]
   )
+
+  const _renderModal = useCallback(() => {
+    return (
+      <>
+        <WrapperModal.Header>
+          <Title H2 style={{ marginLeft: 20 }}>
+            {moduleName}
+          </Title>
+          <LineProgress
+            percent={(step * 100) / moduleNumber}
+            strokeColor={theme.colors.progress[0]}
+            showInfo={false}
+            strokeWidth={5}
+          />
+        </WrapperModal.Header>
+        <Body>{renderModule(modules[step - 1])}</Body>
+        <WrapperModal.Footer>
+          <WrapperFooter>
+            <Button
+              onClick={() => activeStep('prev')}
+              hide={step === 1}
+              secondary
+              bold
+            >
+              <Icon name='feather-chevron-left' size={18} /> Previous
+            </Button>
+            <Button
+              onClick={() => activeStep('next')}
+              secondary
+              bold
+              hide={step === moduleNumber}
+            >
+              Next
+              <Icon name='feather-chevron-right' size={18} />
+            </Button>
+            {step == moduleNumber && (
+              <Button onClick={() => activeStep('next')} primary finish bold>
+                Finish
+              </Button>
+            )}
+          </WrapperFooter>
+        </WrapperModal.Footer>
+      </>
+    )
+  }, [modules, step, moduleNumber])
 
   if (!modules || withNumber('length', modules) == 0) return null
 
   return (
-    <Wrapper {...others}>
-      <Title H2 style={{ marginLeft: 20 }}>
-        {moduleName || 'Checklist module name'}
-      </Title>
-
-      {renderModule(modules[step - 1], step)}
-      <WrapperFooter>
-        {step != 1 && (
-          <Button onClick={() => activeStep('prev')} secondary bold>
-            <Icon name='feather-chevron-left' size={18} /> Previous
-          </Button>
-        )}
-        {step != moduleNumber && (
-          <Button onClick={() => activeStep('next')} secondary next bold>
-            Next
-            <Icon name='feather-chevron-right' size={18} />
-          </Button>
-        )}
-        {step == moduleNumber && (
-          <Button onClick={() => activeStep('next')} primary finish bold>
-            Finish
-          </Button>
-        )}
-      </WrapperFooter>
-    </Wrapper>
+    <WrapperModal show={show} onHide={onHide} {...others}>
+      {_renderModal()}
+    </WrapperModal>
   )
 }
 
 PreviewCheckList.propTypes = {
   moduleName: PropTypes.string,
-  modules: PropTypes.array.isRequired
+  modules: PropTypes.array.isRequired,
+  show: PropTypes.bool,
+  onHide: PropTypes.func
 }
 
 export default PreviewCheckList

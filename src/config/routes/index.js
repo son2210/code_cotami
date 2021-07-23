@@ -63,6 +63,7 @@ const Routes = ({ isLoggedIn, ...rest }) => {
     const validNormalAdminUrls = [
       ...Routers.NORMAL_ADMIN.MENU,
       ...Routers.NORMAL_ADMIN.PROFILE.CHILD,
+      ...Routers.NORMAL_ADMIN.CHECKLIST.CHILD,
       { URL: Routers.NORMAL_ADMIN.PROFILE.URL }
     ]
     if (isLoggedIn) {

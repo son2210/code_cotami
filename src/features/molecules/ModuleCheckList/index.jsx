@@ -1,74 +1,129 @@
-import React, { useCallback, useState } from 'react'
-import SectionCheckList from '../SectionCheckList'
 import { withArray, withEmpty, withNumber } from 'exp-value'
-import {
-  Wrapper,
-  Title,
-  ButtonCreateSection,
-  Icon,
-  ContainerSection,
-  IconRemoveModule,
-  SectionCount,
-  Collapse,
-  Module
-} from './styled'
 import PropTypes from 'prop-types'
+import React, { useCallback, useEffect, useState } from 'react'
+import SectionCheckList from '../SectionCheckList'
+import {
+  ButtonCreateSection,
+  Collapse,
+  ContainerSection,
+  Icon,
+  IconRemoveModule,
+  Module,
+  SectionCount,
+  Title,
+  Wrapper
+} from './styled'
 
-const ModuleCheckList = ({ data, ...others }) => {
-  const [showSection, setShowSection] = useState(true)
-  const [section] = useState(data)
+const ModuleCheckList = ({ modules, index, onRemoveModule, ...others }) => {
+  const [showSection, setShowSection] = useState({})
+  const [dataModule, setDataModule] = useState({
+    id: 0,
+    title: '',
+    description: '',
+    sections: []
+  })
 
-  const toggleSection = useCallback(() => setShowSection(!showSection), [
-    showSection
-  ])
+  const onChangeData = useCallback(
+    (field, value) => {
+      setDataModule(prev => ({
+        ...prev,
+        [field]: value
+      }))
+    },
+    [dataModule]
+  )
 
-  const renderModule = useCallback(() => {
-    return section?.map((module, index) => {
+  const toggleSection = useCallback(
+    id => {
+      setShowSection(prev => {
+        return { ...prev, [id]: !prev[id] }
+      })
+    },
+    [showSection.sections]
+  )
+
+  const createSection = useCallback(() => {
+    const temp = dataModule.sections.push([])
+    onChangeData('sections', temp)
+  }, [dataModule])
+
+  const removeModule = useCallback(() => setDataModule(null), [])
+
+  const renderSection = useCallback(
+    (module, index) => {
+      return (
+        <Collapse collapse={showSection[index]}>
+          {withArray('sections', module).map((section, key) => {
+            return (
+              <SectionCheckList
+                type={withEmpty('inputTypeId.title', section)}
+                sectionTitle={withEmpty('title', section)}
+                description={withEmpty('description', section)}
+                sectionItems={withArray('sectionItems', section)}
+                key={`section ${key}`}
+              />
+            )
+          })}
+          <ButtonCreateSection dashed={1} onClick={createSection}>
+            <Icon name='feather-plus' size={16} />
+            <Title>Create section</Title>
+          </ButtonCreateSection>
+        </Collapse>
+      )
+    },
+    [showSection]
+  )
+
+  const renderModule = useCallback(
+    (module, index) => {
+      if (!dataModule) return null
       return (
         <Module key={index}>
           <Title h2 bold>
-            {withEmpty('title', module) || 'Module name'}
+            {withEmpty('title', module) || 'title'}
           </Title>
           <Title h4 light>
             {withEmpty('description', module) || 'description'}
           </Title>
-          <IconRemoveModule name={'feather-trash-2'} size={26} />
+          <IconRemoveModule
+            name={'feather-trash-2'}
+            size={26}
+            onClick={() => {
+              onRemoveModule(index)
+              removeModule()
+            }}
+          />
           <ContainerSection>
-            <SectionCount onClick={toggleSection}>
+            <SectionCount onClick={() => toggleSection(index)}>
               {`${withNumber('sections.length', module)} section`}
               <Icon name='feather-chevron-down' size={16} />
             </SectionCount>
 
-            <Collapse>
-              {withArray('sections', module).map((section, key) => {
-                return (
-                  <SectionCheckList
-                    type={
-                      withEmpty('inputTypeId.title', section) ||
-                      'multiple-choice'
-                    }
-                    key={'sections' + key}
-                    sectionTitle={withEmpty('title', section)}
-                    description={withEmpty('description', section)}
-                    sectionItems={withArray('sectionItems', section)}
-                  />
-                )
-              })}
-            </Collapse>
-            <ButtonCreateSection dashed={1}>
-              <Icon name='feather-plus' size={16} />
-              <Title>Create section</Title>
-            </ButtonCreateSection>
+            {renderSection(module, index)}
           </ContainerSection>
         </Module>
       )
+    },
+    [showSection, dataModule]
+  )
+
+  useEffect(() => {
+    setDataModule({
+      id: withNumber('id', modules),
+      title: withEmpty('title', modules),
+      description: withEmpty('description', modules),
+      sections: withArray('sections', modules)
     })
-  }, [section])
-  return <Wrapper {...others}>{renderModule()}</Wrapper>
+  }, [modules])
+
+  return <Wrapper {...others}>{renderModule(dataModule, index)}</Wrapper>
 }
 
 ModuleCheckList.propTypes = {
-  data: PropTypes.array
+  modules: PropTypes.object,
+  index: PropTypes.number,
+  onRemoveModule: PropTypes.func,
+  createSection: PropTypes.func
 }
 
 export default React.memo(ModuleCheckList)
