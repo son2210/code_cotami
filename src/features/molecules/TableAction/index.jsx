@@ -52,7 +52,10 @@ const TableAction = ({
         return (
           <CustomizeColorCell
             onClick={e => others.handleOnClick(e, rowData)}
-            color={setColorViaValue(rowData[id], theme)}
+            color={setColorViaValue(
+              rowData[id] ? rowData[id] : 'INACTIVE',
+              theme
+            )}
           >
             {rowData[id]}
           </CustomizeColorCell>
@@ -193,6 +196,7 @@ const TableAction = ({
           total={paginateProps?.total}
           onChangePage={paginateProps?.onChangePage}
           onChangeLength={paginateProps?.onChangeLength}
+          showInfo={paginateProps?.showInfo || false}
         />
       )}
     </Wrapper>
@@ -208,7 +212,8 @@ TableAction.propTypes = {
     activePage: PropTypes.number,
     displayLength: PropTypes.number,
     onChangeLength: PropTypes.func,
-    onChangePage: PropTypes.func
+    onChangePage: PropTypes.func,
+    showInfo: PropTypes.bool
   }),
   data: PropTypes.any,
   hasSummary: PropTypes.bool,

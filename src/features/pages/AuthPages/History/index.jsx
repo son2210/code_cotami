@@ -6,14 +6,14 @@ import { usePaginate } from 'hooks'
 import { useTheme } from 'styled-components'
 
 const History = () => {
-  const [
+  const {
     activePage,
     displayLength,
     // total,
     // setTotal,
     onChangePage,
     onChangeLength
-  ] = usePaginate()
+  } = usePaginate()
   const theme = useTheme()
 
   const columns = [

@@ -1,5 +1,7 @@
 import { Header, Content, Footer, Sidebar } from 'rsuite'
 import styled from 'styled-components'
+import { PrivateHeader } from 'molecules'
+import { BaseInputPicker } from 'atoms'
 
 export const ContainerWrapper = styled.div`
   display: flex;
@@ -19,13 +21,26 @@ export const CenterWrapper = styled.div`
 `
 
 export const HeaderWrapper = styled(Header)`
-  margin: 0;
+  margin: 20px 0 0 0;
   padding: 0 10px;
   position: sticky;
   top: 0;
   left: 0;
   z-index: 1000;
   background: ${props => props.theme.colors.white};
+  display: flex;
+`
+export const Breadcrumb = styled(PrivateHeader)`
+  flex-grow: 1;
+`
+export const LanguageChoice = styled(BaseInputPicker)`
+  height: 36px;
+  width: 110px;
+  & input {
+    &:hover {
+      cursor: pointer;
+    }
+  }
 `
 
 export const LeftSideBar = styled(Sidebar)`

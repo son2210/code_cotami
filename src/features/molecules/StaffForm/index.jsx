@@ -12,7 +12,7 @@ import { BaseCheckPicker, BaseInputPicker } from 'atoms'
 import { InputBlock } from 'molecules/ProfileChange'
 
 const StaffForm = ({ handleInput, data, error, ...others }) => {
-
+  console.log(data)
   // mock
   const dataSelect = [
     {

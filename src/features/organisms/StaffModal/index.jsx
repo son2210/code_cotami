@@ -18,7 +18,8 @@ const StaffModal = ({ footerHandle, staffData, ...others }) => {
         <>
           <ProfileBlock
             canNavigate={false}
-            subText={<EmailWrapper> abc@gmail</EmailWrapper>}
+            name={data.firstName}
+            subText={<EmailWrapper>{data.email}</EmailWrapper>}
           />
           <StaffForm handleInput={handleInput} data={data} error={error} />
         </>

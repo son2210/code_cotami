@@ -13,14 +13,14 @@ import { useTheme } from 'styled-components'
 import { Constant } from 'utils'
 
 const CheckInRequest = () => {
-  const [
+  const {
     activePage,
     displayLength,
     // total,
     // setTotal,
     onChangePage,
     onChangeLength
-  ] = usePaginate()
+  } = usePaginate()
   const theme = useTheme()
   const modalRef = useRef(null)
   const modalInputRef = useRef(null)

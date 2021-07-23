@@ -28,6 +28,19 @@ export const TableWrapper = styled(BaseTable)``
 export const CellWrapper = styled(BaseCell)`
   padding: 0px;
   text-align: left;
+  ${props =>
+    props.hoverPointer &&
+    `&:hover {
+    cursor: pointer;
+  }`}
+  ${props =>
+    props.isAvatar &&
+    css`
+      & .rs-table-cell-content {
+        padding-top: 0;
+        padding-bottom: 0;
+      }
+    `}
 
   ${props =>
     props.isCheckbox &&

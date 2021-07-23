@@ -5,6 +5,7 @@ import App from './App'
 import reportWebVitals from './reportWebVitals'
 import { ThemeProvider } from 'styled-components'
 import { LightTheme } from 'config/theme'
+import './i18n'
 
 const AppWrapper = props => {
   return (

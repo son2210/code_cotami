@@ -5,14 +5,17 @@ import {
   LeftSideBar,
   FooterWrapper,
   ContentWrapper,
-  CenterWrapper
+  CenterWrapper,
+  Breadcrumb,
+  LanguageChoice
 } from './styled'
 import PropTypes from 'prop-types'
 import { SideBar } from 'organisms'
-import { PrivateHeader } from 'molecules'
+import i18next from 'i18next'
 
 const PrivateTemplate = ({ menuList, children, ...others }) => {
   const [path, setPath] = useState([])
+  const [lang, setLang] = useState()
   useEffect(() => {
     const pathname = window.location.pathname
       .split('/')
@@ -20,6 +23,22 @@ const PrivateTemplate = ({ menuList, children, ...others }) => {
     setPath(pathname)
   }, [window.location.pathname])
 
+
+  useEffect(() => {
+    i18next.changeLanguage(i18next.language ? i18next.language : 'en')
+    setLang(i18next.language ? i18next.language : 'en')
+  }, [])
+
+  const langList = [
+    {
+      label: 'English',
+      value: 'en'
+    },
+    {
+      label: 'Japanese',
+      value: 'jp'
+    }
+  ]
   return (
     <ContainerWrapper {...others}>
       <LeftSideBar>
@@ -27,7 +46,16 @@ const PrivateTemplate = ({ menuList, children, ...others }) => {
       </LeftSideBar>
       <CenterWrapper>
         <HeaderWrapper>
-          <PrivateHeader paths={path} />
+          <Breadcrumb paths={path} />
+          <LanguageChoice
+            data={langList}
+            cleanable={false}
+            value={lang}
+            onChange={v => {
+              setLang(v)
+              i18next.changeLanguage(v)
+            }}
+          />
         </HeaderWrapper>
         <ContentWrapper>{children}</ContentWrapper>
       </CenterWrapper>

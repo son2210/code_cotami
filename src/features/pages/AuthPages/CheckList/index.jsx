@@ -9,14 +9,14 @@ import { modifyPropsOfState } from 'utils/Helpers'
 import { IMAGES } from 'assets'
 
 const CheckList = () => {
-  const [
+  const {
     activePage,
     displayLength,
     // total,
     // setTotal,
     onChangePage,
     onChangeLength
-  ] = usePaginate()
+  } = usePaginate()
   const theme = useTheme()
 
   const [searchTerm, setSearchTerm] = useState({

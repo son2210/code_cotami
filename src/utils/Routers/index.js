@@ -7,56 +7,56 @@ const Routers = {
   NORMAL_ADMIN: {
     MENU: [
       {
-        URL: '/admin/dashboard',
-        NAME: 'Dashboard'
+        URL: '/dashboard',
+        NAME: 'dashboard'
       },
       {
-        URL: '/admin/statistics',
-        NAME: 'Statistics'
+        URL: '/statistics',
+        NAME: 'statistics'
       },
       {
-        URL: '/admin/history-management',
-        NAME: 'History management'
+        URL: '/history-management',
+        NAME: 'history-management'
       },
       {
-        URL: '/admin/check-in-request-management',
-        NAME: 'Check in request management'
+        URL: '/check-in-request-management',
+        NAME: 'check-in-request-management'
       },
       {
-        URL: '/admin/checklist-management',
-        NAME: 'Checklist management'
+        URL: '/checklist-management',
+        NAME: 'checklist-management'
       },
       {
-        URL: '/admin/staff-management',
-        NAME: 'Staff management'
+        URL: '/staff-management',
+        NAME: 'staff-management'
       }
     ],
 
     CHECKLIST: {
-      URL: '/admin/checklist-management',
+      URL: '/checklist-management',
       NAME: 'Checklist management',
       CHILD: [
         {
-          URL: '/admin/checklist-management/create',
+          URL: '/checklist-management/create',
           NAME: 'Create a checklist'
         },
         {
-          URL: '/admin/checklist-management/template',
+          URL: '/checklist-management/template',
           NAME: 'Templates management'
         }
       ]
     },
 
     PROFILE: {
-      URL: '/admin/profile',
+      URL: '/profile',
       NAME: 'Profile',
       CHILD: [
         {
-          URL: '/admin/profile/change-password',
+          URL: '/profile/change-password',
           NAME: 'Change password'
         },
         {
-          URL: '/admin/profile/update',
+          URL: '/profile/update',
           NAME: 'Update password'
         }
       ]
