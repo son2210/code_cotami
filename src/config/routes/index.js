@@ -8,7 +8,7 @@ import { PublicTemplate, PrivateTemplate } from 'templates'
 import { useRequestManager } from 'hooks'
 import { globalUserState } from 'stores/profile/atom'
 import { EndPoint } from 'config/api'
-import { useSetRecoilState} from 'recoil'
+import { useSetRecoilState } from 'recoil'
 
 //  public page
 const LoginPage = lazy(() => import('pages/UnAuthPages/Login'))
@@ -43,7 +43,7 @@ const Routes = ({ isLoggedIn, ...rest }) => {
   const location = useLocation()
   const history = useHistory()
   const { onGetExecute } = useRequestManager()
-  const  setUserState = useSetRecoilState(globalUserState)
+  const setUserState = useSetRecoilState(globalUserState)
 
   const getUserInfor = async () => {
     const response = await onGetExecute(EndPoint.ADMIN_PROFILE)
@@ -76,7 +76,7 @@ const Routes = ({ isLoggedIn, ...rest }) => {
         history.push(Routers.NORMAL_ADMIN.MENU[0].URL)
       }
     }
-  }, [location])
+  }, [location, isLoggedIn])
 
   const _renderPrivateNormalAdminRoute = React.useCallback(() => {
     return (
@@ -173,10 +173,17 @@ const Routes = ({ isLoggedIn, ...rest }) => {
     )
   }, [isLoggedIn])
 
-  // eslint-disable-next-line no-unused-vars
   const _renderPublicRoute = React.useCallback(() => {
     return (
       <PublicTemplate>
+        <Route
+          {...rest}
+          exact
+          path={'/'}
+          render={props => {
+            return <LoginPage {...rest} {...props} />
+          }}
+        />
         <Route
           {...rest}
           exact
@@ -220,8 +227,6 @@ const Routes = ({ isLoggedIn, ...rest }) => {
             ? _renderPrivateNormalAdminRoute()
             : _renderPublicRoute()
           : null}
-        {/* {_renderPublicRoute()} */}
-        {/* {_renderPrivateNormalAdminRoute()} */}
       </Switch>
     </Suspense>
   )

@@ -1,36 +1,38 @@
 /* eslint-disable no-unused-vars */
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import { Wrapper } from './styled'
 import { TableAction, FilterBar } from 'molecules'
 import { BaseButton, BaseCheckPicker, BaseInput, BaseInputPicker } from 'atoms'
-import { usePaginate } from 'hooks'
+import { usePaginate, useRequestManager } from 'hooks'
 import { useTheme } from 'styled-components'
 import { Constant } from 'utils'
-
 import { modifyPropsOfState } from 'utils/Helpers'
 import { IMAGES } from 'assets'
-import StaffModal from '../../../organisms/StaffModal'
+import { StaffModal } from 'organisms'
+import { EndPoint } from 'config/api'
+import { withNamespaces } from 'react-i18next'
+import i18next from 'i18next'
+import { PropTypes } from 'prop-types'
 
-const Staffs = () => {
-  const [
+const Staffs = ({ t }) => {
+  const {
     activePage,
     displayLength,
     // total,
     // setTotal,
     onChangePage,
     onChangeLength
-  ] = usePaginate()
+  } = usePaginate()
   const theme = useTheme()
-
+  const { onGetExecute } = useRequestManager()
   const [profileModal, setProfileModal] = useState(false)
   const [selectedRow, setSelectedRow] = useState(false)
-
   const [searchTerm, setSearchTerm] = useState({
     name: '',
     display: '',
     status: ''
   })
-  const [data, setData] = useState({
+  const [detailsData, setDetailsData] = useState({
     email: '',
     firstName: '',
     lastName: '',
@@ -42,19 +44,22 @@ const Staffs = () => {
     lastName: '',
     phone: ''
   })
+  const [data, setData] = useState([])
+  const [loading, setLoading] = useState(true)
+
   const handleInput = useCallback(
     (name, value) => {
       modifyPropsOfState(error, setError, name, '')
-      modifyPropsOfState(data, setData, name, value)
+      modifyPropsOfState(detailsData, setDetailsData, name, value)
     },
-    [data]
+    [detailsData]
   )
 
   const handleInputSearch = useCallback(
     (name, value) => {
       modifyPropsOfState(searchTerm, setSearchTerm, name, value)
     },
-    [data]
+    [detailsData]
   )
 
   const toggleModal = useCallback((e, rowData) => {
@@ -66,6 +71,20 @@ const Staffs = () => {
     console.log('todo update')
   }, [])
 
+  const getData = async (offset, limit) => {
+    const response = await onGetExecute(EndPoint.STAFFS, {
+      params: { offset, limit }
+    })
+    if (response) {
+      setData(response)
+    }
+    setLoading(false)
+  }
+
+  useEffect(() => {
+    getData(activePage, displayLength)
+  }, [activePage, displayLength])
+
   const columns = [
     {
       width: 100,
@@ -75,7 +94,7 @@ const Staffs = () => {
       },
       cell: {
         type: Constant.CellType.IMAGE,
-        id: 'url',
+        id: 'avatarUrl',
         isAvatar: true,
         hoverPointer: true,
         style: {
@@ -89,7 +108,7 @@ const Staffs = () => {
             height: 35,
             borderRadius: '50%'
           },
-          handleOnClick: toggleModal,
+          handleOnClick: toggleModal
         }
       }
     },
@@ -197,13 +216,6 @@ const Staffs = () => {
     }
   ]
 
-  // function handleOnChange (checked, e, data)  {
-  //   // console.log(e)
-  //   // console.log(checked)
-  //   // console.log(data)
-  //   console.log('toggle click')
-  // }
-
   //mock
   const pickerData = [
     {
@@ -215,6 +227,9 @@ const Staffs = () => {
       label: '四川'
     }
   ]
+  function changeLng(lng) {
+    i18next.changeLanguage(lng)
+  }
 
   return (
     <Wrapper>
@@ -235,6 +250,7 @@ const Staffs = () => {
           data={pickerData}
           style={{ marginLeft: 10, maxWidth: 170 }}
           placeholder='Status'
+          cleanable={false} 
         />
 
         <BaseButton
@@ -250,9 +266,10 @@ const Staffs = () => {
       </FilterBar>
       <TableAction
         id='table3'
+        loading={loading}
         height={600}
         width={800}
-        data={testData}
+        data={data}
         columns={columns}
         onRowClick={data => {
           console.log('onRowClick')
@@ -261,16 +278,16 @@ const Staffs = () => {
         paginateProps={{
           activePage,
           displayLength,
-          total: 100,
-          onChangePage,
-          onChangeLength
+          total: 100, // hard code
+          onChangePage: page => onChangePage(page, setLoading),
+          onChangeLength: length => onChangeLength(length, setLoading)
         }}
       />
 
       <StaffModal
         size='xs'
         show={profileModal}
-        staffData={{ handleInput, data, error }}
+        staffData={{ handleInput, data: selectedRow, error }}
         onHide={() => setProfileModal(false)}
         footerHandle={{
           onClickBtn1: () => setProfileModal(false),
@@ -281,49 +298,8 @@ const Staffs = () => {
   )
 }
 
-//Moc data
+Staffs.propTypes = {
+  t: PropTypes.any
+}
 
-const testData = [
-  {
-    url: IMAGES.AVATAR,
-    firstName: 'Jacob',
-    lastName: 'Nguyen',
-    email: 'jacob@gmail.com',
-    role: 'chef',
-    status: 'active'
-  },
-  {
-    url: IMAGES.AVATAR,
-    firstName: 'Jacob',
-    lastName: 'Nguyen',
-    email: 'jacob@gmail.com',
-    role: 'chef',
-    status: 'inactive'
-  },
-  {
-    url: IMAGES.AVATAR,
-    firstName: 'Jacob',
-    lastName: 'Nguyen',
-    email: 'jacob@gmail.com',
-    role: 'chef',
-    status: 'active'
-  },
-  {
-    url: IMAGES.AVATAR,
-    firstName: 'Jacob',
-    lastName: 'Nguyen',
-    email: 'jacob@gmail.com',
-    role: 'chef',
-    status: 'inactive'
-  },
-  {
-    url: IMAGES.AVATAR,
-    firstName: 'Jacob',
-    lastName: 'Nguyen',
-    email: 'jacob@gmail.com',
-    role: 'chef',
-    status: 'inactive'
-  }
-]
-
-export default Staffs
+export default withNamespaces('menu')(Staffs)

@@ -8,14 +8,14 @@ import { usePaginate } from 'hooks'
 import { Constant } from 'utils'
 
 const Statistics = () => {
-  const [
+  const {
     activePage,
     displayLength,
     // total,
     // setTotal,
     onChangePage,
     onChangeLength
-  ] = usePaginate()
+  } = usePaginate()
 
   const columns = [
     {
