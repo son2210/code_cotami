@@ -12,6 +12,7 @@ import {
 import PropTypes from 'prop-types'
 import { SideBar } from 'organisms'
 import i18next from 'i18next'
+import { Constant } from 'utils'
 
 const PrivateTemplate = ({ menuList, children, ...others }) => {
   const [path, setPath] = useState([])
@@ -23,22 +24,11 @@ const PrivateTemplate = ({ menuList, children, ...others }) => {
     setPath(pathname)
   }, [window.location.pathname])
 
-
   useEffect(() => {
     i18next.changeLanguage(i18next.language ? i18next.language : 'en')
     setLang(i18next.language ? i18next.language : 'en')
   }, [])
 
-  const langList = [
-    {
-      label: 'English',
-      value: 'en'
-    },
-    {
-      label: 'Japanese',
-      value: 'jp'
-    }
-  ]
   return (
     <ContainerWrapper {...others}>
       <LeftSideBar>
@@ -48,7 +38,7 @@ const PrivateTemplate = ({ menuList, children, ...others }) => {
         <HeaderWrapper>
           <Breadcrumb paths={path} />
           <LanguageChoice
-            data={langList}
+            data={Constant.Languages}
             cleanable={false}
             value={lang}
             onChange={v => {

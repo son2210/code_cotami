@@ -8,7 +8,7 @@ const BaseModal = ({ size, header, body, footer, show, onHide, ...others }) => {
       <WrapperModal size={size} show={show} onHide={onHide} {...others}>
         {header && <WrapperModal.Header>{header}</WrapperModal.Header>}
         <Body>{body}</Body>
-        <WrapperModal.Footer>{footer}</WrapperModal.Footer>
+        {footer && <WrapperModal.Footer>{footer}</WrapperModal.Footer>}
       </WrapperModal>
     </Wrapper>
   )

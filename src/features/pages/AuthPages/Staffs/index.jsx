@@ -3,15 +3,13 @@ import React, { useState, useCallback, useEffect } from 'react'
 import { Wrapper } from './styled'
 import { TableAction, FilterBar } from 'molecules'
 import { BaseButton, BaseCheckPicker, BaseInput, BaseInputPicker } from 'atoms'
-import { usePaginate, useRequestManager } from 'hooks'
+import { usePaginate, useRequestManager, useAlert } from 'hooks'
 import { useTheme } from 'styled-components'
 import { Constant } from 'utils'
-import { modifyPropsOfState } from 'utils/Helpers'
-import { IMAGES } from 'assets'
+import { modifyPropsOfState, trimStringFieldOfObject } from 'utils/Helpers'
 import { StaffModal } from 'organisms'
 import { EndPoint } from 'config/api'
 import { withNamespaces } from 'react-i18next'
-import i18next from 'i18next'
 import { PropTypes } from 'prop-types'
 
 const Staffs = ({ t }) => {
@@ -24,20 +22,27 @@ const Staffs = ({ t }) => {
     onChangeLength
   } = usePaginate()
   const theme = useTheme()
-  const { onGetExecute } = useRequestManager()
+  const { showSuccess } = useAlert()
+  const { onGetExecute, onPatchExecute } = useRequestManager()
   const [profileModal, setProfileModal] = useState(false)
-  const [selectedRow, setSelectedRow] = useState(false)
-  const [searchTerm, setSearchTerm] = useState({
-    name: '',
-    display: '',
-    status: ''
-  })
-  const [detailsData, setDetailsData] = useState({
+  const [selectedRow, setSelectedRow] = useState({
     email: '',
     firstName: '',
     lastName: '',
     phone: ''
   })
+  const [displayStaff, setDisplayStaff] = useState({
+    email: '',
+    firstName: '',
+    lastName: ''
+  })
+  const [searchTerm, setSearchTerm] = useState({
+    name: '',
+    display: '',
+    status: ''
+  })
+
+  // ===========================================
   const [error, setError] = useState({
     email: '',
     firstName: '',
@@ -50,26 +55,45 @@ const Staffs = ({ t }) => {
   const handleInput = useCallback(
     (name, value) => {
       modifyPropsOfState(error, setError, name, '')
-      modifyPropsOfState(detailsData, setDetailsData, name, value)
+      modifyPropsOfState(selectedRow, setSelectedRow, name, value)
     },
-    [detailsData]
+    [selectedRow, error]
   )
 
-  const handleInputSearch = useCallback(
-    (name, value) => {
-      modifyPropsOfState(searchTerm, setSearchTerm, name, value)
-    },
-    [detailsData]
-  )
+  const validateData = useCallback(err => {
+    let newError = { ...error }
+    for (const [key, value] of Object.entries(err)) {
+      newError[key] = value
+    }
+    setError(newError)
+  }, [])
 
+  const handleInputSearch = useCallback((name, value) => {
+    modifyPropsOfState(searchTerm, setSearchTerm, name, value)
+  }, [])
+
+  // =========================================================
+  
   const toggleModal = useCallback((e, rowData) => {
     setSelectedRow(rowData)
+    setDisplayStaff(rowData)
     setProfileModal(true)
   }, [])
 
-  const updateProfile = useCallback(() => {
-    console.log('todo update')
-  }, [])
+  const updateProfile = useCallback(async () => {
+    const submitData = trimStringFieldOfObject(selectedRow)
+    const response = await onPatchExecute(
+      `${EndPoint.UPDATE_STAFFS}/${selectedRow.id}`,
+      submitData
+    )
+    if (response) {
+      getData(activePage, displayLength)
+      showSuccess('update success')
+    }
+    setTimeout(() => {
+      setProfileModal(false)
+    }, 500)
+  }, [selectedRow])
 
   const getData = async (offset, limit) => {
     const response = await onGetExecute(EndPoint.STAFFS, {
@@ -132,22 +156,19 @@ const Staffs = ({ t }) => {
     },
     {
       width: 100,
+      align: 'left',
       header: {
         label: 'Last Name'
       },
+
       cell: {
         type: Constant.CellType.ACTION_CELL,
         id: 'lastName',
+        style: {
+          color: theme.colors.secondary[1]
+        },
         others: {
-          label: ' Config',
-          source: IMAGES.LOGO.MONITOR,
-          style: {
-            width: 20,
-            height: 20
-          },
-          others: {
-            handleOnClick: toggleModal
-          }
+          handleOnClick: toggleModal
         }
       }
     },
@@ -227,9 +248,6 @@ const Staffs = ({ t }) => {
       label: '四川'
     }
   ]
-  function changeLng(lng) {
-    i18next.changeLanguage(lng)
-  }
 
   return (
     <Wrapper>
@@ -250,7 +268,7 @@ const Staffs = ({ t }) => {
           data={pickerData}
           style={{ marginLeft: 10, maxWidth: 170 }}
           placeholder='Status'
-          cleanable={false} 
+          cleanable={false}
         />
 
         <BaseButton
@@ -288,10 +306,15 @@ const Staffs = ({ t }) => {
         size='xs'
         show={profileModal}
         staffData={{ handleInput, data: selectedRow, error }}
+        viewOnlyData={{ dataDisplay: displayStaff }}
         onHide={() => setProfileModal(false)}
         footerHandle={{
           onClickBtn1: () => setProfileModal(false),
           onClickBtn2: updateProfile
+        }}
+        formOthers={{
+          formTitle: 'update profile',
+          onCheck: validateData
         }}
       />
     </Wrapper>

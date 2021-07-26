@@ -26,7 +26,16 @@ const Constant = {
     ACTIVE: 'ACTIVE',
     INACTIVE: 'INACTIVE'
   },
-
+  Languages: [
+    {
+      label: 'English',
+      value: 'en'
+    },
+    {
+      label: 'Japanese',
+      value: 'jp'
+    }
+  ],
   sectionType: [
     {
       value: 'single-choice',
