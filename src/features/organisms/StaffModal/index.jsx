@@ -1,11 +1,18 @@
 import React from 'react'
 import { ModalWrapper, EmailWrapper } from './styled'
 import PropTypes from 'prop-types'
-import { BaseTitle, BaseButton } from 'atoms'
+import { BaseTitle} from 'atoms'
 import { ProfileBlock, StaffForm } from 'molecules'
 
-const StaffModal = ({ footerHandle, staffData, ...others }) => {
+const StaffModal = ({
+  viewOnlyData,
+  footerHandle,
+  staffData,
+  formOthers,
+  ...others
+}) => {
   const { handleInput, data, error } = staffData
+  const { dataDisplay } = viewOnlyData
   const { onClickBtn1, onClickBtn2 } = footerHandle
   return (
     <ModalWrapper
@@ -18,20 +25,17 @@ const StaffModal = ({ footerHandle, staffData, ...others }) => {
         <>
           <ProfileBlock
             canNavigate={false}
-            name={data.firstName}
-            subText={<EmailWrapper>{data.email}</EmailWrapper>}
+            name={dataDisplay.firstName}
+            subText={<EmailWrapper>{dataDisplay.email}</EmailWrapper>}
           />
-          <StaffForm handleInput={handleInput} data={data} error={error} />
-        </>
-      }
-      footer={
-        <>
-          <BaseButton uppercase bold onClick={onClickBtn1}>
-            Cancel
-          </BaseButton>
-          <BaseButton bold uppercase primary onClick={onClickBtn2}>
-            Update
-          </BaseButton>
+          <StaffForm
+            handleInput={handleInput}
+            data={data}
+            error={error}
+            onSubmit={onClickBtn2}
+            onClose={onClickBtn1}
+            formOthers={formOthers}
+          />
         </>
       }
       {...others}
@@ -42,6 +46,8 @@ const StaffModal = ({ footerHandle, staffData, ...others }) => {
 StaffModal.propTypes = {
   children: PropTypes.node,
   staffData: PropTypes.object,
+  viewOnlyData: PropTypes.object,
+  formOthers: PropTypes.object,
   footerHandle: PropTypes.object
 }
 

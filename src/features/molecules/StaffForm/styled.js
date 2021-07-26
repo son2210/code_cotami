@@ -2,10 +2,10 @@ import styled from 'styled-components'
 
 import {
   BaseItemGrid,
-  BaseForm,
   BaseWrapper,
   BaseTitle,
-  BaseToggle
+  BaseToggle,
+  BaseForm
 } from 'atoms'
 import { FlexboxGrid } from 'rsuite'
 import { InputBlock } from 'molecules/ProfileChange'
@@ -33,4 +33,9 @@ export const TitleWrapper = styled(BaseTitle)`
 
 export const ToggleWrapper = styled(BaseToggle)`
   width: 50px;
+`
+
+export const ButtonGroup = styled(BaseWrapper)`
+  display: flex;
+  flex-direction: row-reverse;
 `

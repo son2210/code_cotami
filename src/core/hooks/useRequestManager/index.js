@@ -18,7 +18,7 @@ const useRequestManager = () => {
 
   const headers = React.useMemo(
     () => ({
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
     }),
     [token]
   )
@@ -28,7 +28,7 @@ const useRequestManager = () => {
       const execute = async () => {
         setLoading(true)
         try {
-          const { data } = await instance.get(url, { headers,...entity })
+          const { data } = await instance.get(url, { headers, ...entity })
           setLoading(false)
           return data
         } catch (error) {
@@ -53,6 +53,25 @@ const useRequestManager = () => {
             entity,
             hasHeader ? { headers } : {}
           )
+          setLoading(false)
+          return data
+        } catch (error) {
+          setStatus(withNull('response.status', error))
+          setLoading(false)
+          showError(withNull('response.data.message', error))
+        }
+      }
+      return execute()
+    },
+    [headers]
+  )
+
+  const onPatchExecute = React.useCallback(
+    (url, entity = {}) => {
+      const execute = async () => {
+        setLoading(true)
+        try {
+          const { data } = await instance.patch(url, entity, { headers })
           setLoading(false)
           return data
         } catch (error) {
@@ -125,7 +144,13 @@ const useRequestManager = () => {
 
   React.useEffect(onStatusHandler, [status])
 
-  return { onGetExecute, onPostExecute, onPutExecute, onDeleteExecute }
+  return {
+    onGetExecute,
+    onPostExecute,
+    onPutExecute,
+    onDeleteExecute,
+    onPatchExecute
+  }
 }
 
 export default useRequestManager
