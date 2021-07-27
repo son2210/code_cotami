@@ -1,37 +1,25 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { Wrapper, WrapperItem, Checkbox, Input, Icon } from './styled'
 import { BaseRadio } from 'atoms'
-
-const DEFAULT_OPTIONS = [
-  {
-    value: 'auto',
-    label: 'auto'
-  },
-  {
-    value: 'manual',
-    label: 'manual'
-  },
-  {
-    value: 'hide',
-    label: 'hide'
-  }
-]
+import { Constant } from 'utils'
+import { withNumber } from 'exp-value'
 
 const RadioForm = ({
   inline = true,
   value,
   onChange,
-  options = DEFAULT_OPTIONS,
+  options = Constant.DEFAULT_OPTIONS,
+  sectionItems,
+  setSectionItems,
   addItem = false,
-  setOptions,
   ...others
 }) => {
-  const [data, setData] = useState(options)
+  const [data, setData] = useState([])
   const [item, setItem] = useState('')
   const handleChangeItem = useCallback(e => setItem(e), [])
   const addDataItem = useCallback(() => {
-    setOptions([...data, { value: item, label: item }])
+    setSectionItems([...sectionItems, { value: item }])
     setData([...data, { value: item, label: item }])
   }, [item])
 
@@ -49,7 +37,21 @@ const RadioForm = ({
     [data]
   )
 
-  if (!options || options.length < 0) return null
+  useEffect(() => {
+    if (sectionItems) {
+      if (withNumber('length', sectionItems) < 1) return
+      let temp = sectionItems.map(item => {
+        return {
+          content: item.value,
+          label: item.value
+        }
+      })
+      return setData(temp)
+    }
+
+    if (!options || options.length < 0) return
+    return setData(options)
+  }, [sectionItems, options])
 
   return (
     <Wrapper inline={inline} value={value} onChange={onChange} {...others}>
@@ -82,7 +84,13 @@ RadioForm.propTypes = {
     })
   ).isRequired,
   addItem: PropTypes.bool,
-  setOptions: PropTypes.func
+  setSectionItems: PropTypes.func,
+  sectionItems: PropTypes.arrayOf(
+    PropTypes.shape({
+      value: PropTypes.string.isRequired,
+      id: PropTypes.any
+    })
+  )
 }
 
 export default React.memo(RadioForm)

@@ -2,7 +2,6 @@ import styled from 'styled-components'
 import {
   BaseTitle,
   BaseUploadFile,
-  BaseText,
   BaseInput,
   BaseButton,
   BaseIcon
@@ -31,16 +30,20 @@ export const WrapperTop = styled.div`
 export const WrapperContent = styled.div``
 
 export const Drag = styled(BaseUploadFile)`
-  min-height: 80px;
-  width: 100%;
+  min-height: 150px;
+  width: 150px;
+  margin: auto;
   .rs-uploader-trigger-btn {
     height: 100%;
     width: 100% !important;
   }
+  & .rs-uploader-trigger {
+    height: 150px;
+  }
 `
-export const DragText = styled(BaseText)`
-  font-weight: bold;
-  vertical-align: center;
+export const DragIcon = styled(BaseIcon)`
+  justify-content: center;
+  align-items: center;
 `
 export const CheckPicker = styled(BaseCheckPicker)`
   font-weight: bold;

@@ -48,28 +48,52 @@ const Constant = {
   ],
   sectionType: [
     {
-      value: 'single-choice',
+      value: 'single_choice',
       label: 'Single choice'
     },
     {
-      value: 'multiple-choice',
+      value: 'multiple_choice',
       label: 'Multiple choice'
     },
     {
-      value: 'file',
-      label: 'File'
+      value: 'image',
+      label: 'Image'
     },
     {
-      value: 'text-input',
+      value: 'text',
       label: 'Text input'
     },
     {
-      value: 'number-input',
+      value: 'number',
       label: 'Number input'
+    }
+  ],
+  unit: [
+    {
+      value: 'general',
+      label: 'General'
+    },
+    {
+      value: 'private',
+      label: 'Private'
     }
   ],
 
   displayMode: [
+    {
+      value: 'auto',
+      label: 'auto'
+    },
+    {
+      value: 'manual',
+      label: 'manual'
+    },
+    {
+      value: 'hide',
+      label: 'hide'
+    }
+  ],
+  DEFAULT_OPTIONS: [
     {
       value: 'auto',
       label: 'auto'

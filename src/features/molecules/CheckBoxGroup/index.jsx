@@ -1,25 +1,29 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { BaseCheckbox } from 'atoms'
 
 import { Wrapper, WrapperItem, Checkbox, Input, Icon } from './styled'
+import { withNumber } from 'exp-value'
 
 const CheckBoxGroup = ({
   inline = false,
   value,
   onChange,
   options,
-  setOptions,
+  sectionItems,
+  setSectionItems,
   addItem = false,
   ...others
 }) => {
-  const [data, setData] = useState(options)
+  const [data, setData] = useState([])
   const [item, setItem] = useState('')
   const handleChangeItem = useCallback(e => setItem(e), [])
+
   const addDataItem = useCallback(() => {
-    setOptions([...data, { content: item, id: data.length + 1 }])
+    setSectionItems([...sectionItems, { value: item }])
     setData([...data, { content: item, id: data.length + 1 }])
   }, [item])
+
   const renderForm = useCallback(
     data => {
       return data.map((item, index) => (
@@ -33,7 +37,21 @@ const CheckBoxGroup = ({
     },
     [data]
   )
-  if (!options || options.length < 0) return null
+
+  useEffect(() => {
+    if (withNumber('length', sectionItems) < 1) return
+    if (sectionItems) {
+      let temp = sectionItems?.map((item, index) => {
+        return {
+          content: item.value,
+          id: index
+        }
+      })
+      return setData(temp)
+    }
+    if (!options || options.length < 0) return null
+    return setData(options)
+  }, [sectionItems, options])
 
   return (
     <Wrapper inline={inline} value={value} onChange={onChange} {...others}>
@@ -65,9 +83,15 @@ CheckBoxGroup.propTypes = {
       content: PropTypes.string,
       others: PropTypes.any
     })
-  ).isRequired,
+  ),
   addItem: PropTypes.bool,
-  setOptions: PropTypes.func
+  setSectionItems: PropTypes.func,
+  sectionItems: PropTypes.arrayOf(
+    PropTypes.shape({
+      value: PropTypes.string.isRequired,
+      id: PropTypes.any
+    })
+  )
 }
 
 export default React.memo(CheckBoxGroup)

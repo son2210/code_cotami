@@ -1,9 +1,12 @@
 import { BaseInputPicker } from 'atoms'
+import { EndPoint } from 'config/api'
 import { withEmpty, withNumber } from 'exp-value'
+import { useRequestManager, useAlert } from 'hooks'
 import { RadioForm } from 'molecules'
 import { CreateModule } from 'organisms'
 import React, { useState } from 'react'
 import { useCallback } from 'react/cjs/react.development'
+import { Constant } from 'utils'
 import PreviewCheckList from '../PreviewCheckList'
 import {
   Button,
@@ -23,8 +26,7 @@ import {
   WrapperForm,
   WrapperItem
 } from './styled'
-import { useRequestManager } from 'hooks'
-import { EndPoint } from 'config/api'
+import { formCheckListCreate } from './validation'
 
 const CheckListCreate = () => {
   const [step, setStep] = useState(1)
@@ -39,6 +41,7 @@ const CheckListCreate = () => {
   const [modules, setModules] = useState([])
   const [numModule, setNumModule] = useState(0)
   const { onPostExecute } = useRequestManager()
+  const { showWarning } = useAlert()
 
   const navigationPage = useCallback(
     type => {
@@ -63,9 +66,10 @@ const CheckListCreate = () => {
 
   const handleUpdateModule = useCallback(
     (type, idModule, values) => {
-      let temp = modules
+      let temp
       switch (type) {
         case 'addModule':
+          temp = modules
           temp.push({
             title: 'title',
             description: 'description',
@@ -75,19 +79,37 @@ const CheckListCreate = () => {
           return setModules(temp)
         case 'removeModule':
           if (idModule >= 0 && idModule < withNumber('length', modules)) {
+            temp = modules
             setNumModule(numModule - 1)
             temp.splice(idModule, 1)
             return setModules(temp)
           }
           break
         case 'updateModule':
-          modules[idModule] = values
+          temp = modules
+          temp[idModule] = values
+          setModules(temp)
           break
         default:
           return null
       }
     },
     [modules, numModule]
+  )
+
+  const validateForm = useCallback(
+    errors => {
+      let listError = [...new Set(Object.values(errors))]
+      if (listError && withNumber('length', listError)) {
+        listError.map(err => {
+          showWarning(err.toString())
+        })
+        return
+      }
+
+      return navigationPage('next')
+    },
+    [formCheckList]
   )
 
   const submit = useCallback(async () => {
@@ -173,7 +195,12 @@ const CheckListCreate = () => {
             Checklist info
           </Title>
 
-          <Form>
+          <Form
+            fluid
+            model={formCheckListCreate}
+            formValue={formCheckList}
+            onCheck={validateForm}
+          >
             <Input
               placeholder='Title'
               name={'title'}
@@ -193,7 +220,7 @@ const CheckListCreate = () => {
             <WrapperBlock>
               <Label bold> Unit </Label>
               <BaseInputPicker
-                data={data}
+                data={Constant.unit}
                 placeholder='All'
                 block
                 value={withEmpty('unit', formCheckList)}
@@ -211,7 +238,7 @@ const CheckListCreate = () => {
             </WrapperBlock>
 
             <WrapperBlock>
-              <Button primary fluid onClick={() => navigationPage('next')}>
+              <Button type={'submit'} primary fluid>
                 Next
               </Button>
             </WrapperBlock>
@@ -275,14 +302,3 @@ const CheckListCreate = () => {
 }
 
 export default CheckListCreate
-
-const data = [
-  {
-    value: '1',
-    label: '1234'
-  },
-  {
-    value: '2',
-    label: '23456'
-  }
-]
