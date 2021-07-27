@@ -5,7 +5,7 @@ import {
   Block,
   CheckBox,
   Drag,
-  DragText,
+  DragIcon,
   Icon,
   Input,
   InputPicker,
@@ -30,7 +30,7 @@ const SectionCheckList = ({
 }) => {
   // vi tri section trong modules
   const [dataSection, setDataSection] = useState({
-    id: index,
+    id: orderNumber,
     title: sectionTitle,
     description: description,
     sectionItems: sectionItems || [],
@@ -49,14 +49,18 @@ const SectionCheckList = ({
     [dataSection]
   )
 
+  const handleRemoveSection = useCallback(() => {
+    removeSection(orderNumber)
+  }, [dataSection])
+
   const _renderSectionItem = useCallback(
     type => {
       switch (type) {
         case Constant.sectionType[0].value:
           return (
             <Radio
-              options={sectionItems}
-              setOptions={value => onChangeData('sectionItems', value)}
+              sectionItems={dataSection.sectionItems}
+              setSectionItems={value => onChangeData('sectionItems', value)}
               block
               addItem={!preview}
             />
@@ -64,19 +68,28 @@ const SectionCheckList = ({
         case Constant.sectionType[1].value:
           return (
             <CheckBox
-              options={sectionItems}
-              setOptions={value => onChangeData('sectionItems', value)}
+              sectionItems={dataSection.sectionItems}
+              setSectionItems={value => onChangeData('sectionItems', value)}
               addItem={!preview}
             />
           )
         case Constant.sectionType[2].value:
           return (
             <Drag draggable onChange={e => console.log(e)} autoUpload={false}>
-              <DragText>{'upload_file'}</DragText>
+              <button>
+                <DragIcon name='feather-image' size={24} />
+              </button>
             </Drag>
           )
         case Constant.sectionType[3].value:
-          return <Input place='Type description' />
+          return (
+            <Input
+              place='Type description'
+              componentClass='textarea'
+              row={3}
+              style={{ minWidth: 'unset' }}
+            />
+          )
         case Constant.sectionType[4].value:
           return <Input type='number' />
         default:
@@ -97,11 +110,7 @@ const SectionCheckList = ({
             value={dataSection.inputTypeId}
             placeholder='Unit'
           />
-          <Icon
-            name='feather-x'
-            size={24}
-            onClick={() => removeSection(index)}
-          />
+          <Icon name='feather-x' size={24} onClick={handleRemoveSection} />
         </WrapperTop>
       ) : null}
       <WrapperContent>

@@ -1,6 +1,6 @@
 import { withArray, withEmpty, withNumber } from 'exp-value'
 import PropTypes from 'prop-types'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useState, useEffect } from 'react'
 import SectionCheckList from '../SectionCheckList'
 import {
   ButtonCreateSection,
@@ -42,7 +42,7 @@ const ModuleCheckList = ({
       }
       updateModule(index, temp)
     },
-    [dataModule]
+    [dataModule, index]
   )
 
   const toggleSection = useCallback(
@@ -51,45 +51,39 @@ const ModuleCheckList = ({
         return { ...prev, [id]: !prev[id] }
       })
     },
-    [showSection.sections]
+    [showSection]
   )
 
   const createSection = useCallback(() => {
     const temp = dataModule.sections
     temp.push({
+      id: temp.length,
       title: '',
       description: '',
       sectionItems: [],
-      inputTypeId: 'multiple-choice'
+      inputTypeId: 'multiple_choice'
     })
-    setDataModule(prev => ({
-      ...prev,
-      sections: temp
-    }))
+
     let state = {
       ...dataModule,
       sections: temp
     }
+    setDataModule(state)
     updateModule(index, state)
-  }, [dataModule])
+  }, [dataModule, index])
 
   const removeSection = useCallback(
     id => {
       const temp = dataModule.sections
       temp.splice(id, 1)
-
-      setDataModule(prev => ({
-        ...prev,
-        sections: temp
-      }))
       let state = {
         ...dataModule,
         sections: temp
       }
-
+      setDataModule(state)
       updateModule(index, state)
     },
-    [dataModule]
+    [dataModule.sections]
   )
 
   const updateSection = useCallback(
@@ -168,7 +162,14 @@ const ModuleCheckList = ({
     },
     [showSection, dataModule]
   )
-
+  useEffect(() => {
+    setDataModule({
+      id: index,
+      title: withEmpty('title', modules),
+      description: withEmpty('description', modules),
+      sections: withArray('sections', modules)
+    })
+  }, [modules])
   return <Wrapper {...others}>{renderModule(dataModule, index)}</Wrapper>
 }
 
