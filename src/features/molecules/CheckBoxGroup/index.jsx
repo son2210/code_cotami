@@ -9,6 +9,7 @@ const CheckBoxGroup = ({
   value,
   onChange,
   options,
+  setOptions,
   addItem = false,
   ...others
 }) => {
@@ -16,6 +17,7 @@ const CheckBoxGroup = ({
   const [item, setItem] = useState('')
   const handleChangeItem = useCallback(e => setItem(e), [])
   const addDataItem = useCallback(() => {
+    setOptions([...data, { content: item, id: data.length + 1 }])
     setData([...data, { content: item, id: data.length + 1 }])
   }, [item])
   const renderForm = useCallback(
@@ -31,7 +33,7 @@ const CheckBoxGroup = ({
     },
     [data]
   )
-  if (!options || options.length < 1) return null
+  if (!options || options.length < 0) return null
 
   return (
     <Wrapper inline={inline} value={value} onChange={onChange} {...others}>
@@ -64,7 +66,8 @@ CheckBoxGroup.propTypes = {
       others: PropTypes.any
     })
   ).isRequired,
-  addItem: PropTypes.bool
+  addItem: PropTypes.bool,
+  setOptions: PropTypes.func
 }
 
 export default React.memo(CheckBoxGroup)

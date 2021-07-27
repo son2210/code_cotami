@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useCallback } from 'react'
 import {
   Wrapper,
   Title,
@@ -10,9 +10,14 @@ import {
 } from './styled'
 import PropTypes from 'prop-types'
 import { withNumber } from 'exp-value'
-const CreateModule = ({ data, onCreateModule, onRemoveModule, ...others }) => {
-  const [modules, setModules] = useState([])
-
+const CreateModule = ({
+  data,
+  onCreateModule,
+  onRemoveModule,
+  numModule,
+  updateModule,
+  ...others
+}) => {
   const _renderModule = useCallback(
     modules => {
       return (
@@ -23,7 +28,7 @@ const CreateModule = ({ data, onCreateModule, onRemoveModule, ...others }) => {
             </Title>
             <ModuleCount>
               {`${withNumber('length', modules)} module`}
-              <Button dashed={1} onClick={() => onCreateModule()}>
+              <Button dashed={1} onClick={onCreateModule}>
                 <Icon name='feather-plus' size={16} />
                 New module
               </Button>
@@ -36,26 +41,25 @@ const CreateModule = ({ data, onCreateModule, onRemoveModule, ...others }) => {
                 onRemoveModule={onRemoveModule}
                 index={index}
                 key={index}
+                updateModule={updateModule}
               />
             )
           })}
         </>
       )
     },
-    [modules]
+    [data, onCreateModule, numModule]
   )
 
-  useEffect(() => {
-    setModules(data)
-  }, [data])
-
-  return <Wrapper {...others}>{_renderModule(modules)}</Wrapper>
+  return <Wrapper {...others}>{_renderModule(data)}</Wrapper>
 }
 CreateModule.propTypes = {
   data: PropTypes.array,
   setUpdate: PropTypes.func,
   onCreateModule: PropTypes.func,
-  onRemoveModule: PropTypes.func
+  onRemoveModule: PropTypes.func,
+  numModule: PropTypes.number,
+  updateModule: PropTypes.func
 }
 
 export default React.memo(CreateModule)

@@ -50,7 +50,6 @@ const CheckInRequest = () => {
   }, [modalRef])
 
   const getOffSet = useCallback((event, rowData, id) => {
-    // console.log(event.pageX, event.pageY)
     setModalPosition({ x: event.pageX - 20, y: event.pageY - 20 })
     setCell(rowData[id])
     setModal(true)
@@ -222,7 +221,6 @@ const CheckInRequest = () => {
           secondary
           bold
           onClick={() => {
-            console.log(true)
             setModal(!modal)
           }}
         >
