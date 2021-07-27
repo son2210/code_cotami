@@ -1,21 +1,20 @@
-import React, { useState, useCallback } from 'react'
+import PropTypes from 'prop-types'
+import React, { useCallback, useState } from 'react'
+import { Constant } from 'utils'
 import {
-  Wrapper,
-  WrapperTop,
-  WrapperContent,
-  Title,
-  Icon,
+  Block,
+  CheckBox,
   Drag,
   DragText,
-  CheckPicker,
-  InputPicker,
-  CheckBox,
+  Icon,
   Input,
+  InputPicker,
   Radio,
-  Block
+  Title,
+  Wrapper,
+  WrapperContent,
+  WrapperTop
 } from './styled'
-import PropTypes from 'prop-types'
-import { Constant } from 'utils'
 
 const SectionCheckList = ({
   orderNumber,
@@ -23,32 +22,53 @@ const SectionCheckList = ({
   description,
   sectionItems,
   type,
+  removeSection,
+  updateSection,
+  index,
   preview = false,
   ...others
 }) => {
+  // vi tri section trong modules
   const [dataSection, setDataSection] = useState({
+    id: index,
     title: sectionTitle,
     description: description,
-    sectionItems: sectionItems,
+    sectionItems: sectionItems || [],
     inputTypeId: type
   })
 
-  const onChangeData = useCallback((field, value) => {
-    setDataSection(prev => ({
-      ...prev,
-      [field]: value
-    }))
-  }, [])
+  const onChangeData = useCallback(
+    (field, value) => {
+      setDataSection(prev => ({
+        ...prev,
+        [field]: value
+      }))
+      const temp = { ...dataSection, [field]: value }
+      updateSection(index, orderNumber, temp)
+    },
+    [dataSection]
+  )
 
   const _renderSectionItem = useCallback(
     type => {
       switch (type) {
         case Constant.sectionType[0].value:
           return (
-            <Radio options={sectionItems} block addItem={!preview ? 1 : 0} />
+            <Radio
+              options={sectionItems}
+              setOptions={value => onChangeData('sectionItems', value)}
+              block
+              addItem={!preview}
+            />
           )
         case Constant.sectionType[1].value:
-          return <CheckBox options={sectionItems} addItem={!preview ? 1 : 0} />
+          return (
+            <CheckBox
+              options={sectionItems}
+              setOptions={value => onChangeData('sectionItems', value)}
+              addItem={!preview}
+            />
+          )
         case Constant.sectionType[2].value:
           return (
             <Drag draggable onChange={e => console.log(e)} autoUpload={false}>
@@ -63,32 +83,36 @@ const SectionCheckList = ({
           return null
       }
     },
-    [dataSection.inputTypeId]
+    [dataSection]
   )
 
   return (
     <Wrapper {...others}>
       {!preview ? (
         <WrapperTop>
-          <CheckPicker data={data} placeholder='Unit' />
+          <InputPicker data={Constant.sectionShare} placeholder='Private' />
           <InputPicker
             data={Constant.sectionType}
             onChange={e => onChangeData('inputTypeId', e)}
-            value={dataSection.type}
+            value={dataSection.inputTypeId}
             placeholder='Unit'
           />
-          <Icon name='feather-x' size={16} />
+          <Icon
+            name='feather-x'
+            size={24}
+            onClick={() => removeSection(index)}
+          />
         </WrapperTop>
       ) : null}
       <WrapperContent>
         <Title H2 bold>
-          {orderNumber ? `${orderNumber}. ` : ''}
+          {preview ? `${orderNumber}. ` : null}
           {!preview ? (
             <Input
               placeHolder='Title'
               value={dataSection.title}
               onChange={e => onChangeData('title', e)}
-              disable={preview}
+              disabled={preview}
               borderNone={1}
               h2
               bold
@@ -102,7 +126,7 @@ const SectionCheckList = ({
             placeHolder='Description'
             value={dataSection.description}
             onChange={e => onChangeData('description', e)}
-            disable={preview}
+            disabled={preview}
             borderNone={1}
             h3
             bold
@@ -123,18 +147,10 @@ SectionCheckList.propTypes = {
   sectionItems: PropTypes.array,
   type: PropTypes.string,
   sectionTitle: PropTypes.string,
-  preview: PropTypes.bool
+  preview: PropTypes.bool,
+  removeSection: PropTypes.func,
+  updateSection: PropTypes.func,
+  index: PropTypes.number
 }
 
 export default React.memo(SectionCheckList)
-
-const data = [
-  {
-    value: '1',
-    label: 'user 1'
-  },
-  {
-    value: '2',
-    label: 'user 2'
-  }
-]

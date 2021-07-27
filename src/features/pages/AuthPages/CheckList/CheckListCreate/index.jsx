@@ -1,8 +1,8 @@
 import { BaseInputPicker } from 'atoms'
-import { withEmpty } from 'exp-value'
+import { withEmpty, withNumber } from 'exp-value'
 import { RadioForm } from 'molecules'
 import { CreateModule } from 'organisms'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useCallback } from 'react/cjs/react.development'
 import PreviewCheckList from '../PreviewCheckList'
 import {
@@ -23,6 +23,8 @@ import {
   WrapperForm,
   WrapperItem
 } from './styled'
+import { useRequestManager } from 'hooks'
+import { EndPoint } from 'config/api'
 
 const CheckListCreate = () => {
   const [step, setStep] = useState(1)
@@ -35,6 +37,8 @@ const CheckListCreate = () => {
   })
 
   const [modules, setModules] = useState([])
+  const [numModule, setNumModule] = useState(0)
+  const { onPostExecute } = useRequestManager()
 
   const navigationPage = useCallback(
     type => {
@@ -58,24 +62,46 @@ const CheckListCreate = () => {
   )
 
   const handleUpdateModule = useCallback(
-    (type, idModule) => {
+    (type, idModule, values) => {
       let temp = modules
-      if (type === 'addModule') {
-        temp.push([])
-        setModules(temp)
-      }
-
-      if (
-        type === 'removeModule' &&
-        idModule >= 0 &&
-        idModule < modules?.length
-      ) {
-        temp.splice(idModule, 1)
-        setModules(temp)
+      switch (type) {
+        case 'addModule':
+          temp.push({
+            title: 'title',
+            description: 'description',
+            sections: []
+          })
+          setNumModule(numModule + 1)
+          return setModules(temp)
+        case 'removeModule':
+          if (idModule >= 0 && idModule < withNumber('length', modules)) {
+            setNumModule(numModule - 1)
+            temp.splice(idModule, 1)
+            return setModules(temp)
+          }
+          break
+        case 'updateModule':
+          modules[idModule] = values
+          break
+        default:
+          return null
       }
     },
-    [modules]
+    [modules, numModule]
   )
+
+  const submit = useCallback(async () => {
+    const response = await onPostExecute(EndPoint.FORM_CREATE, {
+      ...formCheckList,
+      modules: modules,
+      templateId: modules.id,
+      displayMode: formCheckList.display
+    })
+    if (response) {
+      console.log(response, 'abc')
+    }
+  }, [modules, formCheckList])
+
   const _renderTheme = useCallback(() => {
     return (
       <FlexBlock>
@@ -94,21 +120,29 @@ const CheckListCreate = () => {
         modules={modules}
         show={showPreview}
         onHide={hideModal}
+        moduleNumber={numModule}
       />
     )
-  }, [showPreview, modules])
+  }, [showPreview, modules, hideModal, numModule])
 
-  const _renderModule = useCallback(() => {
-    return (
-      <WrapperContent>
-        <CreateModule
-          data={modules}
-          onRemoveModule={id => handleUpdateModule('removeModule', id)}
-          onCreateModule={() => handleUpdateModule('addModule')}
-        />
-      </WrapperContent>
-    )
-  }, [modules, step])
+  const _renderModule = useCallback(
+    modules => {
+      return (
+        <WrapperContent>
+          <CreateModule
+            data={modules}
+            setData={setModules}
+            onRemoveModule={id => handleUpdateModule('removeModule', id)}
+            onCreateModule={() => handleUpdateModule('addModule')}
+            updateModule={(id, value) =>
+              handleUpdateModule('updateModule', id, value)
+            }
+          />
+        </WrapperContent>
+      )
+    },
+    [modules, numModule]
+  )
 
   const _renderContent = useCallback(() => {
     if (step == 1)
@@ -123,13 +157,13 @@ const CheckListCreate = () => {
           </ThemeBlock>
 
           <ThemeBlock>
-            <Title H3>Recents</Title>
+            <Title H3>All theme</Title>
             {_renderTheme()}
           </ThemeBlock>
         </WrapperContent>
       )
-    return _renderModule()
-  }, [step, modules])
+    return _renderModule(modules)
+  }, [step, modules, numModule])
 
   const _renderForm = useCallback(() => {
     if (step == 1)
@@ -223,15 +257,13 @@ const CheckListCreate = () => {
             <Icon name='feather-eye' size={16} />
             Preview
           </Button>
-          <Button primary onClick={() => navigationPage('next')}>
+          <Button primary onClick={submit}>
             Submit
           </Button>
         </WrapperButton>
       </WrapperForm>
     )
   }, [step, formCheckList])
-
-  useEffect(() => setModules(fakeModules), [])
 
   return (
     <Wrapper>
@@ -252,261 +284,5 @@ const data = [
   {
     value: '2',
     label: '23456'
-  }
-]
-
-const fakeModules = [
-  {
-    id: 0,
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    index: 0,
-    sections: [
-      {
-        id: 'string',
-        title: '1. Title of Section',
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-        sectionItems: [
-          {
-            id: 'string',
-            title: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
-          },
-          {
-            id: 'string',
-            title: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
-          },
-          {
-            id: 'string',
-            title: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
-          }
-        ],
-        inputTypeId: {
-          id: 'string',
-          title: 'single-choice',
-          description:
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-          guidelineImageUrl: 'string',
-          previewImageUrl: 'string'
-        }
-      },
-      {
-        id: 'string',
-        title: 'string',
-        description: 'string',
-        sectionItems: [
-          {
-            id: 'string',
-            title: 'string'
-          },
-          {
-            id: 'string',
-            title: 'string'
-          },
-          {
-            id: 'string',
-            title: 'string'
-          }
-        ],
-        inputTypeId: {
-          id: 'string',
-          title: 'single-choice',
-          description: 'string',
-          guidelineImageUrl: 'string',
-          previewImageUrl: 'string'
-        }
-      },
-      {
-        id: 'string',
-        title: 'string',
-        description: 'string',
-        sectionItems: [
-          {
-            id: 'string',
-            title: 'string'
-          },
-          {
-            id: 'string',
-            title: 'string'
-          },
-          {
-            id: 'string',
-            title: 'string'
-          }
-        ],
-        inputTypeId: {
-          id: 'string',
-          title: 'single-choice',
-          description: 'string',
-          guidelineImageUrl: 'string',
-          previewImageUrl: 'string'
-        }
-      }
-    ]
-  },
-  {
-    id: 1,
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    index: 1,
-    sections: [
-      {
-        id: 'string',
-        title: 'string',
-        description:
-          '213Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-        sectionItems: [
-          {
-            id: 'string',
-            title: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
-          },
-          {
-            id: 'string',
-            title: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
-          },
-          {
-            id: 'string',
-            title: 'string'
-          }
-        ],
-        inputTypeId: {
-          id: 'string',
-          title: 'single-choice',
-          description:
-            'qwLorem ipsum dolor sit amet, consectetur adipiscing elit.',
-          guidelineImageUrl: 'string',
-          previewImageUrl: 'string'
-        }
-      }
-    ]
-  },
-  {
-    id: 2,
-    description: 'string',
-    index: 2,
-    sections: [
-      {
-        id: 'string',
-        title: 'string',
-        description: 'string',
-        sectionItems: [
-          {
-            id: 'string',
-            title: 'string'
-          },
-          {
-            id: 'string',
-            title: 'string'
-          },
-          {
-            id: 'string',
-            title: 'string'
-          }
-        ],
-        inputTypeId: {
-          id: 'string',
-          title: 'input',
-          description: 'string',
-          guidelineImageUrl: 'string',
-          previewImageUrl: 'string'
-        }
-      }
-    ]
-  },
-  {
-    id: 3,
-    description: 'string',
-    index: 3,
-    sections: [
-      {
-        id: 'string',
-        title: 'string',
-        description: 'string',
-        sectionItems: [
-          {
-            id: 'string',
-            title: 'string'
-          },
-          {
-            id: 'string',
-            title: 'string'
-          },
-          {
-            id: 'string',
-            title: 'string'
-          }
-        ],
-        inputTypeId: {
-          id: 'string',
-          title: 'inputFile',
-          description: 'string',
-          guidelineImageUrl: 'string',
-          previewImageUrl: 'string'
-        }
-      }
-    ]
-  },
-  {
-    id: 4,
-    description: 'string',
-    index: 4,
-    sections: [
-      {
-        id: 'string',
-        title: 'string',
-        description: 'string',
-        sectionItems: [
-          {
-            id: 'string',
-            title: 'string'
-          },
-          {
-            id: 'string',
-            title: 'string'
-          },
-          {
-            id: 'string',
-            title: 'string'
-          }
-        ],
-        inputTypeId: {
-          id: 'string',
-          title: 'inputNumber',
-          description: 'string',
-          guidelineImageUrl: 'string',
-          previewImageUrl: 'string'
-        }
-      }
-    ]
-  },
-  {
-    id: 5,
-    description: 'string',
-    index: 5,
-    sections: [
-      {
-        id: 'string',
-        title: 'string',
-        description: 'string',
-        sectionItems: [
-          {
-            id: 'string',
-            title: 'string'
-          },
-          {
-            id: 'string',
-            title: 'string'
-          },
-          {
-            id: 'string',
-            title: 'string'
-          }
-        ],
-        inputTypeId: {
-          id: 'string',
-          title: 'multiple-choice',
-          description: 'string',
-          guidelineImageUrl: 'string',
-          previewImageUrl: 'string'
-        }
-      }
-    ]
   }
 ]

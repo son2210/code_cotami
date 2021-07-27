@@ -24,12 +24,14 @@ const RadioForm = ({
   onChange,
   options = DEFAULT_OPTIONS,
   addItem = false,
+  setOptions,
   ...others
 }) => {
   const [data, setData] = useState(options)
   const [item, setItem] = useState('')
   const handleChangeItem = useCallback(e => setItem(e), [])
   const addDataItem = useCallback(() => {
+    setOptions([...data, { value: item, label: item }])
     setData([...data, { value: item, label: item }])
   }, [item])
 
@@ -47,7 +49,7 @@ const RadioForm = ({
     [data]
   )
 
-  if (!options || options.length < 1) return null
+  if (!options || options.length < 0) return null
 
   return (
     <Wrapper inline={inline} value={value} onChange={onChange} {...others}>
@@ -79,7 +81,8 @@ RadioForm.propTypes = {
       others: PropTypes.any
     })
   ).isRequired,
-  addItem: PropTypes.bool
+  addItem: PropTypes.bool,
+  setOptions: PropTypes.func
 }
 
 export default React.memo(RadioForm)

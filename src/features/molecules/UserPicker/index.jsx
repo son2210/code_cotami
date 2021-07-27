@@ -8,13 +8,12 @@ const UserPicker = ({ ...others }) => {
       renderMenuItem={(label, url) => {
         return (
           <div>
-            <ImageWrapper  source={url.url} />
+            <ImageWrapper source={url.url} />
             <TitleWrapper>{label}</TitleWrapper>
           </div>
         )
       }}
-      renderValue={(value, url) => {
-        console.log('url', url)
+      renderValue={value => {
         return (
           <div>
             <TitleWrapper>{value}</TitleWrapper>

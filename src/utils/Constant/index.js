@@ -26,6 +26,16 @@ const Constant = {
     ACTIVE: 'ACTIVE',
     INACTIVE: 'INACTIVE'
   },
+  sectionShare: [
+    {
+      value: 'general',
+      label: 'General'
+    },
+    {
+      value: 'private',
+      label: 'Private'
+    }
+  ],
   Languages: [
     {
       label: 'English',

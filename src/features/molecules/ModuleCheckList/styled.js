@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { BaseTitle, BaseButton, BaseIcon } from 'atoms'
+import { BaseTitle, BaseButton, BaseIcon, BaseInput } from 'atoms'
 
 export const Wrapper = styled.div`
   width: 100%;
@@ -71,4 +71,13 @@ export const Button = styled(BaseButton)`
   & svg {
     margin-right: 10px;
   }
+`
+export const Input = styled(BaseInput)`
+  ${props =>
+    props.borderNone &&
+    `border: none !important;    
+    padding: 10px 0 !important;`}
+  ${props => props.h2 && `font-size: 18px !important;`}
+  ${props => props.h3 && `font-size: 14px !important;`}
+  ${props => props.bold && `font-weight: 500 !important;`}
 `

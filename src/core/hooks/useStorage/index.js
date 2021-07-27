@@ -5,7 +5,6 @@ const useStorage = () => {
     try {
       const execute = async () => {
         const jsonValue = JSON.stringify(value)
-        console.log('json value', jsonValue)
         await localStorage.setItem(key, jsonValue)
       }
 

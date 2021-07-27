@@ -1,33 +1,36 @@
-import React, { useCallback, useState } from 'react'
-import {
-  Wrapper,
-  Title,
-  LineProgress,
-  Button,
-  WrapperProgress,
-  WrapperFooter,
-  Icon,
-  WrapperModal,
-  Body
-} from './styled'
-import PropTypes from 'prop-types'
 import { withArray, withEmpty, withNumber } from 'exp-value'
-import { useTheme } from 'styled-components'
 import { SectionPreview } from 'molecules'
+import PropTypes from 'prop-types'
+import React, { useCallback, useState } from 'react'
+import { useTheme } from 'styled-components'
+import {
+  Body,
+  Button,
+  Icon,
+  LineProgress,
+  Title,
+  Wrapper,
+  WrapperFooter,
+  WrapperModal,
+  WrapperProgress
+} from './styled'
 
-const PreviewCheckList = ({ moduleName, modules, show, onHide, ...others }) => {
-  const moduleNumber = React.useMemo(() => withNumber('length', modules), [
-    modules
-  ])
+const PreviewCheckList = ({
+  moduleName,
+  modules,
+  show,
+  onHide,
+  moduleNumber,
+  ...others
+}) => {
   const [step, setStep] = useState(1)
   const theme = useTheme()
-
   const activeStep = useCallback(
     type => {
       if (type === 'next' && step < moduleNumber) return setStep(step + 1)
       if (type === 'prev' && step > 1) return setStep(step - 1)
     },
-    [step, moduleNumber]
+    [step, moduleNumber, modules]
   )
 
   const renderModule = useCallback(
@@ -91,7 +94,7 @@ const PreviewCheckList = ({ moduleName, modules, show, onHide, ...others }) => {
               <Icon name='feather-chevron-right' size={18} />
             </Button>
             {step == moduleNumber && (
-              <Button onClick={() => activeStep('next')} primary finish bold>
+              <Button onClick={onHide} primary finish bold>
                 Finish
               </Button>
             )}
@@ -101,11 +104,11 @@ const PreviewCheckList = ({ moduleName, modules, show, onHide, ...others }) => {
     )
   }, [modules, step, moduleNumber])
 
-  if (!modules || withNumber('length', modules) == 0) return null
-
   return (
     <WrapperModal show={show} onHide={onHide} {...others}>
-      {_renderModal()}
+      {!modules || withNumber('length', modules) == 0
+        ? 'No modules'
+        : _renderModal()}
     </WrapperModal>
   )
 }
@@ -114,7 +117,8 @@ PreviewCheckList.propTypes = {
   moduleName: PropTypes.string,
   modules: PropTypes.array.isRequired,
   show: PropTypes.bool,
-  onHide: PropTypes.func
+  onHide: PropTypes.func,
+  moduleNumber: PropTypes.number
 }
 
 export default PreviewCheckList

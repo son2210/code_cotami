@@ -73,7 +73,7 @@ const Staffs = ({ t }) => {
   }, [])
 
   // =========================================================
-  
+
   const toggleModal = useCallback((e, rowData) => {
     setSelectedRow(rowData)
     setDisplayStaff(rowData)
@@ -289,14 +289,10 @@ const Staffs = ({ t }) => {
         width={800}
         data={data}
         columns={columns}
-        onRowClick={data => {
-          console.log('onRowClick')
-          console.log(data)
-        }}
         paginateProps={{
           activePage,
           displayLength,
-          total: 100, // hard code
+          total: 100,
           onChangePage: page => onChangePage(page, setLoading),
           onChangeLength: length => onChangeLength(length, setLoading)
         }}

@@ -1,5 +1,12 @@
 import styled from 'styled-components'
-import { BaseTitle, BaseIcon, BaseUploadFile, BaseText, BaseInput } from 'atoms'
+import {
+  BaseTitle,
+  BaseUploadFile,
+  BaseText,
+  BaseInput,
+  BaseButton,
+  BaseIcon
+} from 'atoms'
 import { BaseCheckPicker, BaseInputPicker } from 'atoms'
 import CheckBoxGroup from '../CheckBoxGroup'
 import RadioForm from '../RadioForm'
@@ -22,7 +29,6 @@ export const WrapperTop = styled.div`
   }
 `
 export const WrapperContent = styled.div``
-export const Icon = styled(BaseIcon)``
 
 export const Drag = styled(BaseUploadFile)`
   min-height: 80px;
@@ -100,3 +106,5 @@ export const Radio = styled(RadioForm)`
 export const Block = styled.div`
   margin: 5px 0;
 `
+export const IconRemoveSection = styled(BaseButton)``
+export const Icon = styled(BaseIcon)``
