@@ -12,7 +12,7 @@ import { useSetRecoilState } from 'recoil'
 
 //  public page
 const LoginPage = lazy(() => import('pages/UnAuthPages/Login'))
-const RegisterPage = lazy(() => import('pages/UnAuthPages/Register'))
+// const RegisterPage = lazy(() => import('pages/UnAuthPages/Register'))
 const ForgotPasswordPage = lazy(() =>
   import('pages/UnAuthPages/ForgotPassword')
 )
@@ -193,14 +193,14 @@ const Routes = ({ isLoggedIn, ...rest }) => {
             return <LoginPage {...rest} {...props} />
           }}
         />
-        <Route
+        {/* <Route
           {...rest}
           exact
           path={Routers.REGISTER}
           render={props => {
             return <RegisterPage {...rest} {...props} />
           }}
-        />
+        /> */}
         <Route
           {...rest}
           exact

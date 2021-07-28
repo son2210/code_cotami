@@ -48,7 +48,7 @@ const ForgotPassword = () => {
         }}
         secondaryBtn={{
           name: 'Go back to Login Page',
-          onClick: () => goToPage(Routers.REGISTER)
+          onClick: () => goToPage(Routers.LOGIN)
         }}
         formValue={data}
         model={validateModel}
