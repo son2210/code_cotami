@@ -10,6 +10,9 @@ import CHECKED from './logo/checked.svg'
 import MESSAGE from './logo/message.svg'
 import MINUS from './logo/minus.svg'
 import MONITOR from './logo/monitor.svg'
+import COMPANY from './logo/company.svg'
+import USER from './logo/user.svg'
+import LOCK from './logo/lock.svg'
 
 export default {
   DEFAULT: DEFAULT_IMAGE,
@@ -23,6 +26,9 @@ export default {
     CHECKED: CHECKED,
     MESSAGE: MESSAGE,
     MINUS: MINUS,
-    MONITOR: MONITOR
+    MONITOR: MONITOR,
+    COMPANY: COMPANY,
+    USER: USER,
+    LOCK: LOCK
   }
 }

@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react'
 import { Wrapper } from './styled'
 import { UnAuthForm } from 'organisms'
-import { BaseIcon } from 'atoms'
+import { BaseImage } from 'atoms'
 import { InputGroup } from 'molecules'
 import validateModel from './validateModel'
 import { modifyPropsOfState } from 'utils/Helpers'
@@ -9,6 +9,7 @@ import { useHistory } from 'react-router-dom'
 import { Routers } from 'utils'
 import { useRequestManager, useToken } from 'hooks'
 import { EndPoint } from 'config/api'
+import { IMAGES } from 'assets'
 
 const Login = () => {
   const history = useHistory()
@@ -17,11 +18,13 @@ const Login = () => {
   const { saveToken } = useToken()
 
   const [data, setData] = useState({
-    email: '',
-    password: ''
+    enterpriseId: '', //18
+    loginId: '', //aaa34i73
+    password: '' //123123
   })
   const [error, setError] = useState({
-    email: '',
+    enterpriseId: '',
+    loginId: '',
     password: ''
   })
 
@@ -59,10 +62,6 @@ const Login = () => {
           name: 'Login',
           onClick: handleLogin
         }}
-        secondaryBtn={{
-          name: 'Register',
-          onClick: () => goToPage(Routers.REGISTER)
-        }}
         tertiaryBtn={{
           name: 'Forgot Password?',
           onClick: () => goToPage(Routers.FORGOT_PASSWORD)
@@ -73,20 +72,29 @@ const Login = () => {
         onSubmit={handleLogin}
       >
         <InputGroup
-          placeholder='Email'
-          LeftSide={<BaseIcon icon='user' />}
-          name='email'
-          onChange={value => handleInput('email', value)}
-          value={data['email']}
-          helpText={error['email']}
-          isError={!error['email'] ? false : true}
+          placeholder='Company Id'
+          LeftSide={<BaseImage source={IMAGES.LOGO.COMPANY} />}
+          name='enterpriseId'
+          onChange={value => handleInput('enterpriseId', value)}
+          value={data['enterpriseId']}
+          helpText={error['enterpriseId']}
+          isError={!error['enterpriseId'] ? false : true}
+        />
+        <InputGroup
+          placeholder='userId'
+          LeftSide={<BaseImage source={IMAGES.LOGO.USER} />}
+          name='loginId'
+          onChange={value => handleInput('loginId', value)}
+          value={data['loginId']}
+          helpText={error['loginId']}
+          isError={!error['loginId'] ? false : true}
         />
 
         <InputGroup
-          LeftSide={<BaseIcon icon='lock' />}
+          LeftSide={<BaseImage source={IMAGES.LOGO.LOCK} />}
           RightSide={{
             onClick: () => setShowPassword(!showPassword),
-            icon: <BaseIcon icon='eye' />
+            icon: <BaseImage source={IMAGES.EYE} />
           }}
           placeholder='Password'
           type={showPassword ? 'text' : 'password'}
