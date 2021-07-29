@@ -28,6 +28,11 @@ const UpdatePassword = ({ ...others }) => {
 
   const handleUpdatePassword = () => {
     console.log('update', data)
+
+    // if success logout
+    // setUserState({})
+    // await clearToken()
+    // goToPage(Routers.LOGIN)
   }
 
   const handleInput = useCallback(

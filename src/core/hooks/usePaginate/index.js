@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react'
 
 const usePaginate = () => {
-  const [activePage, setActivePage] = useState(1)
+  const [activePage, setActivePage] = useState(0)
   const [displayLength, setDisplayLength] = useState(10)
   const [total, setTotal] = useState(0)
   const onChangePage = useCallback((page, setLoading) => {

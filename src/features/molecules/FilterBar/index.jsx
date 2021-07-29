@@ -2,10 +2,16 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { ContainerWrapper, FilterWrapper, ButtonWrapper } from './styled'
 
-const FilterBar = ({ hasButton = true, onClick, children, ...others }) => {
+const FilterBar = ({
+  hasButton = true,
+  formOpt,
+  onClick,
+  children,
+  ...others
+}) => {
   return (
     <ContainerWrapper {...others}>
-      <FilterWrapper>{children}</FilterWrapper>
+      <FilterWrapper {...formOpt}>{children}</FilterWrapper>
       {hasButton && (
         <ButtonWrapper onClick={onClick} primary bold>
           + New
@@ -17,6 +23,7 @@ const FilterBar = ({ hasButton = true, onClick, children, ...others }) => {
 
 FilterBar.propTypes = {
   hasButton: PropTypes.bool,
+  formOpt: PropTypes.object,
   onClick: PropTypes.func,
   children: PropTypes.node
 }

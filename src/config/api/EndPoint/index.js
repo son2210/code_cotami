@@ -3,8 +3,10 @@ const EndPoint = {
   REGISTER_API: 'admins/register',
   ADMIN_PROFILE: 'users/profile',
   STAFFS: 'staffs',
+  UNITS_LIST: id => `enterprises/${id}/units`,
   UPDATE_STAFFS: 'users',
-  FORM_CREATE: 'forms/create'
+  RESULT_LOGS: 'results/changeLogs',
+  FORM_CREATE: 'forms/create',
 }
 
 export default EndPoint
