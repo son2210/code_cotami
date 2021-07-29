@@ -1,9 +1,12 @@
-import React from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { Wrapper } from './styled'
-import { TableAction, FilterBar, UserPicker } from 'molecules'
-import { BaseButton, BaseDatePicker } from 'atoms'
-import { usePaginate } from 'hooks'
+import { TableAction, FilterBar } from 'molecules'
+import { BaseButton, BaseDateRangePicker, BaseInputPicker } from 'atoms'
+import { usePaginate, useRequestManager, useUnits } from 'hooks'
 import { useTheme } from 'styled-components'
+import moment from 'moment'
+import { EndPoint } from 'config/api'
+import { Constant } from 'utils'
 
 const History = () => {
   const {
@@ -15,6 +18,48 @@ const History = () => {
     onChangeLength
   } = usePaginate()
   const theme = useTheme()
+  const [data, setData] = useState([])
+  const [searchData, setSearchData] = useState({
+    enterpriseUnitId: 14,
+    dateRange: [
+      moment(Date.now()).format('YYYY-MM-DD'),
+      moment(Date.now()).add(1, 'days').format('YYYY-MM-DD')
+    ]
+  })
+  const { onGetExecute } = useRequestManager()
+  const units = useUnits(activePage, displayLength)
+
+  const getData = useCallback(
+    async (offset, limit, dateRange, enterpriseUnitId) => {
+      const response = await onGetExecute(EndPoint.RESULT_LOGS, {
+        params: {
+          offset,
+          limit,
+          enterpriseUnitId,
+          startDate: moment(dateRange[0]).format('YYYY-MM-DD'),
+          endDate: moment(dateRange[1]).format('YYYY-MM-DD')
+        }
+      })
+      if (response && response.length) {
+        setData(
+          response.map(d => {
+            return { ...d, name: d.author.name, title: d.form.title }
+          })
+        )
+      }
+    },
+    []
+  )
+
+  //initial
+  useEffect(() => {
+    if (units && units.length) {
+      getData(activePage, displayLength, searchData.dateRange, units[0].value)
+      setSearchData(prev => {
+        return { ...prev, enterpriseUnitId: units[0].value }
+      })
+    }
+  }, [activePage, displayLength, units])
 
   const columns = [
     {
@@ -24,7 +69,11 @@ const History = () => {
         label: 'Last update time'
       },
       cell: {
-        id: 'update'
+        id: 'actionAt',
+        type: Constant.CellType.DATE_TIME,
+        others: {
+          format: 'YYYY-MM-DD HH:mm:ss'
+        }
       }
     },
     {
@@ -34,20 +83,20 @@ const History = () => {
         label: 'Staff'
       },
       cell: {
-        id: 'staff',
+        id: 'name',
         style: {
           color: theme.colors.tertiary
         }
       }
     },
     {
-      width: 100,
+      width: 200,
       align: 'left',
       header: {
         label: 'Checklist'
       },
       cell: {
-        id: 'checklist',
+        id: 'title',
         style: {
           color: theme.colors.tertiary
         }
@@ -63,7 +112,7 @@ const History = () => {
         label: 'Action'
       },
       cell: {
-        id: 'action',
+        id: 'changeType',
         style: {
           color: theme.colors.tertiary
         }
@@ -73,39 +122,65 @@ const History = () => {
 
   return (
     <Wrapper>
-      <FilterBar hasButton={false} style={{ marginBottom: 20 }}>
-        <BaseDatePicker style={{ marginLeft: 10 }} />
-        <UserPicker
+      <FilterBar
+        formOpt={{
+          formValue: searchData,
+          onSubmit: () =>
+            getData(
+              activePage,
+              displayLength,
+              searchData.dateRange,
+              searchData.enterpriseUnitId
+            )
+        }}
+        hasButton={false}
+        style={{ marginBottom: 20 }}
+      >
+        <BaseInputPicker
+          placeholder='unit'
           style={{ marginLeft: 10 }}
-          data={userPicker}
-          placeholder={'Select user'}
+          data={units}
+          value={searchData['enterpriseUnitId']}
+          onChange={v =>
+            setSearchData(prev => {
+              return { ...prev, ['enterpriseUnitId']: v }
+            })
+          }
         />
-        <BaseButton style={{ marginLeft: 10 }} secondary bold>
+        <BaseDateRangePicker
+          placeholder='Select date range'
+          style={{ marginLeft: 10 }}
+          onChange={v =>
+            setSearchData(prev => {
+              return { ...prev, ['dateRange']: v }
+            })
+          }
+          //fix warning Rsuit
+          value={
+            searchData['dateRange'].length
+              ? [
+                  new Date(searchData['dateRange'][0]),
+                  new Date(searchData['dateRange'][1])
+                ]
+              : []
+          }
+        />
+        <BaseButton type='submit' style={{ marginLeft: 10 }} secondary bold>
           Filter
         </BaseButton>
       </FilterBar>
 
       <TableAction
         height={600}
-        width={550}
-        data={testData}
+        width={800}
+        data={data}
         columns={columns}
         paginateProps={{
           activePage,
           displayLength,
           total: 100,
           onChangePage,
-          onChangeLength,
-          lengthMenu: [
-            {
-              value: 10,
-              label: 10
-            },
-            {
-              value: 20,
-              label: 20
-            }
-          ]
+          onChangeLength
         }}
       />
     </Wrapper>
@@ -113,83 +188,5 @@ const History = () => {
 }
 
 //Moc data
-
-const testData = [
-  {
-    update: '2021/06/25 09:21',
-    staff: 'Salad',
-    checklist: 'Check list 1',
-    action: 'Update'
-  },
-  {
-    update: '2021/06/25 09:21',
-    staff: 'Mane',
-    checklist: 'Check list 1',
-    action: 'Update'
-  },
-  {
-    update: '2021/06/25 09:21',
-    staff: 'Firmino',
-    checklist: 'Check list 1',
-    action: 'Update'
-  },
-  {
-    update: '2021/06/25 09:21',
-    staff: 'Trend',
-    checklist: 'Check list 1',
-    action: 'Update'
-  },
-  {
-    update: '2021/06/25 09:21',
-    staff: 'Alision',
-    checklist: 'Check list 1',
-    action: 'Update'
-  }
-]
-
-const userPicker = [
-  {
-    label: 'Eugenia',
-    value: 'Eugenia',
-    url:
-      'https://m.media-amazon.com/images/M/MV5BMjE4MDI3NDI2Nl5BMl5BanBnXkFtZTcwNjE5OTQwOA@@._V1_UY1200_CR106,0,630,1200_AL_.jpg'
-  },
-  {
-    url:
-      'https://m.media-amazon.com/images/M/MV5BMjE4MDI3NDI2Nl5BMl5BanBnXkFtZTcwNjE5OTQwOA@@._V1_UY1200_CR106,0,630,1200_AL_.jpg',
-    label: 'Kariane',
-    value: 'Kariane'
-  },
-  {
-    url:
-      'https://m.media-amazon.com/images/M/MV5BMjE4MDI3NDI2Nl5BMl5BanBnXkFtZTcwNjE5OTQwOA@@._V1_UY1200_CR106,0,630,1200_AL_.jpg',
-    label: 'Louisa',
-    value: 'Louisa'
-  },
-  {
-    url:
-      'https://m.media-amazon.com/images/M/MV5BMjE4MDI3NDI2Nl5BMl5BanBnXkFtZTcwNjE5OTQwOA@@._V1_UY1200_CR106,0,630,1200_AL_.jpg',
-    label: 'Marty',
-    value: 'Marty'
-  },
-  {
-    url:
-      'https://m.media-amazon.com/images/M/MV5BMjE4MDI3NDI2Nl5BMl5BanBnXkFtZTcwNjE5OTQwOA@@._V1_UY1200_CR106,0,630,1200_AL_.jpg',
-    label: 'Kenya',
-    value: 'Kenya'
-  },
-  {
-    url:
-      'https://m.media-amazon.com/images/M/MV5BMjE4MDI3NDI2Nl5BMl5BanBnXkFtZTcwNjE5OTQwOA@@._V1_UY1200_CR106,0,630,1200_AL_.jpg',
-    label: 'Hal',
-    value: 'Hal'
-  },
-  {
-    url:
-      'https://m.media-amazon.com/images/M/MV5BMjE4MDI3NDI2Nl5BMl5BanBnXkFtZTcwNjE5OTQwOA@@._V1_UY1200_CR106,0,630,1200_AL_.jpg',
-    label: 'Julius',
-    value: 'Julius'
-  }
-]
 
 export default History

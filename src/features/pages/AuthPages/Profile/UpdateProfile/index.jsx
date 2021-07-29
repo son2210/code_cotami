@@ -26,6 +26,10 @@ const UpdateProfile = ({ ...others }) => {
 
   const handleUpdateProfile = () => {
     console.log('update', data)
+    //logout heare
+    // setUserState({})
+    // await clearToken()
+    // goToPage(Routers.LOGIN)
   }
 
   const handleInput = useCallback(

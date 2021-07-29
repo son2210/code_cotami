@@ -5,11 +5,11 @@ import { Route, Switch, useLocation, useHistory } from 'react-router-dom'
 import { Routers } from 'utils'
 import { PublicTemplate, PrivateTemplate } from 'templates'
 
-import { useRequestManager } from 'hooks'
+import { useToken } from 'hooks'
 import { globalUserState } from 'stores/profile/atom'
-import { EndPoint } from 'config/api'
 import { useSetRecoilState } from 'recoil'
 
+import jwtDecode from 'jwt-decode'
 //  public page
 const LoginPage = lazy(() => import('pages/UnAuthPages/Login'))
 // const RegisterPage = lazy(() => import('pages/UnAuthPages/Register'))
@@ -41,15 +41,12 @@ const PreviewsPage = lazy(() => import('pages/Previews'))
 
 const Routes = ({ isLoggedIn, ...rest }) => {
   const location = useLocation()
+  const { token } = useToken()
   const history = useHistory()
-  const { onGetExecute } = useRequestManager()
   const setUserState = useSetRecoilState(globalUserState)
 
   const getUserInfor = async () => {
-    const response = await onGetExecute(EndPoint.ADMIN_PROFILE)
-    if (response) {
-      setUserState(response)
-    }
+    setUserState(jwtDecode(token))
   }
 
   React.useEffect(() => {

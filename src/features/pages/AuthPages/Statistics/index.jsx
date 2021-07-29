@@ -1,11 +1,20 @@
-import React from 'react'
+import React, { 
+  // useState
+ } from 'react'
 import { Wrapper } from './styled'
-import { TableAction, FilterBar, UserPicker } from 'molecules'
-import { BaseButton, BaseCheckPicker, BaseDatePicker } from 'atoms'
+import { TableAction, FilterBar } from 'molecules'
+import { BaseButton, BaseDateRangePicker, BaseInputPicker } from 'atoms'
 
 import { IMAGES } from 'assets'
 import { usePaginate } from 'hooks'
 import { Constant } from 'utils'
+import {
+  // useRequestManager,
+  useUnits
+} from 'hooks'
+// import { EndPoint } from 'config/api'
+// import { globalUserState } from 'stores/profile/atom'
+// import { useRecoilValue } from 'recoil'
 
 const Statistics = () => {
   const {
@@ -16,6 +25,8 @@ const Statistics = () => {
     onChangePage,
     onChangeLength
   } = usePaginate()
+  const units = useUnits(activePage, displayLength)
+  // const { onGetExecute } = useRequestManager()
 
   const columns = [
     {
@@ -104,24 +115,32 @@ const Statistics = () => {
     }
   ]
 
-  const data = [
-    {
-      value: '1',
-      label: '四川'
-    },
-    {
-      value: '2',
-      label: '川'
-    }
-  ]
-
   return (
     <Wrapper>
-      <FilterBar hasButton={false} style={{ marginBottom: 20 }}>
-        <BaseCheckPicker data={data} />
-        <BaseDatePicker style={{ marginLeft: 10 }} />
-        <UserPicker style={{ marginLeft: 10 }} data={userPicker} />
-        <BaseButton style={{ marginLeft: 10 }} secondary bold>
+      <FilterBar
+        placeholder='checklist'
+        hasButton={false}
+        style={{ marginBottom: 20 }}
+      >
+        <BaseDateRangePicker
+          placeholder='select date range'
+          style={{ marginLeft: 10 }}
+        />
+
+        <BaseInputPicker
+          placeholder='unit'
+          style={{ marginLeft: 10 }}
+          data={units}
+          onChange={v => console.log(v)}
+        />
+
+        <BaseButton
+          // onClick={() => getUnits(activePage, displayLength)}
+          type='submit'
+          style={{ marginLeft: 10 }}
+          secondary
+          bold
+        >
           Filter
         </BaseButton>
       </FilterBar>
@@ -200,51 +219,6 @@ const testData = [
     c4: IMAGES.LOGO.MINUS,
     c5: IMAGES.LOGO.MESSAGE,
     c6: 7
-  }
-]
-
-const userPicker = [
-  {
-    label: 'Eugenia',
-    value: 'Eugenia',
-    url:
-      'https://m.media-amazon.com/images/M/MV5BMjE4MDI3NDI2Nl5BMl5BanBnXkFtZTcwNjE5OTQwOA@@._V1_UY1200_CR106,0,630,1200_AL_.jpg'
-  },
-  {
-    url:
-      'https://m.media-amazon.com/images/M/MV5BMjE4MDI3NDI2Nl5BMl5BanBnXkFtZTcwNjE5OTQwOA@@._V1_UY1200_CR106,0,630,1200_AL_.jpg',
-    label: 'Kariane',
-    value: 'Kariane'
-  },
-  {
-    url:
-      'https://m.media-amazon.com/images/M/MV5BMjE4MDI3NDI2Nl5BMl5BanBnXkFtZTcwNjE5OTQwOA@@._V1_UY1200_CR106,0,630,1200_AL_.jpg',
-    label: 'Louisa',
-    value: 'Louisa'
-  },
-  {
-    url:
-      'https://m.media-amazon.com/images/M/MV5BMjE4MDI3NDI2Nl5BMl5BanBnXkFtZTcwNjE5OTQwOA@@._V1_UY1200_CR106,0,630,1200_AL_.jpg',
-    label: 'Marty',
-    value: 'Marty'
-  },
-  {
-    url:
-      'https://m.media-amazon.com/images/M/MV5BMjE4MDI3NDI2Nl5BMl5BanBnXkFtZTcwNjE5OTQwOA@@._V1_UY1200_CR106,0,630,1200_AL_.jpg',
-    label: 'Kenya',
-    value: 'Kenya'
-  },
-  {
-    url:
-      'https://m.media-amazon.com/images/M/MV5BMjE4MDI3NDI2Nl5BMl5BanBnXkFtZTcwNjE5OTQwOA@@._V1_UY1200_CR106,0,630,1200_AL_.jpg',
-    label: 'Hal',
-    value: 'Hal'
-  },
-  {
-    url:
-      'https://m.media-amazon.com/images/M/MV5BMjE4MDI3NDI2Nl5BMl5BanBnXkFtZTcwNjE5OTQwOA@@._V1_UY1200_CR106,0,630,1200_AL_.jpg',
-    label: 'Julius',
-    value: 'Julius'
   }
 ]
 
