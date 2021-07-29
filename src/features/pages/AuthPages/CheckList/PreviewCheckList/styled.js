@@ -31,7 +31,7 @@ export const Button = styled(BaseButton)`
     `};
 `
 export const WrapperProgress = styled(StepProgress)`
-  margin: 20px 0;
+  margin: 20px -20px;
 `
 export const WrapperFooter = styled.div`
   display: flex;
@@ -63,7 +63,7 @@ export const Body = styled(Modal.Body)`
   width: 100%;
   height: 100%;
   margin: 0;
-  padding: 0 5px;
+  padding: 0 20px;
   ::-webkit-scrollbar {
     width: 3px;
     height: 100px;

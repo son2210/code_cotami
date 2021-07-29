@@ -6,7 +6,7 @@ const EndPoint = {
   UNITS_LIST: id => `enterprises/${id}/units`,
   UPDATE_STAFFS: 'users',
   RESULT_LOGS: 'results/changeLogs',
-  FORM_CREATE: 'forms/create',
+  FORM_CREATE: 'forms/create'
 }
 
 export default EndPoint

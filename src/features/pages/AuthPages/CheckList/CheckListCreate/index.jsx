@@ -30,6 +30,7 @@ import {
   WrapperItem
 } from './styled'
 import { formCheckListCreate } from './validation'
+import { useHistory } from 'react-router-dom'
 
 const CheckListCreate = () => {
   const [step, setStep] = useState(1)
@@ -45,9 +46,10 @@ const CheckListCreate = () => {
   const handleAddModule = useSetRecoilState(addModule)
   const handleUpdateModule = useSetRecoilState(updateModule)
   const handleRemoveModule = useSetRecoilState(removeModule)
+  const history = useHistory()
 
   const { onPostExecute } = useRequestManager()
-  const { showWarning } = useAlert()
+  const { showError, showSuccess } = useAlert()
 
   const navigationPage = useCallback(
     type => {
@@ -80,7 +82,7 @@ const CheckListCreate = () => {
     errors => {
       let listError = [...new Set(Object.values(errors))]
       if (listError && withNumber('length', listError)) {
-        showWarning(listError[0].toString())
+        showError(listError[0].toString())
         return
       }
 
@@ -89,17 +91,25 @@ const CheckListCreate = () => {
     [formCheckList]
   )
 
-  const submit = useCallback(async () => {
-    const response = await onPostExecute(EndPoint.FORM_CREATE, {
-      ...formCheckList,
-      modules: modules,
-      templateId: modules.id,
-      displayMode: formCheckList.display
-    })
-    console.log(response, 'abc')
-    if (response) {
-      resetState()
+  const submit = useCallback(() => {
+    async function postData() {
+      const response = await onPostExecute(EndPoint.FORM_CREATE, {
+        ...formCheckList,
+        modules: modules,
+        displayMode: formCheckList.display
+      })
+      if (response) {
+        showSuccess('Success create form')
+        setTimeout(() => {
+          resetState()
+          history.goBack()
+        }, 3000)
+
+        return
+      }
+      showError('Error !. Check data submit')
     }
+    postData()
   }, [modules, formCheckList])
 
   // const _renderTheme = useCallback(() => {
@@ -267,7 +277,7 @@ const CheckListCreate = () => {
         </WrapperButton>
       </WrapperForm>
     )
-  }, [step, formCheckList])
+  }, [step, formCheckList, modules])
 
   return (
     <Wrapper>

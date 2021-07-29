@@ -131,11 +131,6 @@ export const swapSection = selector({
           ])
         )
       }
-      // temp.splice(
-      //   idSection,
-      //   1,
-      //   temp.splice(idSection - 1, 1, temp[idSection - 1])[0]
-      // )
     }
 
     if (type == 'down') {

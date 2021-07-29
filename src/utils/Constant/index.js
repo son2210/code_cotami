@@ -103,7 +103,7 @@ const Constant = {
       label: 'manual'
     },
     {
-      value: 'hide',
+      value: 'hidden',
       label: 'hide'
     }
   ]

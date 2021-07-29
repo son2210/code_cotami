@@ -2,14 +2,12 @@ import React, { useState, useCallback, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { Wrapper, WrapperItem, Checkbox, Input, Icon } from './styled'
 import { BaseRadio } from 'atoms'
-import { Constant } from 'utils'
 import { withNumber } from 'exp-value'
 
 const CustomRadio = ({
   inline = true,
   value,
   onChange,
-  options = Constant.DEFAULT_OPTIONS,
   sectionItems,
   setSectionItems,
   addItem = false,
@@ -34,43 +32,60 @@ const CustomRadio = ({
     [sectionItems, data]
   )
 
-  const renderForm = useCallback(
-    data => {
-      return data?.map((item, index) => (
-        <WrapperItem key={index}>
-          <BaseRadio
-            key={index}
-            value={item.value}
-            label={item.label}
-            {...item.others}
-          />
-          <Checkbox
-            onClick={() => removeDataItem(index)}
-            style={{ borderWidth: 0 }}
-          >
-            <Icon name='feather-x' size={16} />
-          </Checkbox>
-        </WrapperItem>
-      ))
+  const updateDataItem = useCallback(
+    (value, id) => {
+      if (id < 0 || id >= sectionItems.length) return
+      const temp = JSON.parse(JSON.stringify(sectionItems))
+      temp[id].value = value
+      setSectionItems(temp)
+
+      const tmp2 = JSON.parse(JSON.stringify(data))
+      tmp2[id] = {
+        value: value,
+        label: value
+      }
+      setData(tmp2)
     },
-    [data]
+    [sectionItems, data]
   )
 
+  const renderForm = useCallback(
+    data => {
+      return data?.map((item, index) => {
+        if (!addItem)
+          return <BaseRadio key={index} value={item.value} label={item.label} />
+        return (
+          <WrapperItem key={index}>
+            {addItem && (
+              <Checkbox
+                onClick={() => removeDataItem(index)}
+                style={{ borderWidth: 0 }}
+              >
+                <Icon name='feather-x' size={16} />
+              </Checkbox>
+            )}
+            <Input
+              value={item.value}
+              onChange={value => updateDataItem(value, index)}
+            />
+          </WrapperItem>
+        )
+      })
+    },
+    [sectionItems, data, addItem]
+  )
   useEffect(() => {
     if (sectionItems) {
       if (withNumber('length', sectionItems) < 1) return
-      let temp = sectionItems.map(item => {
+      const temp = sectionItems.map(item => {
         return {
-          content: item.value,
+          value: item.value,
           label: item.value
         }
       })
       return setData(temp)
     }
-
-    if (!options || options.length < 0) return
-    return setData(options)
-  }, [sectionItems, options])
+  }, [sectionItems, addItem, value])
 
   return (
     <Wrapper inline={inline} value={value} onChange={onChange} {...others}>
@@ -95,13 +110,7 @@ CustomRadio.propTypes = {
   inline: PropTypes.bool,
   value: PropTypes.any,
   onChange: PropTypes.func,
-  options: PropTypes.arrayOf(
-    PropTypes.shape({
-      value: PropTypes.any.isRequired,
-      label: PropTypes.string,
-      others: PropTypes.any
-    })
-  ).isRequired,
+  options: PropTypes.any,
   addItem: PropTypes.bool,
   setSectionItems: PropTypes.func,
   sectionItems: PropTypes.arrayOf(

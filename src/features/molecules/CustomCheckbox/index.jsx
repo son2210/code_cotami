@@ -1,18 +1,16 @@
 import React, { useState, useCallback, useEffect } from 'react'
 import PropTypes from 'prop-types'
-import { BaseCheckbox } from 'atoms'
 
 import { Wrapper, WrapperItem, Checkbox, Input, Icon } from './styled'
+import { BaseCheckbox } from 'atoms'
 import { withNumber } from 'exp-value'
 
 const CustomCheckbox = ({
-  inline = false,
   value,
   onChange,
-  options,
   sectionItems,
   setSectionItems,
-  addItem = false,
+  addItem,
   ...others
 }) => {
   const [data, setData] = useState([])
@@ -28,34 +26,61 @@ const CustomCheckbox = ({
 
   const removeDataItem = useCallback(
     id => {
-      if (id < 0 || id > data.length) return
+      if (id < 0 || id > sectionItems.length) return
       setSectionItems(sectionItems.filter((_, index) => index !== id))
       setData(data.filter((_, index) => index !== id))
     },
-    [sectionItems, data]
+    [sectionItems]
+  )
+
+  const updateDataItem = useCallback(
+    (value, id) => {
+      if (id < 0 || id > sectionItems.length) return
+      const temp = JSON.parse(JSON.stringify(sectionItems))
+      temp[id].value = value
+      setSectionItems(temp)
+
+      const tmp2 = JSON.parse(JSON.stringify(data))
+      tmp2[id].content = value
+      setData(tmp2)
+    },
+    [sectionItems]
   )
 
   const renderForm = useCallback(
     data => {
-      return data.map((item, index) => (
-        <WrapperItem key={index}>
-          <BaseCheckbox content={item.content} id={item.id} {...item.others} />
-          <Checkbox
-            onClick={() => removeDataItem(index)}
-            style={{ borderWidth: 0 }}
-          >
-            <Icon name='feather-x' size={16} />
-          </Checkbox>
-        </WrapperItem>
-      ))
+      return data.map((item, index) => {
+        if (!addItem)
+          return (
+            <BaseCheckbox key={index} content={item.content} id={item.id} />
+          )
+        return (
+          <WrapperItem key={index}>
+            <WrapperItem>
+              {addItem && (
+                <Checkbox
+                  onClick={() => removeDataItem(index)}
+                  style={{ borderWidth: 0 }}
+                >
+                  <Icon name='feather-x' size={16} />
+                </Checkbox>
+              )}
+              <Input
+                value={item.content}
+                onChange={value => updateDataItem(value, index)}
+              />
+            </WrapperItem>
+          </WrapperItem>
+        )
+      })
     },
-    [data]
+    [sectionItems]
   )
 
   useEffect(() => {
-    if (withNumber('length', sectionItems) < 1) return
     if (sectionItems) {
-      let temp = sectionItems?.map((item, index) => {
+      if (withNumber('length', sectionItems) < 1) return
+      const temp = sectionItems.map((item, index) => {
         return {
           content: item.value,
           id: index
@@ -63,12 +88,10 @@ const CustomCheckbox = ({
       })
       return setData(temp)
     }
-    if (!options || options.length < 0) return null
-    return setData(options)
-  }, [sectionItems, options])
+  }, [sectionItems, addItem])
 
   return (
-    <Wrapper inline={inline} value={value} onChange={onChange} {...others}>
+    <Wrapper value={value} onChange={onChange} {...others}>
       {renderForm(data)}
 
       {addItem ? (
@@ -91,13 +114,7 @@ CustomCheckbox.propTypes = {
   inline: PropTypes.bool,
   value: PropTypes.any,
   onChange: PropTypes.func,
-  options: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.any.isRequired,
-      content: PropTypes.string,
-      others: PropTypes.any
-    })
-  ),
+  options: PropTypes.any,
   addItem: PropTypes.bool,
   setSectionItems: PropTypes.func,
   sectionItems: PropTypes.arrayOf(

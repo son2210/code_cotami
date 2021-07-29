@@ -23,6 +23,14 @@ export const Checkbox = styled.div`
   align-items: center;
   margin-right: 5px;
   margin-left: 10px;
+  ${props =>
+    props.circle &&
+    css`
+      height: 18px;
+      width: 22px;
+      padding: 0;
+      border-radius: 50%;
+    `}
 `
 export const Input = styled(BaseInput)`
   border: none !important;
