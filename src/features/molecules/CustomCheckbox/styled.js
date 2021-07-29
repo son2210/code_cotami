@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { CheckboxGroup } from 'rsuite'
 import { BaseInput, BaseIcon } from 'atoms'
 
@@ -17,6 +17,13 @@ export const Checkbox = styled.div`
   align-items: center;
   margin-right: 5px;
   margin-left: 10px;
+  ${props =>
+    props.square &&
+    css`
+      height: 18px;
+      width: 22px;
+      padding: 0;
+    `}
 `
 export const Input = styled(BaseInput)`
   border: none !important;
