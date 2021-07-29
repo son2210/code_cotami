@@ -1,7 +1,7 @@
 import { withArray, withEmpty, withNumber } from 'exp-value'
 import { SectionPreview } from 'molecules'
 import PropTypes from 'prop-types'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useState, useMemo } from 'react'
 import { useTheme } from 'styled-components'
 import {
   Body,
@@ -15,16 +15,10 @@ import {
   WrapperProgress
 } from './styled'
 
-const PreviewCheckList = ({
-  moduleName,
-  modules,
-  show,
-  onHide,
-  moduleNumber,
-  ...others
-}) => {
+const PreviewCheckList = ({ moduleName, modules, show, onHide, ...others }) => {
   const [step, setStep] = useState(1)
   const theme = useTheme()
+  const moduleNumber = useMemo(() => modules.length, [modules])
   const activeStep = useCallback(
     type => {
       if (type === 'next' && step < moduleNumber) return setStep(step + 1)
@@ -117,8 +111,7 @@ PreviewCheckList.propTypes = {
   moduleName: PropTypes.string,
   modules: PropTypes.array.isRequired,
   show: PropTypes.bool,
-  onHide: PropTypes.func,
-  moduleNumber: PropTypes.number
+  onHide: PropTypes.func
 }
 
 export default PreviewCheckList

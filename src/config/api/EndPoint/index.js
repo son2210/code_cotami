@@ -2,8 +2,9 @@ const EndPoint = {
   LOGIN_API: 'auth/login',
   REGISTER_API: 'admins/register',
   ADMIN_PROFILE: 'users/profile',
-  STAFFS:'staffs',
-  UPDATE_STAFFS:"users"
+  STAFFS: 'staffs',
+  UPDATE_STAFFS: 'users',
+  FORM_CREATE: 'forms/create'
 }
 
 export default EndPoint

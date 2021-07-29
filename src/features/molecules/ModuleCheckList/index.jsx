@@ -14,6 +14,8 @@ import {
   Wrapper,
   Input
 } from './styled'
+import { useRecoilState, useSetRecoilState } from 'recoil'
+import { addSection, globalSectionState } from 'stores/CreateForm'
 
 const ModuleCheckList = ({
   modules,
@@ -22,12 +24,15 @@ const ModuleCheckList = ({
   updateModule,
   ...others
 }) => {
+  const [sections, setSections] = useRecoilState(globalSectionState)
+  const handleAddSection = useSetRecoilState(addSection)
+
   const [showSection, setShowSection] = useState({})
   const [dataModule, setDataModule] = useState({
     id: index,
     title: withEmpty('title', modules),
     description: withEmpty('description', modules),
-    sections: withArray('sections', modules)
+    sections: sections
   })
 
   const onChangeData = useCallback(
@@ -40,7 +45,7 @@ const ModuleCheckList = ({
         ...dataModule,
         [field]: value
       }
-      updateModule(index, temp)
+      updateModule({ index, temp })
     },
     [dataModule, index]
   )
@@ -54,45 +59,9 @@ const ModuleCheckList = ({
     [showSection]
   )
 
-  const createSection = useCallback(() => {
-    const temp = dataModule.sections
-    temp.push({
-      id: temp.length,
-      title: '',
-      description: '',
-      sectionItems: [],
-      inputTypeId: 'multiple_choice'
-    })
-
-    let state = {
-      ...dataModule,
-      sections: temp
-    }
-    setDataModule(state)
-    updateModule(index, state)
-  }, [dataModule, index])
-
-  const removeSection = useCallback(
-    id => {
-      const temp = dataModule.sections
-      temp.splice(id, 1)
-      let state = {
-        ...dataModule,
-        sections: temp
-      }
-      setDataModule(state)
-      updateModule(index, state)
-    },
-    [dataModule.sections]
-  )
-
-  const updateSection = useCallback(
-    (index, orderNumber, temp) => {
-      dataModule.sections[orderNumber] = temp
-      updateModule(index, dataModule)
-    },
-    [dataModule]
-  )
+  useEffect(() => {
+    setSections(withArray('sections', modules))
+  }, [modules])
 
   const renderSection = useCallback(
     (module, index) => {
@@ -106,14 +75,15 @@ const ModuleCheckList = ({
                 description={withEmpty('description', section)}
                 sectionItems={withArray('sectionItems', section)}
                 orderNumber={key}
-                removeSection={removeSection}
-                updateSection={updateSection}
                 index={index}
                 key={`section ${key}`}
               />
             )
           })}
-          <ButtonCreateSection dashed={1} onClick={createSection}>
+          <ButtonCreateSection
+            dashed={1}
+            onClick={() => handleAddSection(index)}
+          >
             <Icon name='feather-plus' size={16} />
             <Title>Create section</Title>
           </ButtonCreateSection>
@@ -129,15 +99,15 @@ const ModuleCheckList = ({
       return (
         <Module key={index}>
           <Input
-            placeHolder='Title'
             value={withEmpty('title', module)}
             onChange={e => onChangeData('title', e)}
+            placeHolder='Module name'
             borderNone={1}
             h2
             bold
           />
           <Input
-            placeHolder='Title'
+            placeHolder='Description'
             value={withEmpty('description', module)}
             onChange={e => onChangeData('description', e)}
             borderNone={1}
@@ -170,6 +140,7 @@ const ModuleCheckList = ({
       sections: withArray('sections', modules)
     })
   }, [modules])
+
   return <Wrapper {...others}>{renderModule(dataModule, index)}</Wrapper>
 }
 

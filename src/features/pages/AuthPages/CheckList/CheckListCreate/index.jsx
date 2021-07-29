@@ -1,22 +1,25 @@
-import { BaseInputPicker } from 'atoms'
 import { EndPoint } from 'config/api'
 import { withEmpty, withNumber } from 'exp-value'
-import { useRequestManager, useAlert } from 'hooks'
+import { useAlert, useRequestManager } from 'hooks'
 import { RadioForm } from 'molecules'
 import { CreateModule } from 'organisms'
 import React, { useState } from 'react'
 import { useCallback } from 'react/cjs/react.development'
-import { Constant } from 'utils'
+import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil'
+import {
+  addModule,
+  globalModulesState,
+  removeModule,
+  updateModule
+} from 'stores/CreateForm'
 import PreviewCheckList from '../PreviewCheckList'
 import {
   Button,
   Content,
-  FlexBlock,
   Form,
   Icon,
   Input,
   Label,
-  Theme,
   ThemeBlock,
   Title,
   Wrapper,
@@ -37,9 +40,12 @@ const CheckListCreate = () => {
     unit: '',
     display: ''
   })
+  const modules = useRecoilValue(globalModulesState)
+  const resetState = useResetRecoilState(globalModulesState)
+  const handleAddModule = useSetRecoilState(addModule)
+  const handleUpdateModule = useSetRecoilState(updateModule)
+  const handleRemoveModule = useSetRecoilState(removeModule)
 
-  const [modules, setModules] = useState([])
-  const [numModule, setNumModule] = useState(0)
   const { onPostExecute } = useRequestManager()
   const { showWarning } = useAlert()
 
@@ -52,8 +58,14 @@ const CheckListCreate = () => {
     },
     [step]
   )
-  const hideModal = useCallback(() => setShowPreview(false), [showPreview])
-  const showModal = useCallback(() => setShowPreview(true), [showPreview])
+  const hideModal = useCallback(() => setShowPreview(false), [
+    showPreview,
+    modules
+  ])
+  const showModal = useCallback(() => setShowPreview(true), [
+    showPreview,
+    modules
+  ])
   const handleChangeForm = useCallback(
     (field, value) => {
       setFormCheckList(prev => ({
@@ -64,46 +76,11 @@ const CheckListCreate = () => {
     [formCheckList]
   )
 
-  const handleUpdateModule = useCallback(
-    (type, idModule, values) => {
-      let temp
-      switch (type) {
-        case 'addModule':
-          temp = modules
-          temp.push({
-            title: 'title',
-            description: 'description',
-            sections: []
-          })
-          setNumModule(numModule + 1)
-          return setModules(temp)
-        case 'removeModule':
-          if (idModule >= 0 && idModule < withNumber('length', modules)) {
-            temp = modules
-            setNumModule(numModule - 1)
-            temp.splice(idModule, 1)
-            return setModules(temp)
-          }
-          break
-        case 'updateModule':
-          temp = modules
-          temp[idModule] = values
-          setModules(temp)
-          break
-        default:
-          return null
-      }
-    },
-    [modules, numModule]
-  )
-
   const validateForm = useCallback(
     errors => {
       let listError = [...new Set(Object.values(errors))]
       if (listError && withNumber('length', listError)) {
-        listError.map(err => {
-          showWarning(err.toString())
-        })
+        showWarning(listError[0].toString())
         return
       }
 
@@ -119,21 +96,22 @@ const CheckListCreate = () => {
       templateId: modules.id,
       displayMode: formCheckList.display
     })
+    console.log(response, 'abc')
     if (response) {
-      console.log(response, 'abc')
+      resetState()
     }
   }, [modules, formCheckList])
 
-  const _renderTheme = useCallback(() => {
-    return (
-      <FlexBlock>
-        <Theme />
-        <Theme />
-        <Theme />
-        <Theme />
-      </FlexBlock>
-    )
-  }, [])
+  // const _renderTheme = useCallback(() => {
+  //   return (
+  //     <FlexBlock>
+  //       <Theme />
+  //       <Theme />
+  //       <Theme />
+  //       <Theme />
+  //     </FlexBlock>
+  //   )
+  // }, [])
 
   const _renderModalPreviewCheckList = useCallback(() => {
     return (
@@ -142,10 +120,9 @@ const CheckListCreate = () => {
         modules={modules}
         show={showPreview}
         onHide={hideModal}
-        moduleNumber={numModule}
       />
     )
-  }, [showPreview, modules, hideModal, numModule])
+  }, [showPreview, modules, hideModal])
 
   const _renderModule = useCallback(
     modules => {
@@ -153,21 +130,19 @@ const CheckListCreate = () => {
         <WrapperContent>
           <CreateModule
             data={modules}
-            setData={setModules}
-            onRemoveModule={id => handleUpdateModule('removeModule', id)}
-            onCreateModule={() => handleUpdateModule('addModule')}
-            updateModule={(id, value) =>
-              handleUpdateModule('updateModule', id, value)
-            }
+            onRemoveModule={id => handleRemoveModule(id)}
+            onCreateModule={handleAddModule}
+            updateModule={handleUpdateModule}
           />
         </WrapperContent>
       )
     },
-    [modules, numModule]
+    [modules]
   )
 
   const _renderContent = useCallback(() => {
-    if (step == 1)
+    if (step == 1) {
+      resetState()
       return (
         <WrapperContent>
           <Title H2 bold>
@@ -175,17 +150,19 @@ const CheckListCreate = () => {
           </Title>
           <ThemeBlock>
             <Title H3>Recents</Title>
-            {_renderTheme()}
+            {/* {_renderTheme()} */}
           </ThemeBlock>
 
           <ThemeBlock>
             <Title H3>All theme</Title>
-            {_renderTheme()}
+            {/* {_renderTheme()} */}
           </ThemeBlock>
         </WrapperContent>
       )
+    }
+
     return _renderModule(modules)
-  }, [step, modules, numModule])
+  }, [step, modules])
 
   const _renderForm = useCallback(() => {
     if (step == 1)
@@ -217,7 +194,7 @@ const CheckListCreate = () => {
               onChange={value => handleChangeForm('description', value)}
             />
 
-            <WrapperBlock>
+            {/* <WrapperBlock>
               <Label bold> Unit </Label>
               <BaseInputPicker
                 data={Constant.unit}
@@ -227,7 +204,7 @@ const CheckListCreate = () => {
                 onChange={value => handleChangeForm('unit', value)}
                 name='unit'
               />
-            </WrapperBlock>
+            </WrapperBlock> */}
             <WrapperBlock>
               <Label bold> Display </Label>
               <RadioForm
@@ -269,10 +246,10 @@ const CheckListCreate = () => {
           </Content>
         </WrapperItem>
 
-        <WrapperItem>
+        {/* <WrapperItem>
           <Title>Unit</Title>
           <Content>{withEmpty('unit', formCheckList) || 'all'}</Content>
-        </WrapperItem>
+        </WrapperItem> */}
 
         <WrapperItem>
           <Title>Display</Title>

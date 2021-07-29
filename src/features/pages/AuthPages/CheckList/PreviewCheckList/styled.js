@@ -45,6 +45,9 @@ export const WrapperFooter = styled.div`
 export const Icon = styled(BaseIcon)``
 export const WrapperModal = styled(Modal)`
   width: 480px;
+  .rs-modal-header {
+    padding: 0;
+  }
   .rs-modal-content {
     padding: 10px;
     border-radius: 20px;
