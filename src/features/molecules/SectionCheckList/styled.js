@@ -7,8 +7,8 @@ import {
   BaseIcon
 } from 'atoms'
 import { BaseCheckPicker, BaseInputPicker } from 'atoms'
-import CheckBoxGroup from '../CheckBoxGroup'
-import RadioForm from '../RadioForm'
+import CustomCheckbox from '../CustomCheckbox'
+import CustomRadio from '../CustomRadio'
 
 export const Wrapper = styled.div`
   border-top: 2px solid ${props => props.theme.colors.secondary[6]};
@@ -39,6 +39,9 @@ export const Drag = styled(BaseUploadFile)`
   }
   & .rs-uploader-trigger {
     height: 150px;
+  }
+  .rs-uploader-trigger-disabled {
+    opacity: 1;
   }
 `
 export const DragIcon = styled(BaseIcon)`
@@ -88,7 +91,7 @@ export const InputPicker = styled(BaseInputPicker)`
     }
   }
 `
-export const CheckBox = styled(CheckBoxGroup)`
+export const CheckBox = styled(CustomCheckbox)`
   margin-left: -10px;
 `
 export const Input = styled(BaseInput)`
@@ -99,7 +102,7 @@ export const Input = styled(BaseInput)`
   ${props => props.h2 && `font-size: 18px !important;`}
   ${props => props.h3 && `font-size: 14px !important;`}
 `
-export const Radio = styled(RadioForm)`
+export const Radio = styled(CustomRadio)`
   display: block !important;
   margin-left: -10px;
   & .rs-radio {
@@ -109,5 +112,24 @@ export const Radio = styled(RadioForm)`
 export const Block = styled.div`
   margin: 5px 0;
 `
-export const IconRemoveSection = styled(BaseButton)``
-export const Icon = styled(BaseIcon)``
+export const Button = styled(BaseButton)`
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  margin: 0;
+  border-radius: 5px;
+`
+export const Icon = styled(BaseIcon)`
+  &svg:hover {
+    background: ${props => props.theme.colors.secondary[3]};
+  }
+`
+export const WrapperRowButton = styled.div`
+  display: flex;
+  background: ${props => props.theme.colors.secondary[6]};
+  border-radius: 5px;
+  & > button:first-child {
+    border-radius: 5px 0 0 5px !important;
+    border-right: 1px solid ${props => props.theme.colors.secondary[3]};
+  }
+`

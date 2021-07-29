@@ -13,22 +13,25 @@ export const Wrapper = styled.div`
   display: flex;
   justify-content: space-between;
   width: 100%;
-  @media screen and (max-width: 480px) {
+  @media screen and (max-width: 1200px) {
     display: block;
   }
 `
 export const WrapperContent = styled.div`
   width: 60%;
   padding: 0 20px;
-  @media screen and (max-width: 480px) {
+  min-width: 560px;
+  @media screen and (max-width: 1200px) {
     width: 100%;
+    margin: 40px auto;
   }
 `
 export const WrapperForm = styled.div`
   width: 35%;
   padding: 0 20px;
-  @media screen and (max-width: 480px) {
+  @media screen and (max-width: 1200px) {
     width: 100%;
+    margin: 40px auto;
   }
 `
 export const Theme = styled(BaseThemeChecklist)``

@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useState, useEffect } from 'react'
 import { Constant } from 'utils'
 import {
   Block,
@@ -13,8 +13,12 @@ import {
   Title,
   Wrapper,
   WrapperContent,
-  WrapperTop
+  WrapperTop,
+  WrapperRowButton,
+  Button
 } from './styled'
+import { useSetRecoilState } from 'recoil'
+import { swapSection, updateSection, removeSection } from 'stores/CreateForm'
 
 const SectionCheckList = ({
   orderNumber,
@@ -22,19 +26,20 @@ const SectionCheckList = ({
   description,
   sectionItems,
   type,
-  removeSection,
-  updateSection,
   index,
   preview = false,
   ...others
 }) => {
-  // vi tri section trong modules
+  const handleSwapSection = useSetRecoilState(swapSection)
+  const handleUpdateSection = useSetRecoilState(updateSection)
+  const handleRemoveSection = useSetRecoilState(removeSection)
+
   const [dataSection, setDataSection] = useState({
-    id: orderNumber,
-    title: sectionTitle,
-    description: description,
-    sectionItems: sectionItems || [],
-    inputTypeId: type
+    id: null,
+    title: '',
+    description: '',
+    sectionItems: [],
+    inputTypeId: ''
   })
 
   const onChangeData = useCallback(
@@ -44,14 +49,14 @@ const SectionCheckList = ({
         [field]: value
       }))
       const temp = { ...dataSection, [field]: value }
-      updateSection(index, orderNumber, temp)
+      handleUpdateSection({ index, orderNumber, temp })
     },
     [dataSection]
   )
 
-  const handleRemoveSection = useCallback(() => {
-    removeSection(orderNumber)
-  }, [dataSection])
+  const moveSection = useCallback(type => {
+    handleSwapSection({ type, index, orderNumber })
+  }, [])
 
   const _renderSectionItem = useCallback(
     type => {
@@ -75,29 +80,40 @@ const SectionCheckList = ({
           )
         case Constant.sectionType[2].value:
           return (
-            <Drag draggable onChange={e => console.log(e)} autoUpload={false}>
-              <button>
-                <DragIcon name='feather-image' size={24} />
-              </button>
+            <Drag draggable autoUpload={false} disabled>
+              <Button>
+                <DragIcon name='feather-image' size={18} />
+              </Button>
             </Drag>
           )
         case Constant.sectionType[3].value:
           return (
             <Input
-              place='Type description'
+              placeHolder='Type description'
               componentClass='textarea'
               row={3}
               style={{ minWidth: 'unset' }}
+              disabled
             />
           )
         case Constant.sectionType[4].value:
-          return <Input type='number' />
+          return <Input type='number' disabled placeHolder='number' />
         default:
           return null
       }
     },
     [dataSection]
   )
+
+  useEffect(() => {
+    setDataSection({
+      id: orderNumber,
+      title: sectionTitle,
+      description: description,
+      sectionItems: sectionItems || [],
+      inputTypeId: type
+    })
+  }, [orderNumber, sectionTitle, sectionItems, description, type])
 
   return (
     <Wrapper {...others}>
@@ -110,7 +126,20 @@ const SectionCheckList = ({
             value={dataSection.inputTypeId}
             placeholder='Unit'
           />
-          <Icon name='feather-x' size={24} onClick={handleRemoveSection} />
+
+          <WrapperRowButton>
+            <Button onClick={() => moveSection('up')}>
+              <Icon name='feather-arrow-up' size={18} />
+            </Button>
+
+            <Button onClick={() => moveSection('down')}>
+              <Icon name='feather-arrow-down' size={18} />
+            </Button>
+          </WrapperRowButton>
+
+          <Button onClick={() => handleRemoveSection({ index, orderNumber })}>
+            <Icon name='feather-x' size={18} />
+          </Button>
         </WrapperTop>
       ) : null}
       <WrapperContent>
@@ -157,8 +186,6 @@ SectionCheckList.propTypes = {
   type: PropTypes.string,
   sectionTitle: PropTypes.string,
   preview: PropTypes.bool,
-  removeSection: PropTypes.func,
-  updateSection: PropTypes.func,
   index: PropTypes.number
 }
 

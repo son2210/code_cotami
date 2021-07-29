@@ -1,20 +1,20 @@
+import { withNumber } from 'exp-value'
+import PropTypes from 'prop-types'
 import React, { useCallback } from 'react'
 import {
-  Wrapper,
-  Title,
-  Icon,
-  WrapperModule,
+  Button,
   HeaderModule,
+  Icon,
   ModuleCount,
-  Button
+  Title,
+  Wrapper,
+  WrapperModule
 } from './styled'
-import PropTypes from 'prop-types'
-import { withNumber } from 'exp-value'
+
 const CreateModule = ({
   data,
   onCreateModule,
   onRemoveModule,
-  numModule,
   updateModule,
   ...others
 }) => {
@@ -48,7 +48,7 @@ const CreateModule = ({
         </>
       )
     },
-    [data, onCreateModule, numModule]
+    [data, onCreateModule]
   )
 
   return <Wrapper {...others}>{_renderModule(data)}</Wrapper>
@@ -58,7 +58,6 @@ CreateModule.propTypes = {
   setUpdate: PropTypes.func,
   onCreateModule: PropTypes.func,
   onRemoveModule: PropTypes.func,
-  numModule: PropTypes.number,
   updateModule: PropTypes.func
 }
 
