@@ -39,7 +39,7 @@ const CheckListCreate = () => {
     title: '',
     description: '',
     unit: '',
-    display: ''
+    displayMode: ''
   })
   const modules = useRecoilValue(globalModulesState)
   const resetState = useResetRecoilState(globalModulesState)
@@ -95,8 +95,7 @@ const CheckListCreate = () => {
     async function postData() {
       const response = await onPostExecute(EndPoint.FORM_CREATE, {
         ...formCheckList,
-        modules: modules,
-        displayMode: formCheckList.display
+        modules: modules
       })
       if (response) {
         showSuccess('Success create form')
@@ -218,9 +217,9 @@ const CheckListCreate = () => {
             <WrapperBlock>
               <Label bold> Display </Label>
               <RadioForm
-                name='display'
-                value={withEmpty('display', formCheckList)}
-                onChange={value => handleChangeForm('display', value)}
+                name='displayMode'
+                value={withEmpty('displayMode', formCheckList)}
+                onChange={value => handleChangeForm('displayMode', value)}
               />
             </WrapperBlock>
 
@@ -248,12 +247,7 @@ const CheckListCreate = () => {
 
         <WrapperItem>
           <Title>Description</Title>
-          <Content>
-            {withEmpty('description', formCheckList) ||
-              `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum
-            dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit
-            amet, consectetur adipiscing elit.`}
-          </Content>
+          <Content>{withEmpty('description', formCheckList)}</Content>
         </WrapperItem>
 
         {/* <WrapperItem>
@@ -263,7 +257,7 @@ const CheckListCreate = () => {
 
         <WrapperItem>
           <Title>Display</Title>
-          <Content>{withEmpty('display', formCheckList) || 'Auto'}</Content>
+          <Content>{withEmpty('displayMode', formCheckList)}</Content>
         </WrapperItem>
 
         <WrapperButton>

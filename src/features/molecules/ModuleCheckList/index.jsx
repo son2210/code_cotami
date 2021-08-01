@@ -122,7 +122,11 @@ const ModuleCheckList = ({
           <ContainerSection>
             <SectionCount onClick={() => toggleSection(index)}>
               {`${withNumber('sections.length', module)} section`}
-              <Icon name='feather-chevron-down' size={16} />
+              {showSection[index] ? (
+                <Icon name='feather-chevron-down' size={16} />
+              ) : (
+                <Icon name='feather-chevron-up' size={16} />
+              )}
             </SectionCount>
 
             {renderSection(module, index)}
