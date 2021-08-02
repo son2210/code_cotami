@@ -35,12 +35,7 @@ const CheckList = () => {
         }
       })
       if (response && response.length) {
-        setData(
-          response.map(d => {
-            console.log(d)
-            return d
-          })
-        )
+        setData(response)
       }
     }
     execute()
