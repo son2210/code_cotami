@@ -21,10 +21,17 @@ const Constant = {
     COLOR_VIA_VALUE: 'COLOR_VIA_VALUE',
     DISPLAY: 'DISPLAY'
   },
-
+  Status: [
+    { label: 'Active', value: 'active' },
+    { label: 'Inactive', value: 'in_active' }
+  ],
+  Role: [
+    { label: 'Admin', value: 'ADMIN' },
+    { label: 'Staff', value: 'STAFF' }
+  ],
   CellColor: {
-    ACTIVE: 'ACTIVE',
-    INACTIVE: 'INACTIVE'
+    ACTIVE: 'active',
+    INACTIVE: 'in_active'
   },
   sectionShare: [
     {

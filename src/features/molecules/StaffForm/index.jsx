@@ -9,11 +9,14 @@ import {
   ToggleWrapper,
   ButtonGroup
 } from './styled'
-import { BaseCheckPicker, BaseInputPicker, BaseButton } from 'atoms'
+import { BaseInputPicker, BaseButton, BaseDatePicker } from 'atoms'
 import { InputBlock } from 'molecules/ProfileChange'
-import validateModel from './validateModel'
+import { validateModelUpdate, validateModelCreate } from './validateModel'
+import { Constant } from 'utils'
 
 const StaffForm = ({
+  isUpdate,
+  units,
   handleInput,
   data,
   error,
@@ -21,19 +24,9 @@ const StaffForm = ({
   onClose,
   formOthers
 }) => {
-  const dataSelect = [
-    {
-      value: '1',
-      label: '四川'
-    },
-    {
-      value: '2',
-      label: '四川'
-    }
-  ]
   return (
     <ContainerWrapper
-      model={validateModel}
+      model={isUpdate ? validateModelUpdate : validateModelCreate}
       onSubmit={onSubmit}
       formValue={data}
       {...formOthers}
@@ -63,7 +56,7 @@ const StaffForm = ({
             value={data['email']}
             helpText={error['email']}
             isError={!error['email'] ? false : true}
-            disabled={true}
+            disabled={isUpdate ? true : false}
           />
           <InputBlock
             title='Phone'
@@ -77,22 +70,46 @@ const StaffForm = ({
         <ColWrapper colspan={9}>
           <BlockFieldWrapper column={'column'}>
             <TitleWrapper>Unit</TitleWrapper>
-            <BaseCheckPicker data={dataSelect} placeholder='Unit' />
+            <BaseInputPicker data={units} placeholder='Unit' />
           </BlockFieldWrapper>
           <BlockFieldWrapper column={'column'}>
             <TitleWrapper>Role</TitleWrapper>
-            <BaseInputPicker data={dataSelect} placeholder='Status' />
+            <BaseInputPicker data={Constant.Role} placeholder='Status' />
+          </BlockFieldWrapper>
+          <BlockFieldWrapper column={'column'}>
+            <TitleWrapper>Date of Birth</TitleWrapper>
+            <BaseDatePicker
+              placeholder='Date of Birth'
+              onChange={value => handleInput('dateOfBirth', value)}
+              value={data['dateOfBirth']}
+              helpText={error['dateOfBirth']}
+              isError={!error['dateOfBirth'] ? false : true}
+              style={{ width: '100%' }}
+            />
           </BlockFieldWrapper>
           <BlockFieldWrapper column={'column'}>
             <TitleWrapper>Status</TitleWrapper>
-            <ToggleWrapper />
+            <ToggleWrapper
+              defaultChecked={!isUpdate && true}
+              checked={
+                data['status'] === Constant.CellColor.ACTIVE ? true : false
+              }
+              onChange={checked => {
+                handleInput(
+                  'status',
+                  checked
+                    ? Constant.CellColor.ACTIVE
+                    : Constant.CellColor.INACTIVE
+                )
+              }}
+            />
           </BlockFieldWrapper>
         </ColWrapper>
       </FlexGridWrapper>
 
       <ButtonGroup>
         <BaseButton bold uppercase primary type='submit'>
-          Update
+          {isUpdate ? ' Update' : 'Create'}
         </BaseButton>
         <BaseButton
           style={{ marginRight: 20 }}
@@ -113,6 +130,8 @@ StaffForm.propTypes = {
   formOthers: PropTypes.object,
   handleInput: PropTypes.func,
   onSubmit: PropTypes.func,
+  isUpdate: PropTypes.bool,
+  units: PropTypes.array,
   onClose: PropTypes.func
 }
 

@@ -3,12 +3,21 @@ import { ContainerWrapper, ColWrapper, FormWrapper } from '../styled'
 import PropTypes from 'prop-types'
 import { AvatarBlock, InputBlock } from 'molecules/ProfileChange'
 import { useHistory } from 'react-router-dom'
-import { BaseButton, BaseIcon } from 'atoms'
+import { BaseButton, BaseIcon, BaseDatePicker, BaseTitle } from 'atoms'
 import Routers from 'utils/Routers'
-import { modifyPropsOfState } from 'utils/Helpers'
+import { modifyPropsOfState, trimStringFieldOfObject } from 'utils/Helpers'
 import validateModel from './validateModel'
+import { EndPoint } from 'config/api'
+import { useRecoilState } from 'recoil'
+import { globalUserState } from 'stores/profile/atom'
+import { useToken, useRequestManager, useAlert } from 'hooks'
+import { Constant } from 'utils'
 
 const UpdateProfile = ({ ...others }) => {
+  const [userState, setUserState] = useRecoilState(globalUserState)
+  const { clearToken } = useToken()
+  const { onPatchExecute } = useRequestManager()
+  const { showSuccess } = useAlert()
   const history = useHistory()
   const goToPage = useCallback(route => history.push(route), [])
   const [data, setData] = useState({
@@ -24,12 +33,21 @@ const UpdateProfile = ({ ...others }) => {
     phone: ''
   })
 
-  const handleUpdateProfile = () => {
-    console.log('update', data)
-    //logout heare
-    // setUserState({})
-    // await clearToken()
-    // goToPage(Routers.LOGIN)
+  const handleUpdateProfile = async () => {
+    const submitData = {
+      ...trimStringFieldOfObject(data),
+      status: Constant.Status[0]
+    }
+    const response = await onPatchExecute(
+      `${EndPoint.UPDATE_STAFFS}/${userState.sub}`,
+      submitData
+    )
+    if (response) {
+      setUserState({})
+      await clearToken()
+      showSuccess('Update Successfully')
+      goToPage(Routers.LOGIN)
+    }
   }
 
   const handleInput = useCallback(
@@ -75,7 +93,17 @@ const UpdateProfile = ({ ...others }) => {
             helpText={error['firstName']}
             isError={!error['firstName'] ? false : true}
           />
+          <BaseTitle style={{ marginTop: 10 }}> Date of Birth</BaseTitle>
+          <BaseDatePicker
+            placeholder='Date of Birth'
+            onChange={value => handleInput('dateOfBirth', value)}
+            value={data['dateOfBirth']}
+            helpText={error['dateOfBirth']}
+            isError={!error['dateOfBirth'] ? false : true}
+            style={{ marginTop: 10, marginBottom: 20, width: '100%' }}
+          />
           <InputBlock
+            disabled={true}
             title='Email'
             placeholder='Email'
             RightSide={{
@@ -107,12 +135,7 @@ const UpdateProfile = ({ ...others }) => {
               </BaseButton>
             </ColWrapper>
             <ColWrapper colspan={12}>
-              <BaseButton
-                type='submit'
-                primary
-                bold
-                onClick={handleUpdateProfile}
-              >
+              <BaseButton type='submit' primary bold>
                 Update profile
               </BaseButton>
             </ColWrapper>

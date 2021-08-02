@@ -3,7 +3,7 @@ import React, { useState, useCallback, useEffect } from 'react'
 import { Wrapper } from './styled'
 import { TableAction, FilterBar } from 'molecules'
 import { BaseButton, BaseCheckPicker, BaseInput, BaseInputPicker } from 'atoms'
-import { usePaginate, useRequestManager, useAlert } from 'hooks'
+import { usePaginate, useRequestManager, useAlert, useUnits } from 'hooks'
 import { useTheme } from 'styled-components'
 import { Constant } from 'utils'
 import { modifyPropsOfState, trimStringFieldOfObject } from 'utils/Helpers'
@@ -11,6 +11,8 @@ import { StaffModal } from 'organisms'
 import { EndPoint } from 'config/api'
 import { withNamespaces } from 'react-i18next'
 import { PropTypes } from 'prop-types'
+import { globalUnitsState } from 'stores/Units/atom'
+import { useRecoilValue } from 'recoil'
 
 const Staffs = ({ t }) => {
   const {
@@ -22,19 +24,27 @@ const Staffs = ({ t }) => {
     onChangeLength
   } = usePaginate()
   const theme = useTheme()
+  useUnits()
+  const units = useRecoilValue(globalUnitsState)
   const { showSuccess } = useAlert()
-  const { onGetExecute, onPatchExecute } = useRequestManager()
-  const [profileModal, setProfileModal] = useState(false)
+  const { onGetExecute, onPatchExecute, onPostExecute } = useRequestManager()
+  const [profileModal, setProfileModal] = useState({
+    toggle: false,
+    isUpdate: false
+  })
   const [selectedRow, setSelectedRow] = useState({
     email: '',
     firstName: '',
     lastName: '',
-    phone: ''
+    phone: '',
+    dateOfBirth: ''
   })
   const [displayStaff, setDisplayStaff] = useState({
     email: '',
     firstName: '',
-    lastName: ''
+    lastName: '',
+    phone: '',
+    dateOfBirth: ''
   })
   const [searchTerm, setSearchTerm] = useState({
     name: '',
@@ -77,33 +87,92 @@ const Staffs = ({ t }) => {
   const toggleModal = useCallback((e, rowData) => {
     setSelectedRow(rowData)
     setDisplayStaff(rowData)
-    setProfileModal(true)
+    setProfileModal({
+      toggle: true,
+      isUpdate: true
+    })
   }, [])
 
-  const updateProfile = useCallback(async () => {
+  const updateProfile = useCallback(
+    async (selectedRow, disableLoading = false) => {
+      const submitData = trimStringFieldOfObject(selectedRow)
+      const response = await onPatchExecute(
+        `${EndPoint.UPDATE_STAFFS}/${selectedRow.id}`,
+        submitData,
+        disableLoading
+      )
+      if (response) {
+        getData(activePage, displayLength, disableLoading)
+        showSuccess('update success')
+      }
+      setTimeout(() => {
+        setProfileModal(false)
+      }, 500)
+    },
+    []
+  )
+
+  // const createProfile = useCallback(async () => {
+  //   console.log('create')
+  // }, [])
+
+  const createProfile = async (selectedRow, disableLoading = false) => {
     const submitData = trimStringFieldOfObject(selectedRow)
-    const response = await onPatchExecute(
-      `${EndPoint.UPDATE_STAFFS}/${selectedRow.id}`,
-      submitData
+    const response = await onPostExecute(
+      `${EndPoint.REGISTER_API}`,
+      submitData,
+      disableLoading
     )
     if (response) {
-      getData(activePage, displayLength)
+      getData(activePage, displayLength, disableLoading)
       showSuccess('update success')
     }
     setTimeout(() => {
       setProfileModal(false)
     }, 500)
-  }, [selectedRow])
+  }
 
-  const getData = async (offset, limit) => {
-    const response = await onGetExecute(EndPoint.STAFFS, {
-      params: { offset, limit }
-    })
+  const toggleStatus = useCallback(async (value, e, row) => {
+    const staffData = {
+      ...row,
+      status: value ? Constant.CellColor.ACTIVE : Constant.CellColor.INACTIVE
+    }
+    await updateProfile(staffData, true)
+  }, [])
+
+  const getData = async (offset, limit, disableLoading = false) => {
+    const response = await onGetExecute(
+      EndPoint.STAFFS,
+      {
+        params: { offset, limit }
+      },
+      disableLoading
+    )
     if (response) {
       setData(response)
     }
     setLoading(false)
   }
+
+  const onCloseModal = useCallback(() => {
+    setProfileModal(prev => {
+      return { ...prev, toggle: false }
+    })
+    setSelectedRow({
+      email: '',
+      firstName: '',
+      lastName: '',
+      phone: '',
+      dateOfBirth: ''
+    })
+    setDisplayStaff({
+      email: '',
+      firstName: '',
+      lastName: '',
+      phone: '',
+      dateOfBirth: ''
+    })
+  }, [])
 
   useEffect(() => {
     getData(activePage, displayLength)
@@ -137,7 +206,7 @@ const Staffs = ({ t }) => {
       }
     },
     {
-      width: 100,
+      width: 150,
       align: 'center',
       header: {
         label: 'First Name'
@@ -155,7 +224,7 @@ const Staffs = ({ t }) => {
       }
     },
     {
-      width: 100,
+      width: 150,
       align: 'left',
       header: {
         label: 'Last Name'
@@ -190,22 +259,40 @@ const Staffs = ({ t }) => {
       }
     },
     {
-      width: 80,
+      width: 100,
       align: 'left',
       header: {
-        label: 'Role'
+        label: 'Birthday'
       },
       cell: {
-        type: Constant.CellType.ACTION_CELL,
-        id: 'role',
+        type: Constant.CellType.DATE_TIME,
+        id: 'dateOfBirth',
         style: {
           color: theme.colors.tertiary
         },
         others: {
-          handleOnClick: toggleModal
+          handleOnClick: toggleModal,
+          format: 'YYYY/MM/DD'
         }
       }
     },
+    // {
+    //   width: 80,
+    //   align: 'left',
+    //   header: {
+    //     label: 'Role'
+    //   },
+    //   cell: {
+    //     type: Constant.CellType.ACTION_CELL,
+    //     id: 'role',
+    //     style: {
+    //       color: theme.colors.tertiary
+    //     },
+    //     others: {
+    //       handleOnClick: toggleModal
+    //     }
+    //   }
+    // },
     {
       width: 80,
       align: 'left',
@@ -225,33 +312,30 @@ const Staffs = ({ t }) => {
       width: 80,
       align: 'left',
       header: {
-        label: 'Active'
+        label: 'Toggle'
       },
       cell: {
         id: 'status',
-        type: Constant.CellType.TOGGLE
-        // others: {
-        //   handleOnChange: handleOnChange
-        // }
+        type: Constant.CellType.TOGGLE,
+        others: {
+          handleOnChange: toggleStatus
+        }
       }
-    }
-  ]
-
-  //mock
-  const pickerData = [
-    {
-      value: '1',
-      label: '四川'
-    },
-    {
-      value: '2',
-      label: '四川'
     }
   ]
 
   return (
     <Wrapper>
-      <FilterBar hasButton={false} style={{ marginBottom: 20, width: '70%' }}>
+      <FilterBar
+        hasButton={true}
+        style={{ marginBottom: 20, width: '70%' }}
+        onClick={() =>
+          setProfileModal({
+            toggle: true,
+            isUpdate: false
+          })
+        }
+      >
         <BaseInput
           style={{ maxWidth: 170 }}
           placeholder='Keyword...'
@@ -260,12 +344,12 @@ const Staffs = ({ t }) => {
           value={searchTerm['email']}
         />
         <BaseCheckPicker
-          data={pickerData}
+          data={units}
           style={{ marginLeft: 10 }}
           placeholder='Unit'
         />
         <BaseInputPicker
-          data={pickerData}
+          data={Constant.Status}
           style={{ marginLeft: 10, maxWidth: 170 }}
           placeholder='Status'
           cleanable={false}
@@ -286,7 +370,7 @@ const Staffs = ({ t }) => {
         id='table3'
         loading={loading}
         height={600}
-        width={800}
+        width={900}
         data={data}
         columns={columns}
         paginateProps={{
@@ -300,16 +384,20 @@ const Staffs = ({ t }) => {
 
       <StaffModal
         size='xs'
-        show={profileModal}
+        isUpdate={profileModal.isUpdate}
+        show={profileModal.toggle}
+        units={units}
         staffData={{ handleInput, data: selectedRow, error }}
         viewOnlyData={{ dataDisplay: displayStaff }}
-        onHide={() => setProfileModal(false)}
+        onHide={onCloseModal}
         footerHandle={{
-          onClickBtn1: () => setProfileModal(false),
-          onClickBtn2: updateProfile
+          onClickBtn1: onCloseModal,
+          onClickBtn2: profileModal.isUpdate
+            ? () => updateProfile(selectedRow)
+            : () => createProfile(selectedRow)
         }}
         formOthers={{
-          formTitle: 'update profile',
+          formTitle: 'staff profile',
           onCheck: validateData
         }}
       />
