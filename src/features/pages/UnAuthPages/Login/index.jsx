@@ -19,7 +19,7 @@ const Login = () => {
 
   const [data, setData] = useState({
     enterpriseId: '', //18
-    loginId: '', //aaa34i73
+    loginId: '', //admin
     password: '' //123123
   })
   const [error, setError] = useState({
@@ -84,7 +84,7 @@ const Login = () => {
           isError={!error['enterpriseId'] ? false : true}
         />
         <InputGroup
-          placeholder='userId'
+          placeholder='Login id'
           LeftSide={<BaseImage source={IMAGES.LOGO.USER} />}
           name='loginId'
           onChange={value => handleInput('loginId', value)}
