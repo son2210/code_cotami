@@ -22,12 +22,12 @@ export const CenterWrapper = styled.div`
 
 export const HeaderWrapper = styled(Header)`
   margin: 0 -10px;
-  padding: 0 10px;
+  padding: 20px 10px 0px 10px;
   position: sticky;
   top: 0;
   left: 0;
   right: 0;
-  z-index: 1000;
+  z-index: 6;
   background: ${props => props.theme.colors.white};
   display: flex;
 `

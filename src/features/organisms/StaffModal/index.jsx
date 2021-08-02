@@ -1,10 +1,12 @@
 import React from 'react'
 import { ModalWrapper, EmailWrapper } from './styled'
 import PropTypes from 'prop-types'
-import { BaseTitle} from 'atoms'
+import { BaseTitle } from 'atoms'
 import { ProfileBlock, StaffForm } from 'molecules'
 
 const StaffModal = ({
+  isUpdate = true,
+  units,
   viewOnlyData,
   footerHandle,
   staffData,
@@ -18,17 +20,21 @@ const StaffModal = ({
     <ModalWrapper
       header={
         <BaseTitle H5 bold>
-          Profile Detail
+          {isUpdate ? 'Profile Detail' : ' Create staff'}
         </BaseTitle>
       }
       body={
         <>
-          <ProfileBlock
-            canNavigate={false}
-            name={dataDisplay.firstName}
-            subText={<EmailWrapper>{dataDisplay.email}</EmailWrapper>}
-          />
+          {isUpdate ? (
+            <ProfileBlock
+              canNavigate={false}
+              name={dataDisplay.firstName}
+              subText={<EmailWrapper>{dataDisplay.email}</EmailWrapper>}
+            />
+          ) : null}
           <StaffForm
+            isUpdate={isUpdate}
+            units={units}
             handleInput={handleInput}
             data={data}
             error={error}
@@ -48,6 +54,8 @@ StaffModal.propTypes = {
   staffData: PropTypes.object,
   viewOnlyData: PropTypes.object,
   formOthers: PropTypes.object,
+  isUpdate: PropTypes.bool,
+  units: PropTypes.array,
   footerHandle: PropTypes.object
 }
 

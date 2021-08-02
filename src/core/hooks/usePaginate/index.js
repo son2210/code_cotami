@@ -5,12 +5,12 @@ const usePaginate = () => {
   const [displayLength, setDisplayLength] = useState(10)
   const [total, setTotal] = useState(0)
   const onChangePage = useCallback((page, setLoading) => {
-    setLoading(true)
+    setLoading && setLoading(true)
     setActivePage(page)
   }, [])
 
   const onChangeLength = useCallback((length, setLoading) => {
-    setLoading(true)
+    setLoading && setLoading(true)
     setDisplayLength(length)
   }, [])
 

@@ -33,6 +33,9 @@ const Login = () => {
     if (response) {
       await saveToken(response.accessToken)
       goToPage(Routers.NORMAL_ADMIN.MENU[0].URL)
+    } else {
+      //  prevent  block resubmit
+      setData({ ...data })
     }
   }, [data])
 

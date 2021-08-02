@@ -3,7 +3,7 @@ import { Constant } from 'utils'
 const setColorViaValue = (value, theme) => {
   const { ACTIVE, INACTIVE } = Constant.CellColor
 
-  switch (value.toUpperCase()) {
+  switch (value.toLowerCase()) {
     case ACTIVE:
       return theme?.colors?.status[1]
     case INACTIVE:

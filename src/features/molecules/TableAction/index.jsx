@@ -53,7 +53,7 @@ const TableAction = ({
           <CustomizeColorCell
             onClick={e => others.handleOnClick(e, rowData)}
             color={setColorViaValue(
-              rowData[id] ? rowData[id] : 'INACTIVE',
+              rowData[id] ? rowData[id] : Constant.CellColor.INACTIVE,
               theme
             )}
           >
@@ -71,8 +71,9 @@ const TableAction = ({
       case TOGGLE:
         return (
           <ToggleCellWrapper
+            checked={rowData[id] === Constant.CellColor.ACTIVE ? true : false}
             onChange={(checked, e) => {
-              others.handleOnChange(checked, e, rowData[id])
+              others.handleOnChange(checked, e, rowData)
             }}
             {...others}
           />

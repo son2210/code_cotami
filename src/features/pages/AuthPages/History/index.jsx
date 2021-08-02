@@ -7,6 +7,8 @@ import { useTheme } from 'styled-components'
 import moment from 'moment'
 import { EndPoint } from 'config/api'
 import { Constant } from 'utils'
+import { useRecoilValue } from 'recoil'
+import { globalUnitsState } from 'stores/Units/atom'
 
 const History = () => {
   const {
@@ -20,14 +22,15 @@ const History = () => {
   const theme = useTheme()
   const [data, setData] = useState([])
   const [searchData, setSearchData] = useState({
-    enterpriseUnitId: 14,
+    enterpriseUnitId: null,
     dateRange: [
-      moment(Date.now()).format('YYYY-MM-DD'),
-      moment(Date.now()).add(1, 'days').format('YYYY-MM-DD')
+      moment(Date.now()).subtract(30, 'days').format('YYYY-MM-DD'),
+      moment(Date.now()).format('YYYY-MM-DD')
     ]
   })
   const { onGetExecute } = useRequestManager()
-  const units = useUnits(activePage, displayLength)
+  useUnits()
+  const units = useRecoilValue(globalUnitsState)
 
   const getData = useCallback(
     async (offset, limit, dateRange, enterpriseUnitId) => {
@@ -54,10 +57,10 @@ const History = () => {
   //initial
   useEffect(() => {
     if (units && units.length) {
-      getData(activePage, displayLength, searchData.dateRange, units[0].value)
       setSearchData(prev => {
         return { ...prev, enterpriseUnitId: units[0].value }
       })
+      getData(activePage, displayLength, searchData.dateRange, units[0].value)
     }
   }, [activePage, displayLength, units])
 
@@ -179,8 +182,8 @@ const History = () => {
           activePage,
           displayLength,
           total: 100,
-          onChangePage,
-          onChangeLength
+          onChangePage: p => onChangePage(p - 1),
+          onChangeLength: l => onChangeLength(l)
         }}
       />
     </Wrapper>
