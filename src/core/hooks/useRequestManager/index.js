@@ -18,15 +18,15 @@ const useRequestManager = () => {
 
   const headers = React.useMemo(
     () => ({
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${token}`
     }),
     [token]
   )
 
   const onGetExecute = React.useCallback(
-    (url, entity = {}) => {
+    (url, entity = {}, disableLoading = false) => {
       const execute = async () => {
-        setLoading(true)
+        disableLoading ? setLoading(false) : setLoading(true)
         try {
           const { data } = await instance.get(url, { headers, ...entity })
           setLoading(false)
@@ -44,9 +44,9 @@ const useRequestManager = () => {
   )
 
   const onPostExecute = React.useCallback(
-    (url, entity = {}, hasHeader = true) => {
+    (url, entity = {}, hasHeader = true, disableLoading = false) => {
       const execute = async () => {
-        setLoading(true)
+        disableLoading ? setLoading(false) : setLoading(true)
         try {
           const { data } = await instance.post(
             url,
@@ -67,9 +67,9 @@ const useRequestManager = () => {
   )
 
   const onPatchExecute = React.useCallback(
-    (url, entity = {}) => {
+    (url, entity = {}, disableLoading = false) => {
       const execute = async () => {
-        setLoading(true)
+        disableLoading ? setLoading(false) : setLoading(true)
         try {
           const { data } = await instance.patch(url, entity, { headers })
           setLoading(false)
@@ -86,9 +86,9 @@ const useRequestManager = () => {
   )
 
   const onPutExecute = React.useCallback(
-    (url, entity = {}) => {
+    (url, entity = {}, disableLoading = false) => {
       const execute = async () => {
-        setLoading(true)
+        disableLoading ? setLoading(false) : setLoading(true)
         try {
           const { data } = await instance.post(url, entity, {
             headers
@@ -106,9 +106,9 @@ const useRequestManager = () => {
   )
 
   const onDeleteExecute = React.useCallback(
-    (url, entity = {}) => {
+    (url, entity = {}, disableLoading = false) => {
       const execute = async () => {
-        setLoading(true)
+        disableLoading ? setLoading(false) : setLoading(true)
         try {
           const { data } = await instance.delete(url, entity, {
             headers
@@ -131,8 +131,9 @@ const useRequestManager = () => {
         case 400:
           break
         case 401:
-          await onResetToken()
-
+          if (token) {
+            await onResetToken()
+          }
           break
         default:
           break

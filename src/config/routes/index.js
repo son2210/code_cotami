@@ -1,15 +1,17 @@
 import { Loading } from 'atoms'
 import PropTypes from 'prop-types'
-import React, { lazy, Suspense } from 'react'
+import React, { lazy, Suspense, useCallback } from 'react'
 import { Route, Switch, useLocation, useHistory } from 'react-router-dom'
 import { Routers } from 'utils'
 import { PublicTemplate, PrivateTemplate } from 'templates'
 
-import { useToken } from 'hooks'
+import { useToken, useRequestManager } from 'hooks'
 import { globalUserState } from 'stores/profile/atom'
+import { globalUnitsState } from 'stores/Units/atom'
 import { useSetRecoilState } from 'recoil'
-
+import { EndPoint } from 'config/api'
 import jwtDecode from 'jwt-decode'
+
 //  public page
 const LoginPage = lazy(() => import('pages/UnAuthPages/Login'))
 // const RegisterPage = lazy(() => import('pages/UnAuthPages/Register'))
@@ -44,14 +46,36 @@ const Routes = ({ isLoggedIn, ...rest }) => {
   const { token } = useToken()
   const history = useHistory()
   const setUserState = useSetRecoilState(globalUserState)
+  const setUnitsState = useSetRecoilState(globalUnitsState)
+  const { onGetExecute } = useRequestManager()
 
-  const getUserInfor = async () => {
-    setUserState(jwtDecode(token))
-  }
+  const getUserInfor = useCallback(token => {
+    const loggedAdmin = jwtDecode(token)
+    setUserState(loggedAdmin)
+  }, [])
+
+  const getUnitsArray = useCallback(async token => {
+    const loggedAdmin = jwtDecode(token)
+    const response = await onGetExecute(
+      EndPoint.UNITS_LIST(loggedAdmin.enterpriseId),
+      {
+        // Thinhさん will fixed this in future
+        params: { offset: 0, limit: 1000 }
+      }
+    )
+    if (response && response.length) {
+      setUnitsState(
+        response.map(u => {
+          return { ...u, label: u.name, value: u.id }
+        })
+      )
+    }
+  })
 
   React.useEffect(() => {
     if (isLoggedIn) {
-      getUserInfor()
+      getUserInfor(token)
+      getUnitsArray(token)
     }
   }, [isLoggedIn])
 

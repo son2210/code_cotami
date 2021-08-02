@@ -1,9 +1,17 @@
 import { Schema } from 'rsuite'
-const { StringType } = Schema.Types
+const { StringType, DateType } = Schema.Types
 
-const validateModel = Schema.Model({
-  firstName: StringType().isRequired('firstName is required'),
-  lastName: StringType().isRequired('lastName is required')
+export const validateModelCreate = Schema.Model({
+  email: StringType()
+    .isEmail('Please enter the correct email')
+    .isRequired('Email is required'),
+  firstName: StringType().isRequired('FirstName is required'),
+  dateOfBirth: DateType().isRequired('Date of Birth is required'),
+  lastName: StringType().isRequired('LastName is required')
 })
 
-export default validateModel
+export const validateModelUpdate = Schema.Model({
+  firstName: StringType().isRequired('FirstName is required'),
+  dateOfBirth: DateType().isRequired('Date of Birth is required'),
+  lastName: StringType().isRequired('LastName is required')
+})
