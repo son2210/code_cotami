@@ -1,46 +1,73 @@
-import React, { useState, useCallback } from 'react'
-import { Wrapper, FilterWrapper, Table } from './styled'
-import { BaseButton, BaseCheckPicker, BaseInput, BaseInputPicker } from 'atoms'
-import { usePaginate } from 'hooks'
+import { IMAGES } from 'assets'
+import { BaseButton, BaseInputPicker, BaseInput } from 'atoms'
+import { EndPoint } from 'config/api'
+import { usePaginate, useRequestManager, useUnits } from 'hooks'
+import React, { useCallback, useEffect, useState } from 'react'
+import { useHistory } from 'react-router-dom'
 import { useTheme } from 'styled-components'
 import { Constant, Routers } from 'utils'
-import { useHistory } from 'react-router-dom'
-import { modifyPropsOfState } from 'utils/Helpers'
-import { IMAGES } from 'assets'
+import { FilterWrapper, Table, Wrapper } from './styled'
 
 const CheckList = () => {
   const {
     activePage,
     displayLength,
-    // total,
-    // setTotal,
     onChangePage,
     onChangeLength
   } = usePaginate()
   const theme = useTheme()
-
-  const [searchTerm, setSearchTerm] = useState({
+  const history = useHistory()
+  const [data, setData] = useState([])
+  const [searchData, setSearchData] = useState({
     name: '',
     display: '',
     status: ''
   })
-  const history = useHistory()
-  const handleInput = useCallback(
-    (name, value) => {
-      modifyPropsOfState(searchTerm, setSearchTerm, name, value)
-    },
-    [data]
-  )
+  const { onGetExecute } = useRequestManager()
+  const units = useUnits(activePage, displayLength)
+
+  const getData = useCallback((offset, limit) => {
+    async function execute() {
+      const response = await onGetExecute(EndPoint.GET_FORM, {
+        params: {
+          offset,
+          limit
+        }
+      })
+      if (response && response.length) {
+        setData(response)
+      }
+    }
+    execute()
+  }, [])
+
+  useEffect(() => {
+    if (units && units.length) {
+      getData(activePage, displayLength, units[0].value)
+      setSearchData(prev => {
+        return { ...prev, enterpriseUnitId: units[0].value }
+      })
+    }
+  }, [activePage, displayLength, units])
 
   const goToCreateChecklist = useCallback(() => {
     history.push(Routers.NORMAL_ADMIN.CHECKLIST.CHILD[0].URL)
   }, [])
 
+  useEffect(() => {
+    if (units && units.length) {
+      getData(activePage, displayLength, searchData.dateRange, units[0].value)
+      setSearchData(prev => {
+        return { ...prev, enterpriseUnitId: units[0].value }
+      })
+    }
+  }, [activePage, displayLength, units])
+
   const columns = [
     {
       width: 100,
       header: {
-        label: 'Date'
+        label: 'ID'
       },
       cell: {
         id: 'id',
@@ -53,10 +80,10 @@ const CheckList = () => {
       width: 100,
       align: 'left',
       header: {
-        label: 'Checklist 1'
+        label: 'Name'
       },
       cell: {
-        id: 'name',
+        id: 'title',
         style: {
           color: theme.colors.secondary[1]
         }
@@ -107,53 +134,56 @@ const CheckList = () => {
     }
   ]
 
-  const data = [
-    {
-      value: '1',
-      label: '四川'
-    },
-    {
-      value: '2',
-      label: '四川'
-    }
-  ]
-
   return (
     <Wrapper>
-      <FilterWrapper onClick={goToCreateChecklist} style={{ marginBottom: 20 }}>
+      <FilterWrapper
+        formOpt={{
+          formValue: searchData,
+          onSubmit: () =>
+            getData(
+              activePage,
+              displayLength,
+              searchData.dateRange,
+              searchData.enterpriseUnitId
+            )
+        }}
+        onClick={goToCreateChecklist}
+      >
         <BaseInput
           style={{ maxWidth: 170 }}
           placeholder='Keyword...'
           name='searchTerm'
-          onChange={value => handleInput('email', value)}
-          value={data['email']}
-        />
-        <BaseCheckPicker
-          data={data}
-          style={{ marginLeft: 10 }}
-          placeholder='Unit'
         />
         <BaseInputPicker
-          data={data}
-          style={{ marginLeft: 10, maxWidth: 170 }}
-          placeholder='Unit'
+          placeholder='unit'
+          style={{ marginLeft: 10 }}
+          data={units}
+          value={searchData['enterpriseUnitId']}
+          onChange={v =>
+            setSearchData(prev => {
+              return { ...prev, ['enterpriseUnitId']: v }
+            })
+          }
         />
-
+        <BaseInputPicker
+          placeholder='unit'
+          style={{ marginLeft: 10 }}
+          data={['active', 'inactive']}
+        />
         <BaseButton
           style={{ marginLeft: 10 }}
           secondary
           bold
-          onClick={() => {
-            null
-          }}
+          onClick={() => {}}
         >
           Search
         </BaseButton>
       </FilterWrapper>
+
       <Table
-        id='table3'
-        height={window.innerHeight - 200}
-        data={testData}
+        id='table__checklist-forms'
+        height={window.innerHeight - 300}
+        data={data}
         columns={columns}
         paginateProps={{
           activePage,
@@ -166,30 +196,5 @@ const CheckList = () => {
     </Wrapper>
   )
 }
-
-//Moc data
-
-const testData = [
-  {
-    id: 1,
-    name: 'checklist 1',
-    displayMode: 'auto'
-  },
-  {
-    id: 2,
-    name: 'checklist 1',
-    displayMode: 'manual'
-  },
-  {
-    id: 3,
-    name: 'checklist 1',
-    displayMode: 'hide'
-  },
-  {
-    id: 4,
-    name: 'checklist 1',
-    displayMode: 'auto'
-  }
-]
 
 export default CheckList

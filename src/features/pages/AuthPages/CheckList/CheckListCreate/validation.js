@@ -5,5 +5,5 @@ export const formCheckListCreate = Schema.Model({
   title: StringType().isRequired('Title is required field'),
   description: StringType().isRequired('Description is required field'),
   // unit: StringType(),
-  display: StringType().isRequired('Display mode is required field')
+  displayMode: StringType().isRequired('Display mode is required field')
 })
