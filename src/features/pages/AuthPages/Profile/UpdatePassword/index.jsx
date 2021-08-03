@@ -5,8 +5,12 @@ import { ContainerWrapper, ColWrapper, FormWrapper } from '../styled'
 import { InputBlock } from 'molecules/ProfileChange'
 import { useHistory } from 'react-router-dom'
 import { BaseButton, BaseIcon } from 'atoms'
-import { modifyPropsOfState } from 'utils/Helpers'
+import { modifyPropsOfState, trimStringFieldOfObject } from 'utils/Helpers'
 import validateModel from './validateModel'
+import { useRequestManager, useToken, useAlert } from 'hooks'
+import { EndPoint } from 'config/api'
+import { globalUserState } from 'stores/profile/atom'
+import { useSetRecoilState } from 'recoil'
 
 const UpdatePassword = ({ ...others }) => {
   const history = useHistory()
@@ -14,6 +18,10 @@ const UpdatePassword = ({ ...others }) => {
   const [showOldPassword, setShowOldPassword] = useState(false)
   const [showPasswordCf, setShowPasswordCf] = useState(false)
   const goToPage = useCallback(route => history.push(route), [])
+  const { clearToken } = useToken()
+  const { onPostExecute } = useRequestManager()
+  const { showSuccess } = useAlert()
+  const setUserState = useSetRecoilState(globalUserState)
 
   const [data, setData] = useState({
     oldPassword: '',
@@ -26,14 +34,22 @@ const UpdatePassword = ({ ...others }) => {
     cfPassword: ''
   })
 
-  const handleUpdatePassword = () => {
-    console.log('update', data)
-
-    // if success logout
-    // setUserState({})
-    // await clearToken()
-    // goToPage(Routers.LOGIN)
-  }
+  const handleUpdatePassword = useCallback(async (data) => {
+    const submitData = trimStringFieldOfObject({
+      oldPassword: data.oldPassword,
+      newPassword: data.password
+    })
+    const response = await onPostExecute(
+      EndPoint.ADMIN_RESET_PASSWORD,
+      submitData
+    )
+    if (response) {
+      setUserState({})
+      await clearToken()
+      showSuccess('Update Successfully')
+      goToPage(Routers.LOGIN)
+    }
+  }, [])
 
   const handleInput = useCallback(
     (name, value) => {
@@ -63,7 +79,7 @@ const UpdatePassword = ({ ...others }) => {
           formValue={data}
           model={validateModel}
           onCheck={validateData}
-          onSubmit={handleUpdatePassword}
+          onSubmit={()=>handleUpdatePassword(data)}
         >
           <InputBlock
             title='Old password'
@@ -73,7 +89,7 @@ const UpdatePassword = ({ ...others }) => {
               icon: <BaseIcon icon='eye' />
             }}
             placeholder='Old Password'
-            type={showPassword ? 'text' : 'password'}
+            type={showOldPassword ? 'text' : 'password'}
             value={data['oldPassword']}
             helpText={error['oldPassword']}
             isError={!error['oldPassword'] ? false : true}
@@ -122,7 +138,6 @@ const UpdatePassword = ({ ...others }) => {
                 type='submit'
                 primary
                 bold
-                onClick={handleUpdatePassword}
               >
                 Update Password
               </BaseButton>
