@@ -29,7 +29,6 @@ const CheckInRequest = () => {
   useUnits()
   const [data, setData] = useState([])
   const units = useRecoilValue(globalUnitsState)
-  const [currentUnit, setCurrentUnit] = useState()
   const modalRef = useRef(null)
   const modalInputRef = useRef(null)
   const [cell, setCell] = useState({ row: null, id: null, value: '' })
@@ -44,7 +43,7 @@ const CheckInRequest = () => {
     }
     function handleKeyPress(event) {
       if (event.key === 'Enter') {
-        updateCell(cell, currentUnit)
+        updateCell(cell, searchData.enterpriseUnitId)
       }
     }
     document.addEventListener('keypress', handleKeyPress)
@@ -199,8 +198,18 @@ const CheckInRequest = () => {
       setSearchData(prev => {
         return { ...prev, enterpriseUnitId: units[0].value }
       })
-      setCurrentUnit(units[0].value)
       getData(activePage, displayLength, searchData.dateRange, units[0].value)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (units && units.length && searchData.enterpriseUnitId) {
+      getData(
+        activePage,
+        displayLength,
+        searchData.dateRange,
+        searchData.enterpriseUnitId
+      )
     }
   }, [activePage, displayLength, units])
 
@@ -221,7 +230,7 @@ const CheckInRequest = () => {
               onChange={handleCellInput}
             />
             <ModalButtonWrapper
-              onClick={() => updateCell(cell, currentUnit)}
+              onClick={() => updateCell(cell, searchData.enterpriseUnitId)}
               secondary
             >
               Save
@@ -264,14 +273,7 @@ const CheckInRequest = () => {
             })
           }
           //fix warning Rsuit
-          value={
-            searchData['dateRange'].length
-              ? [
-                  new Date(searchData['dateRange'][0]),
-                  new Date(searchData['dateRange'][1])
-                ]
-              : []
-          }
+          value={searchData['dateRange']}
         />
 
         <BaseButton style={{ marginLeft: 10 }} secondary bold type='submit'>

@@ -159,14 +159,7 @@ const History = () => {
             })
           }
           //fix warning Rsuit
-          value={
-            searchData['dateRange'].length
-              ? [
-                  new Date(searchData['dateRange'][0]),
-                  new Date(searchData['dateRange'][1])
-                ]
-              : []
-          }
+          value={searchData['dateRange']}
         />
         <BaseButton type='submit' style={{ marginLeft: 10 }} secondary bold>
           Filter

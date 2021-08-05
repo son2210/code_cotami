@@ -1,6 +1,4 @@
-import React, { 
-  // useState
- } from 'react'
+import React, { useState, useEffect, useCallback } from 'react' // useState
 import { Wrapper } from './styled'
 import { TableAction, FilterBar } from 'molecules'
 import { BaseButton, BaseDateRangePicker, BaseInputPicker } from 'atoms'
@@ -8,13 +6,12 @@ import { BaseButton, BaseDateRangePicker, BaseInputPicker } from 'atoms'
 import { IMAGES } from 'assets'
 import { usePaginate } from 'hooks'
 import { Constant } from 'utils'
-import {
-  // useRequestManager,
-  useUnits
-} from 'hooks'
-// import { EndPoint } from 'config/api'
-// import { globalUserState } from 'stores/profile/atom'
-// import { useRecoilValue } from 'recoil'
+import { useRequestManager, useUnits } from 'hooks'
+import { EndPoint } from 'config/api'
+import { globalUnitsState } from 'stores/Units/atom'
+import { useRecoilValue } from 'recoil'
+import moment from 'moment'
+import { useTheme } from 'styled-components'
 
 const Statistics = () => {
   const {
@@ -25,95 +22,213 @@ const Statistics = () => {
     onChangePage,
     onChangeLength
   } = usePaginate()
-  const units = useUnits(activePage, displayLength)
-  // const { onGetExecute } = useRequestManager()
+  useUnits()
+  // const theme = useTheme()
+  const { onGetExecute } = useRequestManager()
+  const units = useRecoilValue(globalUnitsState)
+  const [forms, setForms] = useState()
+  const [selected, setSelected] = useState({
+    enterpriseUnitId: null,
+    form: null
+  })
+  const [column, setColumn] = useState([])
+  const [data, setData] = useState([])
 
-  const columns = [
+  const [searchData, setSearchData] = useState(
     {
-      width: 200,
-      header: {
-        label: '　　　　',
-        style: { height: 100 },
-        subLabel: 'Progress'
-      },
-      cell: {
-        id: 'name'
-      }
+      enterpriseUnitId: null,
+      dateRange: [
+        '2020-07-07',
+        '2021-08-30'
+        // moment(Date.now()).subtract(30, 'days').format('YYYY-MM-DD'),
+        // moment(Date.now()).format('YYYY-MM-DD')
+      ],
+      formId: null
     },
-    {
-      header: {
-        subLabel: '80%',
-        label: 'C1'
+    []
+  )
+
+  const getForms = useCallback(async () => {
+    const response = await onGetExecute(
+      EndPoint.FORMS,
+      {
+        params: {
+          offset: 0,
+          limit: 1000
+        }
       },
-      cell: {
-        type: Constant.CellType.IMAGE,
-        id: 'c1'
-      }
+      true
+    )
+    if (response.length) {
+      return response.map(f => {
+        return { ...f, label: f.title, value: f.id }
+      })
+    }
+  })
+
+  const getFormsResults = useCallback(
+    (offset, limit, dateRange, enterpriseUnitId, formId) => {
+      return onGetExecute(EndPoint.FORMS_RESULTS(formId), {
+        params: {
+          offset,
+          limit,
+          enterpriseUnitId,
+          startDate: moment(dateRange[0]).format('YYYY-MM-DD'),
+          endDate: moment(dateRange[1]).format('YYYY-MM-DD')
+        }
+      })
     },
-    {
-      header: {
-        subLabel: '80%',
-        label: 'C2'
-      },
-      cell: {
-        type: Constant.CellType.IMAGE,
-        id: 'c2'
-      }
+    []
+  )
+  const getFormsProgress = useCallback(
+    (offset, limit, dateRange, enterpriseUnitId, formId) => {
+      return onGetExecute(EndPoint.FORMS_RESULTS_PROGRESS(formId), {
+        params: {
+          offset,
+          limit,
+          enterpriseUnitId,
+          startDate: moment(dateRange[0]).format('YYYY-MM-DD'),
+          endDate: moment(dateRange[1]).format('YYYY-MM-DD')
+        }
+      })
     },
-    {
-      width: 100,
-      align: 'center',
-      header: {
-        subLabel: '80%',
-        label: 'C3'
-      },
-      cell: {
-        type: Constant.CellType.IMAGE,
-        id: 'c3',
-        style: {
-          padding: 0
+    []
+  )
+
+  const dataTransform = useCallback((progress, results) => {
+    if (!progress || !results) return { column: [], data: [] }
+    const columnIds = progress.map(c => c.sectionId)
+    let column = [
+      {
+        width: 200,
+        header: {
+          label: '　　　　',
+          style: { height: 100 },
+          subLabel: 'Progress'
         },
-        others: {
-          style: {
-            width: 46,
-            height: 27,
-            borderRadius: 4,
-            padding: 0
+        cell: {
+          id: 'name'
+        }
+      },
+      ...progress.map(p => {
+        let cellType = null
+        let customStyle = {}
+        switch (p.inputTypeId) {
+          case Constant.sectionType[0].value: // single choice
+            cellType = Constant.CellType.IMAGE
+            break
+          case Constant.sectionType[2].value: //image
+            cellType = Constant.CellType.IMAGE
+            customStyle = {
+              width: 100,
+              align: 'center',
+              cellStyle: {
+                padding: 0
+              },
+              cellOthersStyles: {
+                width: 46,
+                height: 27,
+                borderRadius: 4,
+                padding: 0
+              }
+            }
+            break
+          case Constant.sectionType[3].value: // text
+            customStyle = {
+              width: 300
+            }
+            break
+        }
+        return {
+          width: customStyle?.width || 100,
+          align: customStyle?.align || 'center',
+          header: {
+            subLabel: `${p.progress * 100}%`,
+            label: p.title,
+            style: { ...customStyle?.headerStyle }
+          },
+          cell: {
+            id: p.sectionId,
+            type: cellType,
+            others: {
+              ...customStyle?.cellOthersStyles
+            },
+            style: { ...customStyle?.cellStyle }
           }
         }
+      })
+    ]
+    let data = []
+    results.forEach(result => {
+      let row = {
+        name: `${result?.author?.firstName} ${result?.author?.lastName}`
       }
-    },
-    {
-      header: {
-        subLabel: '80%',
-        label: 'C4'
-      },
-      cell: {
-        type: Constant.CellType.IMAGE,
-        id: 'c4'
-      }
-    },
-    {
-      header: {
-        subLabel: '80%',
-        label: 'C5'
-      },
-      cell: {
-        type: Constant.CellType.IMAGE,
-        id: 'c5'
-      }
-    },
-    {
-      width: 40,
-      header: {
-        subLabel: '80%',
-        label: 'C6'
-      },
-      cell: {
-        id: 'c6'
-      }
+      columnIds.forEach(id => {
+        row[id] = ''
+      })
+      // todo with empty
+      result.resultItems.forEach(item => {
+        let { inputTypeId, id } = item.section
+        let { imageUrl, text, number } = item.value
+        switch (inputTypeId) {
+          case Constant.sectionType[0].value: // single choice
+            row[id] = IMAGES.LOGO.CHECKED
+            break
+          case Constant.sectionType[2].value: //
+            row[id] = imageUrl
+            break
+          case Constant.sectionType[3].value: //image
+            row[id] = number
+            break
+          case Constant.sectionType[4].value: //image
+            row[id] = text
+            break
+        }
+      })
+      data.push(row)
+    })
+
+    return { data, column }
+  }, [])
+
+  const initial = useCallback(async (offset, limit, dateRange) => {
+    const listForm = await getForms()
+    if (listForm.length * units.length !== 0) {
+      setForms(listForm)
+      setSelected({
+        formId: listForm[0].value,
+        enterpriseUnitId: units[0].value
+      })
+      Promise.all([
+        getFormsProgress(
+          offset,
+          limit,
+          dateRange,
+          units[0].value,
+          280
+          // listForm[0].value
+        ),
+        getFormsResults(
+          offset,
+          limit,
+          dateRange,
+          units[0].value,
+          280
+          // listForm[0].value
+        )
+      ])
+        .then(conCurrentData => {
+          const [progress, results] = conCurrentData
+          const { column, data } = dataTransform(progress, results)
+          console.log(column, data)
+          setColumn(column)
+          setData(data)
+        })
+        .catch(error => console.log(error))
     }
-  ]
+  }, [])
+
+  useEffect(() => initial(activePage, displayLength, searchData.dateRange), [])
 
   return (
     <Wrapper>
@@ -122,16 +237,21 @@ const Statistics = () => {
         hasButton={false}
         style={{ marginBottom: 20 }}
       >
-        <BaseDateRangePicker
-          placeholder='select date range'
-          style={{ marginLeft: 10 }}
-        />
-
         <BaseInputPicker
           placeholder='unit'
           style={{ marginLeft: 10 }}
           data={units}
           onChange={v => console.log(v)}
+        />
+        <BaseInputPicker
+          placeholder='Form'
+          style={{ marginLeft: 10 }}
+          data={units}
+          onChange={v => console.log(v)}
+        />
+        <BaseDateRangePicker
+          placeholder='select date range'
+          style={{ marginLeft: 10 }}
         />
 
         <BaseButton
@@ -146,10 +266,10 @@ const Statistics = () => {
       </FilterBar>
 
       <TableAction
+        virtualized
         height={600}
-        width={700}
-        data={testData}
-        columns={columns}
+        data={data}
+        columns={column}
         hasSummary={true}
         paginateProps={{
           activePage,
@@ -162,64 +282,5 @@ const Statistics = () => {
     </Wrapper>
   )
 }
-
-//Moc data
-
-const testData = [
-  {
-    name: 'Jadon Sancho',
-    c1: IMAGES.LOGO.CHECKED,
-    c2: IMAGES.LOGO.MINUS,
-    c3: IMAGES.AVATAR,
-    c4: IMAGES.LOGO.MINUS,
-    c5: IMAGES.LOGO.MESSAGE,
-    c6: 7
-  },
-  {
-    name: 'Marcus Rashford',
-    c1: IMAGES.LOGO.CHECKED,
-    c2: IMAGES.LOGO.MINUS,
-    c3: IMAGES.AVATAR,
-    c4: IMAGES.LOGO.MINUS,
-    c5: IMAGES.LOGO.MESSAGE,
-    c6: 7
-  },
-  {
-    name: 'Bukayo Saka',
-    c1: IMAGES.LOGO.CHECKED,
-    c2: IMAGES.LOGO.MINUS,
-    c3: IMAGES.AVATAR,
-    c4: IMAGES.LOGO.MINUS,
-    c5: IMAGES.LOGO.MESSAGE,
-    c6: 7
-  },
-  {
-    name: 'Mount  Mason',
-    c1: IMAGES.LOGO.CHECKED,
-    c2: IMAGES.LOGO.MINUS,
-    c3: IMAGES.AVATAR,
-    c4: IMAGES.LOGO.MINUS,
-    c5: IMAGES.LOGO.MESSAGE,
-    c6: 7
-  },
-  {
-    name: 'Mount  Mason',
-    c1: IMAGES.LOGO.CHECKED,
-    c2: IMAGES.LOGO.MINUS,
-    c3: IMAGES.AVATAR,
-    c4: IMAGES.LOGO.MINUS,
-    c5: IMAGES.LOGO.MESSAGE,
-    c6: 7
-  },
-  {
-    name: 'Mount  Mason',
-    c1: IMAGES.LOGO.CHECKED,
-    c2: IMAGES.LOGO.MINUS,
-    c3: IMAGES.AVATAR,
-    c4: IMAGES.LOGO.MINUS,
-    c5: IMAGES.LOGO.MESSAGE,
-    c6: 7
-  }
-]
 
 export default Statistics
