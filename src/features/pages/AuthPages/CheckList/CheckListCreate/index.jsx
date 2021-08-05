@@ -3,18 +3,24 @@ import { withEmpty, withNumber } from 'exp-value'
 import { useAlert, useRequestManager } from 'hooks'
 import { CreateModule } from 'organisms'
 import React, { useState } from 'react'
+import { useHistory } from 'react-router-dom'
 import { useCallback } from 'react/cjs/react.development'
 import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil'
 import {
   addModule,
   globalModulesState,
   removeModule,
-  updateModule
+  updateModule,
+  presentationConfig
 } from 'stores/CreateForm'
+
+import PresentationConfig from '../PresentationConfig'
 import PreviewCheckList from '../PreviewCheckList'
 import {
   Button,
   Content,
+  DisplayModeForm,
+  FlexBlock,
   Form,
   Icon,
   Input,
@@ -26,14 +32,9 @@ import {
   WrapperButton,
   WrapperContent,
   WrapperForm,
-  WrapperItem,
-  FlexBlock,
-  Theme,
-  DisplayModeForm
+  WrapperItem
 } from './styled'
 import { formCheckListCreate } from './validation'
-import { useHistory } from 'react-router-dom'
-import PresentationConfig from '../PresentationConfig'
 
 const CheckListCreate = () => {
   const [step, setStep] = useState(1)
@@ -44,12 +45,15 @@ const CheckListCreate = () => {
     unit: '',
     displayMode: ''
   })
+
   const modules = useRecoilValue(globalModulesState)
   const resetState = useResetRecoilState(globalModulesState)
   const handleAddModule = useSetRecoilState(addModule)
   const handleUpdateModule = useSetRecoilState(updateModule)
   const handleRemoveModule = useSetRecoilState(removeModule)
+  const presentConfig = useRecoilValue(presentationConfig)
   const history = useHistory()
+  // const { handleError } = useModules()
 
   const { onPostExecute } = useRequestManager()
   const { showError, showSuccess } = useAlert()
@@ -94,11 +98,16 @@ const CheckListCreate = () => {
     [formCheckList]
   )
 
+  const validateModules = useCallback(() => {
+    navigationPage('next')
+  }, [modules, formCheckList, presentConfig])
+
   const submit = useCallback(() => {
     async function postData() {
       const response = await onPostExecute(EndPoint.FORM_CREATE, {
         ...formCheckList,
-        modules: modules
+        modules: modules,
+        presentationConfig: presentConfig
       })
       if (response) {
         showSuccess('Success create form')
@@ -112,45 +121,21 @@ const CheckListCreate = () => {
       showError('Error !. Check data submit')
     }
     postData()
-  }, [modules, formCheckList])
+  }, [modules, formCheckList, presentConfig])
 
   const _renderTheme = useCallback(() => {
-    return (
-      <FlexBlock>
-        <Theme />
-        <Theme />
-        <Theme />
-        <Theme />
-      </FlexBlock>
-    )
+    return <FlexBlock></FlexBlock>
   }, [])
 
   const _renderModalPreviewCheckList = useCallback(() => {
     return (
       <PreviewCheckList
         moduleName={'Checklist module name'}
-        modules={modules}
         show={showPreview}
         onHide={hideModal}
       />
     )
-  }, [showPreview, modules, hideModal])
-
-  // const _renderModule = useCallback(
-  //   modules => {
-  //     return (
-  //       <WrapperContent>
-  //         <CreateModule
-  //           data={modules}
-  //           onRemoveModule={id => handleRemoveModule(id)}
-  //           onCreateModule={handleAddModule}
-  //           updateModule={handleUpdateModule}
-  //         />
-  //       </WrapperContent>
-  //     )
-  //   },
-  //   [modules]
-  // )
+  }, [showPreview, hideModal])
 
   const _renderContent = useCallback(() => {
     if (step == 1) {
@@ -185,7 +170,7 @@ const CheckListCreate = () => {
         </WrapperContent>
       )
     return <PresentationConfig />
-  }, [step, modules])
+  }, [step, modules, presentConfig])
 
   const _renderForm = useCallback(() => {
     if (step == 1)
@@ -290,14 +275,14 @@ const CheckListCreate = () => {
               Submit
             </Button>
           ) : (
-            <Button primary onClick={() => navigationPage('next')}>
+            <Button primary onClick={validateModules}>
               Next
             </Button>
           )}
         </WrapperButton>
       </WrapperForm>
     )
-  }, [step, formCheckList, modules])
+  }, [step, formCheckList, modules, presentConfig])
 
   return (
     <Wrapper>
