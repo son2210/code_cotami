@@ -9,9 +9,9 @@ export const FormWrapper = styled(BaseForm)`
 `
 
 export const LinkWrapper = styled.div`
-  margin-bottom: 20px;
+  margin-top: 10px;
   width: 100%;
-  text-align: right;
+  text-align: center;
   a {
     text-decoration: none;
     color: ${props => props.theme.colors.secondary[1]};

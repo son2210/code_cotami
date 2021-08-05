@@ -175,6 +175,10 @@ const Constant = {
       screenType: 'image',
       screenName: 'Image'
     }
+  ],
+  LOGIN_ROLE: [
+    { value: 'agency', label: 'Agency' },
+    { value: 'admin', label: 'Admin' }
   ]
 }
 
