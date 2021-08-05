@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react'
-import { Wrapper } from './styled'
+import { Wrapper, RadioFormWrapper } from './styled'
 import { UnAuthForm } from 'organisms'
 import { BaseImage } from 'atoms'
 import { InputGroup } from 'molecules'
@@ -10,6 +10,7 @@ import { Routers } from 'utils'
 import { useRequestManager, useToken } from 'hooks'
 import { EndPoint } from 'config/api'
 import { IMAGES } from 'assets'
+import { Constant } from 'utils'
 
 const Login = () => {
   const history = useHistory()
@@ -20,7 +21,8 @@ const Login = () => {
   const [data, setData] = useState({
     enterpriseId: '', //18
     loginId: '', //admin
-    password: '' //123123
+    password: '', //123123
+    role: Constant.LOGIN_ROLE[1].value // admin
   })
   const [error, setError] = useState({
     enterpriseId: '',
@@ -29,7 +31,12 @@ const Login = () => {
   })
 
   const handleLogin = useCallback(async () => {
-    const response = await onPostExecute(EndPoint.LOGIN_API, data, false)
+    const { role } = data
+    let endpoint =
+      role === Constant.LOGIN_ROLE[1].value // admin
+        ? EndPoint.LOGIN_ADMIN
+        : EndPoint.LOGIN_AGENCY
+    const response = await onPostExecute(endpoint, data, false)
     if (response) {
       await saveToken(response.accessToken)
       goToPage(Routers.NORMAL_ADMIN.MENU[0].URL)
@@ -64,6 +71,10 @@ const Login = () => {
         primaryBtn={{
           name: 'Login',
           onClick: handleLogin
+        }}
+        secondaryBtn={{
+          name: 'Register',
+          onClick: () => console.log('to do next week')
         }}
         tertiaryBtn={{
           name: 'Forgot Password?',
@@ -106,6 +117,12 @@ const Login = () => {
           value={data['password']}
           helpText={error['password']}
           isError={!error['password'] ? false : true}
+        />
+        <RadioFormWrapper
+          options={Constant.LOGIN_ROLE}
+          onChange={value => handleInput('role', value)}
+          name='role'
+          value={data['role']}
         />
       </UnAuthForm>
     </Wrapper>
