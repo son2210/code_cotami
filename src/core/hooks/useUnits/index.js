@@ -33,7 +33,7 @@ const useUnits = () => {
               return { ...u, label: u.name, value: u.id }
             })
           )
-        } 
+        }
       }
     })()
   }, [])

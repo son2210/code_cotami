@@ -8,7 +8,7 @@ import {
 } from './styled'
 import { TableAction, FilterBar } from 'molecules'
 import { BaseButton, BaseDateRangePicker, BaseInputPicker } from 'atoms'
-import { usePaginate, useUnits, useRequestManager } from 'hooks'
+import { usePaginate, useRequestManager } from 'hooks'
 import { useTheme } from 'styled-components'
 import { Constant } from 'utils'
 import moment from 'moment'
@@ -26,7 +26,7 @@ const CheckInRequest = () => {
     onChangeLength
   } = usePaginate()
   const theme = useTheme()
-  useUnits()
+  // useUnits()
   const [data, setData] = useState([])
   const units = useRecoilValue(globalUnitsState)
   const modalRef = useRef(null)
