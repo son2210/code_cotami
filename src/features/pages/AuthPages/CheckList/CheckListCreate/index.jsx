@@ -32,13 +32,15 @@ import {
   WrapperButton,
   WrapperContent,
   WrapperForm,
-  WrapperItem
+  WrapperItem,
+  Theme
 } from './styled'
 import { formCheckListCreate } from './validation'
 
 const CheckListCreate = () => {
   const [step, setStep] = useState(1)
   const [showPreview, setShowPreview] = useState(false)
+  const [data, setData] = useState([])
   const [formCheckList, setFormCheckList] = useState({
     title: '',
     description: '',
@@ -55,8 +57,37 @@ const CheckListCreate = () => {
   const history = useHistory()
   // const { handleError } = useModules()
 
-  const { onPostExecute } = useRequestManager()
+  const { onPostExecute, onGetExecute } = useRequestManager()
   const { showError, showSuccess } = useAlert()
+
+  const onChooseTemplate = useCallback(
+    item => {
+      setFormCheckList({
+        title: withEmpty('title', item),
+        description: withEmpty('description', item),
+        displayMode: withEmpty('displayMode', item)
+      })
+    },
+    [formCheckList]
+  )
+  const getData = useCallback(
+    (offset, limit) => {
+      async function execute() {
+        const response = await onGetExecute(EndPoint.TEMPLATE_LIST, {
+          params: {
+            offset,
+            limit
+          }
+        })
+        console.log(response, 'response')
+        if (response && response.length) {
+          setData(response)
+        }
+      }
+      execute()
+    },
+    [data]
+  )
 
   const navigationPage = useCallback(
     type => {
@@ -124,8 +155,20 @@ const CheckListCreate = () => {
   }, [modules, formCheckList, presentConfig])
 
   const _renderTheme = useCallback(() => {
-    return <FlexBlock></FlexBlock>
-  }, [])
+    return (
+      <FlexBlock>
+        {data.map((item, index) => {
+          return (
+            <Theme
+              key={index}
+              content={item.title}
+              onClick={() => onChooseTemplate(item)}
+            />
+          )
+        })}
+      </FlexBlock>
+    )
+  }, [data])
 
   const _renderModalPreviewCheckList = useCallback(() => {
     return (
@@ -145,13 +188,13 @@ const CheckListCreate = () => {
           <Title H2 bold>
             Choose a template
           </Title>
-          <ThemeBlock>
+          {/* <ThemeBlock>
             <Title H3>Recents</Title>
             {_renderTheme()}
-          </ThemeBlock>
+          </ThemeBlock> */}
 
           <ThemeBlock>
-            <Title H3>All theme</Title>
+            <Title H3>All template</Title>
             {_renderTheme()}
           </ThemeBlock>
         </WrapperContent>
@@ -170,7 +213,7 @@ const CheckListCreate = () => {
         </WrapperContent>
       )
     return <PresentationConfig />
-  }, [step, modules, presentConfig])
+  }, [step, modules, presentConfig, data])
 
   const _renderForm = useCallback(() => {
     if (step == 1)
@@ -283,6 +326,8 @@ const CheckListCreate = () => {
       </WrapperForm>
     )
   }, [step, formCheckList, modules, presentConfig])
+
+  useState(() => getData(0, 1000), [])
 
   return (
     <Wrapper>
