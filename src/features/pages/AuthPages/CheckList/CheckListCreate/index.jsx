@@ -1,7 +1,6 @@
 import { EndPoint } from 'config/api'
 import { withEmpty, withNumber } from 'exp-value'
 import { useAlert, useRequestManager } from 'hooks'
-import { RadioForm } from 'molecules'
 import { CreateModule } from 'organisms'
 import React, { useState } from 'react'
 import { useCallback } from 'react/cjs/react.development'
@@ -27,10 +26,14 @@ import {
   WrapperButton,
   WrapperContent,
   WrapperForm,
-  WrapperItem
+  WrapperItem,
+  FlexBlock,
+  Theme,
+  DisplayModeForm
 } from './styled'
 import { formCheckListCreate } from './validation'
 import { useHistory } from 'react-router-dom'
+import PresentationConfig from '../PresentationConfig'
 
 const CheckListCreate = () => {
   const [step, setStep] = useState(1)
@@ -54,7 +57,7 @@ const CheckListCreate = () => {
   const navigationPage = useCallback(
     type => {
       if (step < 1) return setStep(1)
-      if (step > 2) return setStep(2)
+      if (step > 3) return setStep(3)
       if (type === 'prev') return setStep(step - 1)
       setStep(step + 1)
     },
@@ -111,16 +114,16 @@ const CheckListCreate = () => {
     postData()
   }, [modules, formCheckList])
 
-  // const _renderTheme = useCallback(() => {
-  //   return (
-  //     <FlexBlock>
-  //       <Theme />
-  //       <Theme />
-  //       <Theme />
-  //       <Theme />
-  //     </FlexBlock>
-  //   )
-  // }, [])
+  const _renderTheme = useCallback(() => {
+    return (
+      <FlexBlock>
+        <Theme />
+        <Theme />
+        <Theme />
+        <Theme />
+      </FlexBlock>
+    )
+  }, [])
 
   const _renderModalPreviewCheckList = useCallback(() => {
     return (
@@ -133,21 +136,21 @@ const CheckListCreate = () => {
     )
   }, [showPreview, modules, hideModal])
 
-  const _renderModule = useCallback(
-    modules => {
-      return (
-        <WrapperContent>
-          <CreateModule
-            data={modules}
-            onRemoveModule={id => handleRemoveModule(id)}
-            onCreateModule={handleAddModule}
-            updateModule={handleUpdateModule}
-          />
-        </WrapperContent>
-      )
-    },
-    [modules]
-  )
+  // const _renderModule = useCallback(
+  //   modules => {
+  //     return (
+  //       <WrapperContent>
+  //         <CreateModule
+  //           data={modules}
+  //           onRemoveModule={id => handleRemoveModule(id)}
+  //           onCreateModule={handleAddModule}
+  //           updateModule={handleUpdateModule}
+  //         />
+  //       </WrapperContent>
+  //     )
+  //   },
+  //   [modules]
+  // )
 
   const _renderContent = useCallback(() => {
     if (step == 1) {
@@ -159,18 +162,29 @@ const CheckListCreate = () => {
           </Title>
           <ThemeBlock>
             <Title H3>Recents</Title>
-            {/* {_renderTheme()} */}
+            {_renderTheme()}
           </ThemeBlock>
 
           <ThemeBlock>
             <Title H3>All theme</Title>
-            {/* {_renderTheme()} */}
+            {_renderTheme()}
           </ThemeBlock>
         </WrapperContent>
       )
     }
 
-    return _renderModule(modules)
+    if (step == 2)
+      return (
+        <WrapperContent>
+          <CreateModule
+            data={modules}
+            onRemoveModule={id => handleRemoveModule(id)}
+            onCreateModule={handleAddModule}
+            updateModule={handleUpdateModule}
+          />
+        </WrapperContent>
+      )
+    return <PresentationConfig />
   }, [step, modules])
 
   const _renderForm = useCallback(() => {
@@ -216,7 +230,7 @@ const CheckListCreate = () => {
             </WrapperBlock> */}
             <WrapperBlock>
               <Label bold> Display </Label>
-              <RadioForm
+              <DisplayModeForm
                 name='displayMode'
                 value={withEmpty('displayMode', formCheckList)}
                 onChange={value => handleChangeForm('displayMode', value)}
@@ -261,13 +275,25 @@ const CheckListCreate = () => {
         </WrapperItem>
 
         <WrapperButton>
-          <Button blue onClick={showModal}>
-            <Icon name='feather-eye' size={16} />
-            Preview
-          </Button>
-          <Button primary onClick={submit}>
-            Submit
-          </Button>
+          {step == 3 ? (
+            <Button blue onClick={() => navigationPage('prev')}>
+              Continue Edit
+            </Button>
+          ) : (
+            <Button blue onClick={showModal}>
+              <Icon name='feather-eye' size={16} />
+              Preview
+            </Button>
+          )}
+          {step == 3 ? (
+            <Button primary onClick={submit}>
+              Submit
+            </Button>
+          ) : (
+            <Button primary onClick={() => navigationPage('next')}>
+              Next
+            </Button>
+          )}
         </WrapperButton>
       </WrapperForm>
     )

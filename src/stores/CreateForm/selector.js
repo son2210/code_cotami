@@ -53,7 +53,8 @@ export const addSection = selector({
         title: '',
         description: '',
         sectionItems: [],
-        inputTypeId: 'multiple_choice'
+        inputTypeId: 'multiple_choice',
+        screenMatchId: new Date().getTime()
       }
     ]
     set(globalSectionState, temp)
