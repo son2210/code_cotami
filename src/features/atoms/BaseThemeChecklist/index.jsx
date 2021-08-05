@@ -5,8 +5,8 @@ import PropTypes from 'prop-types'
 const BaseThemeChecklist = ({ imageUrl, content, ...others }) => {
   return (
     <Wrapper {...others}>
-      <Image src={imageUrl || 'https://picsum.photos/536/354'} />
-      <Title>{content || 'Theme'}</Title>
+      <Image source={imageUrl} />
+      <Title>{content || ''}</Title>
     </Wrapper>
   )
 }
