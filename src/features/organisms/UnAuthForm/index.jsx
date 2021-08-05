@@ -25,21 +25,9 @@ const UnAuthForm = ({
       <FormWrapper onChange={onChange} {...others}>
         {children}
 
-        <ActionButtonWrapper column={true}> 
-          {tertiaryBtn && (
-            <LinkWrapper>
-              <a onClick={tertiaryBtn.onClick}>{tertiaryBtn.name}</a>
-            </LinkWrapper>
-          )}
-
+        <ActionButtonWrapper column={true}>
           {primaryBtn && (
-            <BaseButton
-              fluid
-              primary
-              uppercase
-              bold
-              type='submit'
-            >
+            <BaseButton fluid primary uppercase bold type='submit'>
               {primaryBtn.name}
             </BaseButton>
           )}
@@ -53,6 +41,11 @@ const UnAuthForm = ({
             >
               {secondaryBtn.name}
             </BaseButton>
+          )}
+          {tertiaryBtn && (
+            <LinkWrapper>
+              <a onClick={tertiaryBtn.onClick}>{tertiaryBtn.name}</a>
+            </LinkWrapper>
           )}
         </ActionButtonWrapper>
       </FormWrapper>

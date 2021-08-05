@@ -113,6 +113,10 @@ const Constant = {
       value: 'hidden',
       label: 'hide'
     }
+  ],
+  LOGIN_ROLE: [
+    { value: 'agency', label: 'Agency' },
+    { value: 'admin', label: 'Admin' }
   ]
 }
 
