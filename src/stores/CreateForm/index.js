@@ -8,11 +8,20 @@ export {
   addSectionItem,
   updateSectionItem,
   removeSectionItem,
-  swapSection
+  getImageSection,
+  swapSection,
+  setDataPresentConfig,
+  updateDefaultPresentation,
+  checkErrorModule,
+  checkErrorPresentation
 } from './selector'
 
 export {
   globalModulesState,
   globalSectionState,
-  globalSectionItemState
+  globalSectionItemState,
+  globalPresentationConfig,
+  presentationConfig,
+  defaultPresentation,
+  errorModule
 } from './atom'

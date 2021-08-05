@@ -1,6 +1,13 @@
 import { withArray, withEmpty, withNumber, withObject } from 'exp-value'
 import { selector } from 'recoil'
-import { globalModulesState, globalSectionState } from './atom'
+import {
+  globalModulesState,
+  globalSectionState,
+  globalPresentationConfig,
+  presentationConfig,
+  defaultPresentation,
+  errorModule
+} from './atom'
 
 export const addModule = selector({
   key: 'CreateForm/add-module',
@@ -75,7 +82,6 @@ export const updateSection = selector({
     const idModule = withNumber('index', data)
     const idSection = withNumber('orderNumber', data)
     const section = withArray('temp', data)
-
     if (
       typeof idModule === 'undefined' ||
       typeof idSection === 'undefined' ||
@@ -165,8 +171,9 @@ export const addSectionItem = selector({
 
 export const updateSectionItem = selector({
   key: 'CreateForm/update-sectionItem',
-  set: ({ get, set }, sectionItem, idModule, idSection, idSectionItem) => {
-    const modules = get(globalModulesState)
+  set: ({ get, set }, data) => {
+    const { sectionItem, idModule, idSection, idSectionItem } = data
+    const modules = JSON.parse(JSON.stringify(get(globalModulesState)))
     modules[idModule].sections[idSection].sectionItems[
       idSectionItem
     ] = sectionItem
@@ -176,9 +183,114 @@ export const updateSectionItem = selector({
 
 export const removeSectionItem = selector({
   key: 'CreateForm/remove-sectionItem',
-  set: ({ get, set }, idModule, idSection, idSectionItems) => {
-    const modules = get(globalModulesState)
+  set: ({ get, set }, data) => {
+    const { idModule, idSection, idSectionItems } = data
+    const modules = JSON.parse(JSON.stringify(get(globalModulesState)))
     modules[idModule].sections[idSection].sectionItems.splice(idSectionItems, 1)
     set(globalModulesState, modules)
+  }
+})
+
+export const getImageSection = selector({
+  key: 'Present-config',
+  set: ({ get, set }) => {
+    const modules = JSON.parse(JSON.stringify(get(globalModulesState)))
+    const temp = []
+    modules.map(value => {
+      value.sections.map(item => {
+        if (item.inputTypeId === 'image')
+          temp.push({
+            screenMatchId: item.screenMatchId,
+            screenType: 'image',
+            screenName: 'Image',
+            id: item.screenMatchId,
+            index: temp.length,
+            duration: 10
+          })
+      })
+    })
+    set(globalPresentationConfig, temp)
+  }
+})
+export const setDataPresentConfig = selector({
+  key: 'setDataPresentConfig',
+  set: ({ get, set }, data) => {
+    const image = JSON.parse(JSON.stringify(get(globalPresentationConfig)))
+    const temp = [...data, ...image]
+    set(presentationConfig, temp)
+  }
+})
+
+export const updateDefaultPresentation = selector({
+  key: 'update-default-presentation',
+  set: ({ get, set }, data) => {
+    const index = data.id
+    const type = data.type
+    const value = data.value
+    const defaultConfig = JSON.parse(JSON.stringify(get(defaultPresentation)))
+    defaultConfig[index][type] = value
+    set(defaultPresentation, defaultConfig)
+  }
+})
+
+export const checkErrorModule = selector({
+  key: 'handle-check-error-module',
+  set: ({ get, set }) => {
+    const modules = JSON.parse(JSON.stringify(get(globalModulesState)))
+    const tempError = []
+    modules.map((module, index) => {
+      if (!module.title)
+        return tempError.push({ message: `Module ${index + 1} hasn't title` })
+      if (!module.description)
+        return tempError.push({
+          message: `Module ${index + 1} hasn't description`
+        })
+      if (module.sections.length < 1)
+        return tempError.push({
+          message: `Section of module ${index + 1} is empty`
+        })
+      withArray('sections', module).map((section, order) => {
+        if (!section.title)
+          return tempError.push({
+            message: `Section ${order + 1} of module ${index + 1} hasn't title`
+          })
+        if (!section.description)
+          return tempError.push({
+            message: `Section ${order + 1} of module ${
+              index + 1
+            } hasn't description`
+          })
+        if (
+          (section.inputTypeId == 'multiple_choice' ||
+            section.inputTypeId == 'multiple_choice') &&
+          section.sectionItems.length < 1
+        )
+          return tempError.push({
+            message: `Section ${order + 1} of module ${
+              index + 1
+            } hasn't section items`
+          })
+      })
+    })
+
+    set(errorModule, tempError)
+  }
+})
+
+export const checkErrorPresentation = selector({
+  key: 'handle-check-error-module',
+  set: ({ get, set }) => {
+    const presentationConfig = JSON.parse(
+      JSON.stringify(get(defaultPresentation))
+    )
+    const tempError = []
+    presentationConfig.map((config, index) => {
+      if (withNumber('commentOfUsers.length', config) < 1)
+        return tempError.push({
+          message: `Comment user of config ${index + 1} is empty`
+        })
+    })
+
+    set(errorModule, tempError)
   }
 })

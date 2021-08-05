@@ -14,10 +14,13 @@ import {
   WrapperModal,
   WrapperProgress
 } from './styled'
+import { useRecoilValue } from 'recoil'
+import { globalModulesState } from 'stores/CreateForm'
 
-const PreviewCheckList = ({ moduleName, modules, show, onHide, ...others }) => {
+const PreviewCheckList = ({ moduleName, show, onHide, ...others }) => {
   const [step, setStep] = useState(1)
   const theme = useTheme()
+  const modules = useRecoilValue(globalModulesState)
   const moduleNumber = useMemo(() => modules.length, [modules])
   const activeStep = useCallback(
     type => {
