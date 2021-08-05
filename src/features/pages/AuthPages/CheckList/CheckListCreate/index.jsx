@@ -62,7 +62,6 @@ const CheckListCreate = () => {
   const presentConfig = useRecoilValue(presentationConfig)
   const history = useHistory()
 
-  console.log(modules, 'modules---')
   // const { handleError } = useModules()
 
   const { onPostExecute, onGetExecute } = useRequestManager()
@@ -78,25 +77,22 @@ const CheckListCreate = () => {
       })
       getDetailTemplate(item.id)
     },
-    [formCheckList]
+    [formCheckList, modules, data]
   )
-  const getData = useCallback(
-    (offset, limit) => {
-      async function execute() {
-        const response = await onGetExecute(EndPoint.TEMPLATE_LIST, {
-          params: {
-            offset,
-            limit
-          }
-        })
-        if (response && response.length) {
-          setData(response)
+  const getData = useCallback((offset, limit) => {
+    async function execute() {
+      const response = await onGetExecute(EndPoint.TEMPLATE_LIST, {
+        params: {
+          offset,
+          limit
         }
+      })
+      if (response && response.length) {
+        setData(response)
       }
-      execute()
-    },
-    [data]
-  )
+    }
+    execute()
+  }, [])
 
   const getDetailTemplate = useCallback(
     id => {
@@ -105,9 +101,7 @@ const CheckListCreate = () => {
           `${EndPoint.TEMPLATE_LIST}/${id}`,
           {}
         )
-        if (response) {
-          setModules(withArray('modules', response))
-        }
+        if (response) setModules(withArray('modules', response))
       }
       execute(id)
     },
@@ -188,12 +182,13 @@ const CheckListCreate = () => {
               key={index}
               content={item.title}
               onClick={() => onChooseTemplate(item)}
+              active={formCheckList.templateId == item.id}
             />
           )
         })}
       </FlexBlock>
     )
-  }, [data])
+  }, [data, formCheckList, modules])
 
   const _renderModalPreviewCheckList = useCallback(() => {
     return (

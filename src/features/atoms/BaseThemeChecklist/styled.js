@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import BaseImage from '../BaseImage'
 
 export const Image = styled(BaseImage)`
@@ -17,7 +17,17 @@ export const Wrapper = styled.div`
   border-radius: 20px;
   width: fit-content;
   cursor: pointer;
-
+  ${props =>
+    props.check &&
+    css`
+      img {
+        border: 2px solid ${props => props.theme.colors.primary} !important;
+      }
+      p {
+        background: ${props => props.theme.colors.primary} !important;
+        color: ${props => props.theme.colors.white} !important;
+      }
+    `};
   &:hover {
     img {
       border: 2px solid ${props => props.theme.colors.primary} !important;
