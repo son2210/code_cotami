@@ -14,7 +14,8 @@ const EndPoint = {
   FORMS_RESULTS_PROGRESS: id => `forms/${id}/results/progress`,
   CHECK_IN_REQ: id => `enterpriseUnits/${id}/forms/checkInRequests`,
   UPDATE_CHECK_IN_REQ: (unit, form) =>
-    `/enterpriseUnits/${unit}/forms/${form}/checkInRequests`
+    `/enterpriseUnits/${unit}/forms/${form}/checkInRequests`,
+  TEMPLATE_LIST: 'templates'
 }
 
 export default EndPoint

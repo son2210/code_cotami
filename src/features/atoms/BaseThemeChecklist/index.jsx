@@ -2,18 +2,19 @@ import React from 'react'
 import { Wrapper, Image, Title } from './styled'
 import PropTypes from 'prop-types'
 
-const BaseThemeChecklist = ({ imageUrl, content, ...others }) => {
+const BaseThemeChecklist = ({ imageUrl, content, active, ...others }) => {
   return (
-    <Wrapper {...others}>
-      <Image src={imageUrl || 'https://picsum.photos/536/354'} />
-      <Title>{content || 'Theme'}</Title>
+    <Wrapper check={active} {...others}>
+      <Image source={imageUrl} />
+      <Title>{content}</Title>
     </Wrapper>
   )
 }
 
 BaseThemeChecklist.propTypes = {
   imageUrl: PropTypes.string,
-  content: PropTypes.string
+  content: PropTypes.string,
+  active: PropTypes.bool
 }
 
 export default React.memo(BaseThemeChecklist)

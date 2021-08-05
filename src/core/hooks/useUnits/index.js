@@ -14,7 +14,7 @@ const useUnits = () => {
   const admin = useRecoilValue(globalUserState)
   const { onGetExecute } = useRequestManager()
   React.useEffect(() => {
-    (async () => {
+    async function execute() {
       if (units && units.length) {
         const response = await onGetExecute(
           EndPoint.UNITS_LIST(admin.enterpriseId),
@@ -35,7 +35,8 @@ const useUnits = () => {
           )
         }
       }
-    })()
+    }
+    execute()
   }, [])
 
   return

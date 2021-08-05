@@ -1,17 +1,18 @@
+import PropTypes from 'prop-types'
 import React from 'react'
+import { Constant } from 'utils'
 import {
-  WrapperModal,
-  TargetType,
   ModalBody,
   SelectUser,
-  Title
+  TargetType,
+  Title,
+  WrapperModal
 } from './styled'
-import PropTypes from 'prop-types'
-import { Constant } from 'utils'
 
 function ModalTargetUser({
   commentType = 'targetUsers',
   onChangeType,
+  onChangeListUser,
   commentOfUsers,
   showListUser = commentType == 'targetUsers',
   ...others
@@ -27,7 +28,9 @@ function ModalTargetUser({
           onChange={onChangeType}
           options={Constant.commentType}
         />
-        {showListUser && <SelectUser data={commentOfUsers} active />}
+        {showListUser && (
+          <SelectUser value={commentOfUsers} onChange={onChangeListUser} />
+        )}
       </ModalBody>
     </WrapperModal>
   )
@@ -36,6 +39,7 @@ ModalTargetUser.propTypes = {
   commentType: PropTypes.string,
   commentOfUsers: PropTypes.array,
   onChangeType: PropTypes.func,
+  onChangeListUser: PropTypes.func,
   showListUser: PropTypes.bool
 }
 export default ModalTargetUser
