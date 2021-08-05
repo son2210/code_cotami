@@ -1,11 +1,16 @@
 import { EndPoint } from 'config/api'
-import { withEmpty, withNumber } from 'exp-value'
+import { withArray, withEmpty, withNumber } from 'exp-value'
 import { useAlert, useRequestManager } from 'hooks'
 import { CreateModule } from 'organisms'
 import React, { useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useCallback } from 'react/cjs/react.development'
-import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil'
+import {
+  useRecoilValue,
+  useResetRecoilState,
+  useSetRecoilState,
+  useRecoilState
+} from 'recoil'
 import {
   addModule,
   globalModulesState,
@@ -45,16 +50,19 @@ const CheckListCreate = () => {
     title: '',
     description: '',
     unit: '',
-    displayMode: ''
+    displayMode: '',
+    templateId: ''
   })
 
-  const modules = useRecoilValue(globalModulesState)
+  const [modules, setModules] = useRecoilState(globalModulesState)
   const resetState = useResetRecoilState(globalModulesState)
   const handleAddModule = useSetRecoilState(addModule)
   const handleUpdateModule = useSetRecoilState(updateModule)
   const handleRemoveModule = useSetRecoilState(removeModule)
   const presentConfig = useRecoilValue(presentationConfig)
   const history = useHistory()
+
+  console.log(modules, 'modules---')
   // const { handleError } = useModules()
 
   const { onPostExecute, onGetExecute } = useRequestManager()
@@ -65,8 +73,10 @@ const CheckListCreate = () => {
       setFormCheckList({
         title: withEmpty('title', item),
         description: withEmpty('description', item),
-        displayMode: withEmpty('displayMode', item)
+        displayMode: withEmpty('displayMode', item),
+        templateId: withEmpty('id', item)
       })
+      getDetailTemplate(item.id)
     },
     [formCheckList]
   )
@@ -79,7 +89,6 @@ const CheckListCreate = () => {
             limit
           }
         })
-        console.log(response, 'response')
         if (response && response.length) {
           setData(response)
         }
@@ -87,6 +96,22 @@ const CheckListCreate = () => {
       execute()
     },
     [data]
+  )
+
+  const getDetailTemplate = useCallback(
+    id => {
+      async function execute(id) {
+        const response = await onGetExecute(
+          `${EndPoint.TEMPLATE_LIST}/${id}`,
+          {}
+        )
+        if (response) {
+          setModules(withArray('modules', response))
+        }
+      }
+      execute(id)
+    },
+    [formCheckList, modules]
   )
 
   const navigationPage = useCallback(
@@ -182,16 +207,11 @@ const CheckListCreate = () => {
 
   const _renderContent = useCallback(() => {
     if (step == 1) {
-      resetState()
       return (
         <WrapperContent>
           <Title H2 bold>
             Choose a template
           </Title>
-          {/* <ThemeBlock>
-            <Title H3>Recents</Title>
-            {_renderTheme()}
-          </ThemeBlock> */}
 
           <ThemeBlock>
             <Title H3>All template</Title>
@@ -245,17 +265,6 @@ const CheckListCreate = () => {
               onChange={value => handleChangeForm('description', value)}
             />
 
-            {/* <WrapperBlock>
-              <Label bold> Unit </Label>
-              <BaseInputPicker
-                data={Constant.unit}
-                placeholder='All'
-                block
-                value={withEmpty('unit', formCheckList)}
-                onChange={value => handleChangeForm('unit', value)}
-                name='unit'
-              />
-            </WrapperBlock> */}
             <WrapperBlock>
               <Label bold> Display </Label>
               <DisplayModeForm
@@ -291,11 +300,6 @@ const CheckListCreate = () => {
           <Title>Description</Title>
           <Content>{withEmpty('description', formCheckList)}</Content>
         </WrapperItem>
-
-        {/* <WrapperItem>
-          <Title>Unit</Title>
-          <Content>{withEmpty('unit', formCheckList) || 'all'}</Content>
-        </WrapperItem> */}
 
         <WrapperItem>
           <Title>Display</Title>

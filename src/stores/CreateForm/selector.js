@@ -9,6 +9,12 @@ import {
   errorModule
 } from './atom'
 
+export const moduleGlobal = selector({
+  key: 'tempCelsius',
+  get: ({ get }) => get(globalModulesState),
+  set: ({ set }, newValue) => set(globalModulesState, newValue)
+})
+
 export const addModule = selector({
   key: 'CreateForm/add-module',
   set: ({ get, set }) => {

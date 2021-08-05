@@ -13,7 +13,8 @@ export {
   setDataPresentConfig,
   updateDefaultPresentation,
   checkErrorModule,
-  checkErrorPresentation
+  checkErrorPresentation,
+  moduleGlobal
 } from './selector'
 
 export {
