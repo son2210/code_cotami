@@ -1,7 +1,9 @@
 const EndPoint = {
-  LOGIN_API: 'auth/login',
+  LOGIN_AGENCY: 'auth/login/agency',
+  LOGIN_ADMIN: 'auth/login/admin',
   REGISTER_API: 'users/register',
   ADMIN_PROFILE: 'users/profile',
+  ADMIN_RESET_PASSWORD: 'auth/resetPassword',
   STAFFS: 'staffs',
   UNITS_LIST: id => `enterprises/${id}/units`,
   UPDATE_STAFFS: 'users',

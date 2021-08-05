@@ -1,8 +1,17 @@
+import { withArray, withNull } from 'exp-value'
 import PropTypes from 'prop-types'
-import React, { useCallback, useState, useEffect } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
+import { useRecoilValue, useSetRecoilState } from 'recoil'
+import {
+  globalModulesState,
+  removeSection,
+  swapSection,
+  updateSection
+} from 'stores/CreateForm'
 import { Constant } from 'utils'
 import {
   Block,
+  Button,
   CheckBox,
   Drag,
   DragIcon,
@@ -13,12 +22,9 @@ import {
   Title,
   Wrapper,
   WrapperContent,
-  WrapperTop,
   WrapperRowButton,
-  Button
+  WrapperTop
 } from './styled'
-import { useSetRecoilState } from 'recoil'
-import { swapSection, updateSection, removeSection } from 'stores/CreateForm'
 
 const SectionCheckList = ({
   orderNumber,
@@ -33,6 +39,7 @@ const SectionCheckList = ({
   const handleSwapSection = useSetRecoilState(swapSection)
   const handleUpdateSection = useSetRecoilState(updateSection)
   const handleRemoveSection = useSetRecoilState(removeSection)
+  const modules = useRecoilValue(globalModulesState)
 
   const [dataSection, setDataSection] = useState({
     id: null,
@@ -106,14 +113,28 @@ const SectionCheckList = ({
   )
 
   useEffect(() => {
+    const section = withArray(
+      'sections',
+      JSON.parse(JSON.stringify(modules))[index]
+    )[orderNumber]
+
     setDataSection({
       id: orderNumber,
       title: sectionTitle,
       description: description,
       sectionItems: sectionItems || [],
-      inputTypeId: type
+      inputTypeId: type,
+      screenMatchId: withNull('screenMatchId', section)
     })
-  }, [orderNumber, sectionTitle, sectionItems, description, type])
+  }, [
+    orderNumber,
+    index,
+    sectionTitle,
+    sectionItems,
+    description,
+    type,
+    modules
+  ])
 
   return (
     <Wrapper {...others}>
@@ -156,7 +177,7 @@ const SectionCheckList = ({
               bold
             />
           ) : (
-            sectionTitle
+            dataSection.title
           )}
         </Title>
         {!preview ? (
@@ -170,7 +191,7 @@ const SectionCheckList = ({
             bold
           />
         ) : (
-          <Title H4>{description}</Title>
+          <Title H4>{dataSection.description}</Title>
         )}
 
         <Block>{_renderSectionItem(dataSection.inputTypeId)}</Block>

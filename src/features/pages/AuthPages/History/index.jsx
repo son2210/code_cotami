@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { Wrapper } from './styled'
 import { TableAction, FilterBar } from 'molecules'
 import { BaseButton, BaseDateRangePicker, BaseInputPicker } from 'atoms'
-import { usePaginate, useRequestManager, useUnits } from 'hooks'
+import { usePaginate, useRequestManager } from 'hooks'
 import { useTheme } from 'styled-components'
 import moment from 'moment'
 import { EndPoint } from 'config/api'
@@ -29,7 +29,7 @@ const History = () => {
     ]
   })
   const { onGetExecute } = useRequestManager()
-  useUnits()
+  // useUnits()
   const units = useRecoilValue(globalUnitsState)
 
   const getData = useCallback(

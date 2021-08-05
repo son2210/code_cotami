@@ -1,6 +1,4 @@
-import React, { 
-  // useState
- } from 'react'
+import React from 'react' // useState
 import { Wrapper } from './styled'
 import { TableAction, FilterBar } from 'molecules'
 import { BaseButton, BaseDateRangePicker, BaseInputPicker } from 'atoms'
@@ -8,13 +6,10 @@ import { BaseButton, BaseDateRangePicker, BaseInputPicker } from 'atoms'
 import { IMAGES } from 'assets'
 import { usePaginate } from 'hooks'
 import { Constant } from 'utils'
-import {
-  // useRequestManager,
-  useUnits
-} from 'hooks'
+
 // import { EndPoint } from 'config/api'
-// import { globalUserState } from 'stores/profile/atom'
-// import { useRecoilValue } from 'recoil'
+import { globalUnitsState } from 'stores/Units/atom'
+import { useRecoilValue } from 'recoil'
 
 const Statistics = () => {
   const {
@@ -25,7 +20,7 @@ const Statistics = () => {
     onChangePage,
     onChangeLength
   } = usePaginate()
-  const units = useUnits(activePage, displayLength)
+  const units = useRecoilValue(globalUnitsState)
   // const { onGetExecute } = useRequestManager()
 
   const columns = [
