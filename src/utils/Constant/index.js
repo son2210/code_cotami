@@ -89,29 +89,91 @@ const Constant = {
   displayMode: [
     {
       value: 'auto',
-      label: 'auto'
+      label: 'Auto'
     },
     {
       value: 'manual',
-      label: 'manual'
+      label: 'Manual'
     },
     {
-      value: 'hide',
-      label: 'hide'
+      value: 'hidden',
+      label: 'Hidden'
     }
   ],
   DEFAULT_OPTIONS: [
     {
       value: 'auto',
-      label: 'auto'
+      label: 'Auto'
     },
     {
       value: 'manual',
-      label: 'manual'
+      label: 'Manual'
     },
     {
       value: 'hidden',
-      label: 'hide'
+      label: 'Hidden'
+    }
+  ],
+  commentType: [
+    {
+      value: 'all',
+      label: 'All'
+    },
+    {
+      value: 'random',
+      label: 'Random'
+    },
+    {
+      value: 'targetUsers',
+      label: 'Target users'
+    }
+  ],
+  presentationConfig: [
+    {
+      id: 0,
+      index: 0,
+      screenType: 'report_today',
+      screenName: 'Report today'
+    },
+    {
+      id: 1,
+      index: 1,
+      screenType: 'report_yesterday',
+      screenName: 'Report yesterday'
+    },
+    {
+      id: 2,
+      index: 2,
+      screenType: 'month_report_by_week',
+      screenName: 'Month report by week'
+    },
+    {
+      id: 3,
+      index: 3,
+      screenType: 'month_report_by_date',
+      screenName: 'Month report by date'
+    },
+    {
+      id: 4,
+      index: 4,
+      screenType: 'comment_today',
+      screenName: 'Comment today',
+      commentType: 'targetUsers',
+      commentOfUsers: []
+    },
+    {
+      id: 5,
+      index: 5,
+      screenType: 'comment_yesterday',
+      screenName: 'Comment yesterday',
+      commentType: 'targetUsers',
+      commentOfUsers: []
+    },
+    {
+      id: 6,
+      index: 6,
+      screenType: 'image',
+      screenName: 'Image'
     }
   ]
 }

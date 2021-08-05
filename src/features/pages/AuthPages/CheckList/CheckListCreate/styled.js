@@ -7,7 +7,7 @@ import {
   BaseButton,
   BaseIcon
 } from 'atoms'
-import { InputGroup } from 'molecules'
+import { InputGroup, RadioForm } from 'molecules'
 
 export const Wrapper = styled.div`
   display: flex;
@@ -95,3 +95,8 @@ export const Content = styled.div`
 export const Icon = styled(BaseIcon)``
 
 export const Input = styled(InputGroup)``
+export const DisplayModeForm = styled(RadioForm)`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+`

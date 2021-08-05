@@ -3,7 +3,7 @@ import React, { useState, useCallback, useEffect } from 'react'
 import { Wrapper } from './styled'
 import { TableAction, FilterBar } from 'molecules'
 import { BaseButton, BaseCheckPicker, BaseInput, BaseInputPicker } from 'atoms'
-import { usePaginate, useRequestManager, useAlert, useUnits } from 'hooks'
+import { usePaginate, useRequestManager, useAlert } from 'hooks'
 import { useTheme } from 'styled-components'
 import { Constant } from 'utils'
 import { modifyPropsOfState, trimStringFieldOfObject } from 'utils/Helpers'
@@ -24,7 +24,7 @@ const Staffs = ({ t }) => {
     onChangeLength
   } = usePaginate()
   const theme = useTheme()
-  useUnits()
+  // useUnits()
   const units = useRecoilValue(globalUnitsState)
   const { showSuccess } = useAlert()
   const { onGetExecute, onPatchExecute, onPostExecute } = useRequestManager()

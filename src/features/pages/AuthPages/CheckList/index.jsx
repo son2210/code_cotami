@@ -1,12 +1,14 @@
 import { IMAGES } from 'assets'
 import { BaseButton, BaseInputPicker, BaseInput } from 'atoms'
 import { EndPoint } from 'config/api'
-import { usePaginate, useRequestManager, useUnits } from 'hooks'
+import { usePaginate, useRequestManager } from 'hooks'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useTheme } from 'styled-components'
 import { Constant, Routers } from 'utils'
 import { FilterWrapper, Table, Wrapper } from './styled'
+import { globalUnitsState } from 'stores/Units/atom'
+import { useRecoilValue } from 'recoil'
 
 const CheckList = () => {
   const {
@@ -24,11 +26,11 @@ const CheckList = () => {
     status: ''
   })
   const { onGetExecute } = useRequestManager()
-  const units = useUnits(activePage, displayLength)
+  const units = useRecoilValue(globalUnitsState)
 
   const getData = useCallback((offset, limit) => {
     async function execute() {
-      const response = await onGetExecute(EndPoint.GET_FORM, {
+      const response = await onGetExecute(EndPoint.FORMS, {
         params: {
           offset,
           limit
@@ -140,12 +142,7 @@ const CheckList = () => {
         formOpt={{
           formValue: searchData,
           onSubmit: () =>
-            getData(
-              activePage,
-              displayLength,
-              searchData.dateRange,
-              searchData.enterpriseUnitId
-            )
+            getData(activePage, displayLength, searchData.enterpriseUnitId)
         }}
         onClick={goToCreateChecklist}
       >
@@ -166,9 +163,12 @@ const CheckList = () => {
           }
         />
         <BaseInputPicker
-          placeholder='unit'
+          placeholder='status'
           style={{ marginLeft: 10 }}
-          data={['active', 'inactive']}
+          data={[
+            { label: 'active', value: 'active' },
+            { label: 'inactive', value: 'inactive' }
+          ]}
         />
         <BaseButton
           style={{ marginLeft: 10 }}
@@ -182,7 +182,7 @@ const CheckList = () => {
 
       <Table
         id='table__checklist-forms'
-        height={window.innerHeight - 300}
+        height={window.innerHeight - 150}
         data={data}
         columns={columns}
         paginateProps={{
