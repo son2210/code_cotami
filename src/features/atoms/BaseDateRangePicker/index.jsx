@@ -5,7 +5,9 @@ import PropTypes from 'prop-types'
 const BaseDateRangePicker = ({ value, ...others }) => {
   return (
     <Wrapper
-      value={value.length ? [new Date(value[0]), new Date(value[1])] : []}
+      value={
+        value && value.length ? [new Date(value[0]), new Date(value[1])] : []
+      }
       {...others}
     ></Wrapper>
   )

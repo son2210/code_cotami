@@ -11,7 +11,7 @@ import { EndPoint } from 'config/api'
 import { globalUnitsState } from 'stores/Units/atom'
 import { useRecoilValue } from 'recoil'
 import moment from 'moment'
-import { useTheme } from 'styled-components'
+// import { useTheme } from 'styled-components'
 
 const Statistics = () => {
   const {
@@ -27,10 +27,6 @@ const Statistics = () => {
   const { onGetExecute } = useRequestManager()
   const units = useRecoilValue(globalUnitsState)
   const [forms, setForms] = useState()
-  const [selected, setSelected] = useState({
-    enterpriseUnitId: null,
-    form: null
-  })
   const [column, setColumn] = useState([])
   const [data, setData] = useState([])
 
@@ -38,12 +34,13 @@ const Statistics = () => {
     {
       enterpriseUnitId: null,
       dateRange: [
-        '2020-07-07',
-        '2021-08-30'
-        // moment(Date.now()).subtract(30, 'days').format('YYYY-MM-DD'),
-        // moment(Date.now()).format('YYYY-MM-DD')
+        // '2020-07-07',
+        // '2021-08-30'
+        moment(Date.now()).subtract(30, 'days').format('YYYY-MM-DD'),
+        moment(Date.now()).format('YYYY-MM-DD')
       ],
       formId: null
+      // formId: 280 // just one available
     },
     []
   )
@@ -68,6 +65,7 @@ const Statistics = () => {
 
   const getFormsResults = useCallback(
     (offset, limit, dateRange, enterpriseUnitId, formId) => {
+      if (formId) return []
       return onGetExecute(EndPoint.FORMS_RESULTS(formId), {
         params: {
           offset,
@@ -82,6 +80,7 @@ const Statistics = () => {
   )
   const getFormsProgress = useCallback(
     (offset, limit, dateRange, enterpriseUnitId, formId) => {
+      if (formId) return []
       return onGetExecute(EndPoint.FORMS_RESULTS_PROGRESS(formId), {
         params: {
           offset,
@@ -191,31 +190,11 @@ const Statistics = () => {
     return { data, column }
   }, [])
 
-  const initial = useCallback(async (offset, limit, dateRange) => {
-    const listForm = await getForms()
-    if (listForm.length * units.length !== 0) {
-      setForms(listForm)
-      setSelected({
-        formId: listForm[0].value,
-        enterpriseUnitId: units[0].value
-      })
+  const getData = useCallback(
+    (offset, limit, dateRange, enterpriseUnitId, formId) => {
       Promise.all([
-        getFormsProgress(
-          offset,
-          limit,
-          dateRange,
-          units[0].value,
-          280
-          // listForm[0].value
-        ),
-        getFormsResults(
-          offset,
-          limit,
-          dateRange,
-          units[0].value,
-          280
-          // listForm[0].value
-        )
+        getFormsProgress(offset, limit, dateRange, enterpriseUnitId, formId),
+        getFormsResults(offset, limit, dateRange, enterpriseUnitId, formId)
       ])
         .then(conCurrentData => {
           const [progress, results] = conCurrentData
@@ -225,10 +204,43 @@ const Statistics = () => {
           setData(data)
         })
         .catch(error => console.log(error))
-    }
+    },
+    []
+  )
+
+  useEffect(() => {
+    (async () => {
+      const listForm = await getForms()
+      if (listForm.length * units.length !== 0) {
+        setForms(listForm)
+        setSearchData({
+          formId: listForm[0].value,
+          enterpriseUnitId: units[0].value
+        })
+        getData(
+          activePage,
+          displayLength,
+          searchData.dateRange,
+          units[0].value,
+          280 // just one available
+          // listForm[0].value,
+        )
+      }
+    })()
   }, [])
 
-  useEffect(() => initial(activePage, displayLength, searchData.dateRange), [])
+  useEffect(() => {
+    if (searchData.enterpriseUnitId && searchData.formId) {
+      getData(
+        activePage,
+        displayLength,
+        searchData.dateRange,
+        searchData.enterpriseUnitId,
+        searchData.formId
+        // 280 // just one available
+      )
+    }
+  }, [activePage, displayLength])
 
   return (
     <Wrapper>
@@ -236,22 +248,52 @@ const Statistics = () => {
         placeholder='checklist'
         hasButton={false}
         style={{ marginBottom: 20 }}
+        formOpt={{
+          formValue: searchData,
+          onSubmit: () => {
+            getData(
+              activePage,
+              displayLength,
+              searchData.dateRange,
+              searchData.enterpriseUnitId,
+              searchData.formId
+              // 280 // just one available
+            )
+          }
+        }}
       >
         <BaseInputPicker
           placeholder='unit'
           style={{ marginLeft: 10 }}
+          value={searchData['enterpriseUnitId']}
           data={units}
-          onChange={v => console.log(v)}
+          onChange={v =>
+            setSearchData(prev => {
+              return { ...prev, ['enterpriseUnitId']: v }
+            })
+          }
         />
         <BaseInputPicker
           placeholder='Form'
           style={{ marginLeft: 10 }}
-          data={units}
-          onChange={v => console.log(v)}
+          data={forms}
+          value={searchData['formId']}
+          onChange={v =>
+            setSearchData(prev => {
+              return { ...prev, ['formId']: v }
+            })
+          }
         />
         <BaseDateRangePicker
-          placeholder='select date range'
+          placeholder='Select date range'
           style={{ marginLeft: 10 }}
+          onChange={v =>
+            setSearchData(prev => {
+              return { ...prev, ['dateRange']: v }
+            })
+          }
+          //fix warning Rsuit
+          value={searchData['dateRange']}
         />
 
         <BaseButton
@@ -275,8 +317,8 @@ const Statistics = () => {
           activePage,
           displayLength,
           total: 100,
-          onChangePage,
-          onChangeLength
+          onChangePage: page => onChangePage(page - 1),
+          onChangeLength: length => onChangeLength(length)
         }}
       />
     </Wrapper>
