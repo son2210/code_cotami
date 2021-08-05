@@ -27,7 +27,10 @@ const UnAuthForm = ({
 
         <ActionButtonWrapper column={true}>
           {primaryBtn && (
-            <BaseButton fluid primary uppercase bold type='submit'>
+            <BaseButton 
+            
+            onClick={primaryBtn.onClick}
+            fluid primary uppercase bold type='submit'>
               {primaryBtn.name}
             </BaseButton>
           )}
