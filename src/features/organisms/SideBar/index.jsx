@@ -25,7 +25,10 @@ const SideBar = ({ t, menuList, ...others }) => {
         ))}
       </MenuWrapper>
       <UserWrapper>
-        <ProfileBlock name={userState?.firstName || ''} />
+        <ProfileBlock
+          name={userState?.firstName || ''}
+          subText={userState?.role || ''}
+        />
       </UserWrapper>
     </ContainerWrapper>
   )

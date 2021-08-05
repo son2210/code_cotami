@@ -1,5 +1,6 @@
 const EndPoint = {
-  LOGIN_API: 'auth/login/admin',
+  LOGIN_AGENCY: 'auth/login/agency',
+  LOGIN_ADMIN: 'auth/login/admin',
   REGISTER_API: 'users/register',
   ADMIN_PROFILE: 'users/profile',
   ADMIN_RESET_PASSWORD: 'auth/resetPassword',
