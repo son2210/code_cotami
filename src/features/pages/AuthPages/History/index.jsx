@@ -43,7 +43,7 @@ const History = () => {
           endDate: moment(dateRange[1]).format('YYYY-MM-DD')
         }
       })
-      if (response && response.length) {
+      if (response ) {
         setData(
           response.map(d => {
             return { ...d, name: d.author.name, title: d.form.title }
@@ -61,6 +61,17 @@ const History = () => {
         return { ...prev, enterpriseUnitId: units[0].value }
       })
       getData(activePage, displayLength, searchData.dateRange, units[0].value)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (units && units.length) {
+      getData(
+        activePage,
+        displayLength,
+        searchData.dateRange,
+        searchData.enterpriseUnitId
+      )
     }
   }, [activePage, displayLength, units])
 
@@ -81,7 +92,7 @@ const History = () => {
     },
     {
       align: 'left',
-      width: 100,
+      width: 300,
       header: {
         label: 'Staff'
       },
@@ -159,14 +170,7 @@ const History = () => {
             })
           }
           //fix warning Rsuit
-          value={
-            searchData['dateRange'].length
-              ? [
-                  new Date(searchData['dateRange'][0]),
-                  new Date(searchData['dateRange'][1])
-                ]
-              : []
-          }
+          value={searchData['dateRange']}
         />
         <BaseButton type='submit' style={{ marginLeft: 10 }} secondary bold>
           Filter

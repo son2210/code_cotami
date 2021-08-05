@@ -17,7 +17,6 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false)
   const { onPostExecute } = useRequestManager()
   const { saveToken } = useToken()
-
   const [data, setData] = useState({
     enterpriseId: '', //18
     loginId: '', //admin
@@ -40,10 +39,7 @@ const Login = () => {
     if (response) {
       await saveToken(response.accessToken)
       goToPage(Routers.NORMAL_ADMIN.MENU[0].URL)
-    } else {
-      //  prevent  block resubmit
-      setData({ ...data })
-    }
+    } 
   }, [data])
 
   const handleInput = useCallback(
@@ -83,7 +79,7 @@ const Login = () => {
         formValue={data}
         model={validateModel}
         onCheck={validateData}
-        onSubmit={handleLogin}
+        // onSubmit={handleLogin}
       >
         <InputGroup
           placeholder='Company Id'
@@ -120,8 +116,12 @@ const Login = () => {
         />
         <RadioFormWrapper
           options={Constant.LOGIN_ROLE}
-          onChange={value => handleInput('role', value)}
           name='role'
+          onChange={value => {
+            setData(prv => {
+              return { ...prv, role: value }
+            })
+          }}
           value={data['role']}
         />
       </UnAuthForm>

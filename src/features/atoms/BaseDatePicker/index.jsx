@@ -7,7 +7,7 @@ const BaseDatePicker = ({ ...others }) => {
 }
 
 BaseDatePicker.propTypes = {
-  others:PropTypes.any
+  others: PropTypes.any
 }
 
 export default React.memo(BaseDatePicker)
