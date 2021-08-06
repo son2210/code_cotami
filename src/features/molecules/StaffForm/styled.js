@@ -1,11 +1,12 @@
 import styled from 'styled-components'
-
+import { RadioForm } from 'molecules'
 import {
   BaseItemGrid,
   BaseWrapper,
   BaseTitle,
   BaseToggle,
-  BaseForm
+  BaseForm,
+  BaseTextArea
 } from 'atoms'
 import { FlexboxGrid } from 'rsuite'
 import { InputBlock } from 'molecules/ProfileChange'
@@ -39,3 +40,6 @@ export const ButtonGroup = styled(BaseWrapper)`
   display: flex;
   flex-direction: row-reverse;
 `
+
+export const RadioFormWrapper = styled(RadioForm)``
+export const TextAreaWrapper = styled(BaseTextArea)``
