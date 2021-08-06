@@ -14,8 +14,8 @@ const History = () => {
   const {
     activePage,
     displayLength,
-    // total,
-    // setTotal,
+    total,
+    setTotal,
     onChangePage,
     onChangeLength
   } = usePaginate()
@@ -43,29 +43,28 @@ const History = () => {
           endDate: moment(dateRange[1]).format('YYYY-MM-DD')
         }
       })
-      if (response ) {
+      if (response) {
+        const { data, paging } = response
         setData(
-          response.map(d => {
+          data.map(d => {
             return { ...d, name: d.author.name, title: d.form.title }
           })
         )
+        setTotal(paging.total)
       }
     },
     []
   )
 
-  //initial
   useEffect(() => {
     if (units && units.length) {
-      setSearchData(prev => {
-        return { ...prev, enterpriseUnitId: units[0].value }
-      })
-      getData(activePage, displayLength, searchData.dateRange, units[0].value)
-    }
-  }, [])
-
-  useEffect(() => {
-    if (units && units.length) {
+      if (!searchData.enterpriseUnitId) {
+        getData(activePage, displayLength, searchData.dateRange, units[0].value)
+        setSearchData(prev => {
+          return { ...prev, enterpriseUnitId: units[0].value }
+        })
+        return
+      }
       getData(
         activePage,
         displayLength,
@@ -185,7 +184,7 @@ const History = () => {
         paginateProps={{
           activePage,
           displayLength,
-          total: 100,
+          total,
           onChangePage: p => onChangePage(p - 1),
           onChangeLength: l => onChangeLength(l)
         }}

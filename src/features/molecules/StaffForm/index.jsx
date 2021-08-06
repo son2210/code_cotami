@@ -6,8 +6,10 @@ import {
   BlockFieldWrapper,
   FlexGridWrapper,
   TitleWrapper,
-  ToggleWrapper,
-  ButtonGroup
+  // ToggleWrapper,
+  ButtonGroup,
+  RadioFormWrapper,
+  TextAreaWrapper
 } from './styled'
 import { BaseInputPicker, BaseButton, BaseDatePicker } from 'atoms'
 import { InputBlock } from 'molecules/ProfileChange'
@@ -42,22 +44,27 @@ const StaffForm = ({
             isError={!error['firstName'] ? false : true}
           />
           <InputBlock
-            title='First Name'
-            placeholder='Last Name'
-            onChange={value => handleInput('lastName', value)}
-            value={data['lastName']}
-            helpText={error['lastName']}
-            isError={!error['lastName'] ? false : true}
+            title='User id'
+            placeholder='User Id'
+            onChange={value => handleInput('userId', value)}
+            value={data['userId']}
+            helpText={error['userId']}
+            isError={!error['userId'] ? false : true}
           />
           <InputBlock
-            title='Email'
-            placeholder='Email'
-            onChange={value => handleInput('email', value)}
-            value={data['email']}
-            helpText={error['email']}
-            isError={!error['email'] ? false : true}
+            title='Password'
+            placeholder='Password'
+            type='password'
+            onChange={value => handleInput('password', value)}
+            value={data['password']}
+            helpText={error['password']}
+            isError={!error['password'] ? false : true}
             disabled={isUpdate ? true : false}
           />
+          <BlockFieldWrapper column={'column'}>
+            <TitleWrapper>Unit</TitleWrapper>
+            <BaseInputPicker data={units} placeholder='Unit' />
+          </BlockFieldWrapper>
           <InputBlock
             title='Phone'
             placeholder='Phone'
@@ -67,15 +74,35 @@ const StaffForm = ({
             isError={!error['phone'] ? false : true}
           />
         </ColWrapper>
+
         <ColWrapper colspan={9}>
-          <BlockFieldWrapper column={'column'}>
-            <TitleWrapper>Unit</TitleWrapper>
-            <BaseInputPicker data={units} placeholder='Unit' />
-          </BlockFieldWrapper>
+          <InputBlock
+            title='First Name'
+            placeholder='Last Name'
+            onChange={value => handleInput('lastName', value)}
+            value={data['lastName']}
+            helpText={error['lastName']}
+            isError={!error['lastName'] ? false : true}
+          />
           <BlockFieldWrapper column={'column'}>
             <TitleWrapper>Role</TitleWrapper>
-            <BaseInputPicker data={Constant.Role} placeholder='Status' />
+            <RadioFormWrapper
+              options={Constant.LOGIN_ROLE}
+              name='role'
+              onChange={value => handleInput('lastName', value)}
+              value={data['role']}
+            />
           </BlockFieldWrapper>
+          <InputBlock
+            title='Password Confirm'
+            placeholder='Password Confirm'
+            type='password'
+            onChange={value => handleInput('passwordCf', value)}
+            value={data['passwordCf']}
+            helpText={error['passwordCf']}
+            isError={!error['passwordCf'] ? false : true}
+            disabled={isUpdate ? true : false}
+          />
           <BlockFieldWrapper column={'column'}>
             <TitleWrapper>Date of Birth</TitleWrapper>
             <BaseDatePicker
@@ -87,25 +114,20 @@ const StaffForm = ({
               style={{ width: '100%' }}
             />
           </BlockFieldWrapper>
-          <BlockFieldWrapper column={'column'}>
-            <TitleWrapper>Status</TitleWrapper>
-            <ToggleWrapper
-              defaultChecked={!isUpdate && true}
-              checked={
-                data['status'] === Constant.CellColor.ACTIVE ? true : false
-              }
-              onChange={checked => {
-                handleInput(
-                  'status',
-                  checked
-                    ? Constant.CellColor.ACTIVE
-                    : Constant.CellColor.INACTIVE
-                )
-              }}
-            />
-          </BlockFieldWrapper>
+
+          <InputBlock
+            title='Email'
+            placeholder='Email'
+            onChange={value => handleInput('email', value)}
+            value={data['email']}
+            helpText={error['email']}
+            isError={!error['email'] ? false : true}
+            disabled={isUpdate ? true : false}
+          />
         </ColWrapper>
       </FlexGridWrapper>
+      <TitleWrapper>Note</TitleWrapper>
+      <TextAreaWrapper rows={3} />
 
       <ButtonGroup>
         <BaseButton bold uppercase primary type='submit'>
