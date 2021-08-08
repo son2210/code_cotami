@@ -1,30 +1,162 @@
 /* eslint-disable no-unused-vars */
-import React, { useState, useCallback, useEffect } from 'react'
-import { Wrapper } from './styled'
-import { TableAction, FilterBar } from 'molecules'
 import { BaseButton, BaseCheckPicker, BaseInput, BaseInputPicker } from 'atoms'
-import { usePaginate, useRequestManager, useAlert } from 'hooks'
+import { EndPoint } from 'config/api'
+import { withArray, withNumber } from 'exp-value'
+import { useAlert, usePaginate, useRequestManager } from 'hooks'
+import { FilterBar, TableAction } from 'molecules'
+import { StaffModal } from 'organisms'
+import { PropTypes } from 'prop-types'
+import React, { useCallback, useEffect, useState } from 'react'
+import { withNamespaces } from 'react-i18next'
+import { useRecoilValue } from 'recoil'
+import { globalUnitsState } from 'stores/Units/atom'
 import { useTheme } from 'styled-components'
 import { Constant } from 'utils'
 import { modifyPropsOfState, trimStringFieldOfObject } from 'utils/Helpers'
-import { StaffModal } from 'organisms'
-import { EndPoint } from 'config/api'
-import { withNamespaces } from 'react-i18next'
-import { PropTypes } from 'prop-types'
-import { globalUnitsState } from 'stores/Units/atom'
-import { useRecoilValue } from 'recoil'
+import { Wrapper } from './styled'
 
 const Staffs = ({ t }) => {
   const {
     activePage,
     displayLength,
-    // total,
-    // setTotal,
+    total,
+    setTotal,
     onChangePage,
     onChangeLength
   } = usePaginate()
   const theme = useTheme()
-  // useUnits()
+
+  const columns = React.useMemo(() => {
+    return [
+      {
+        width: 100,
+        align: 'center',
+        header: {
+          label: 'Avatar'
+        },
+        cell: {
+          type: Constant.CellType.IMAGE,
+          id: 'avatarUrl',
+          isAvatar: true,
+          hoverPointer: true,
+          style: {
+            color: theme.colors.secondary[1],
+            paddingTop: 5,
+            height: 65
+          },
+          others: {
+            style: {
+              width: 35,
+              height: 35,
+              borderRadius: '50%'
+            },
+            handleOnClick: toggleModal
+          }
+        }
+      },
+      {
+        width: 150,
+        align: 'center',
+        header: {
+          label: 'First Name'
+        },
+
+        cell: {
+          type: Constant.CellType.ACTION_CELL,
+          id: 'firstName',
+          style: {
+            color: theme.colors.secondary[1]
+          },
+          others: {
+            handleOnClick: toggleModal
+          }
+        }
+      },
+      {
+        width: 150,
+        align: 'left',
+        header: {
+          label: 'Last Name'
+        },
+
+        cell: {
+          type: Constant.CellType.ACTION_CELL,
+          id: 'lastName',
+          style: {
+            color: theme.colors.secondary[1]
+          },
+          others: {
+            handleOnClick: toggleModal
+          }
+        }
+      },
+      {
+        width: 200,
+        align: 'left',
+        header: {
+          label: 'email'
+        },
+        cell: {
+          type: Constant.CellType.ACTION_CELL,
+          id: 'email',
+          style: {
+            color: theme.colors.tertiary
+          },
+          others: {
+            handleOnClick: toggleModal
+          }
+        }
+      },
+      {
+        width: 100,
+        align: 'left',
+        header: {
+          label: 'Birthday'
+        },
+        cell: {
+          type: Constant.CellType.DATE_TIME,
+          id: 'dateOfBirth',
+          style: {
+            color: theme.colors.tertiary
+          },
+          others: {
+            handleOnClick: toggleModal,
+            format: 'YYYY/MM/DD'
+          }
+        }
+      },
+      {
+        width: 80,
+        align: 'left',
+        header: {
+          label: 'Status'
+        },
+        cell: {
+          hoverPointer: true,
+          id: 'status',
+          type: Constant.CellType.COLOR_VIA_VALUE,
+          others: {
+            handleOnClick: toggleModal
+          }
+        }
+      },
+      {
+        width: 80,
+        align: 'left',
+        header: {
+          label: 'Toggle'
+        },
+        cell: {
+          id: 'status',
+          type: Constant.CellType.TOGGLE,
+          others: {
+            handleOnChange: toggleStatus
+          }
+        }
+      }
+    ]
+  }, [])
+
   const units = useRecoilValue(globalUnitsState)
   const { showSuccess } = useAlert()
   const { onGetExecute, onPatchExecute, onPostExecute } = useRequestManager()
@@ -149,7 +281,8 @@ const Staffs = ({ t }) => {
       disableLoading
     )
     if (response) {
-      setData(response)
+      setData(withArray('data', response))
+      setTotal(withNumber('paging.total', response))
     }
     setLoading(false)
   }
@@ -177,152 +310,6 @@ const Staffs = ({ t }) => {
   useEffect(() => {
     getData(activePage, displayLength)
   }, [activePage, displayLength])
-
-  const columns = [
-    {
-      width: 100,
-      align: 'center',
-      header: {
-        label: 'Avatar'
-      },
-      cell: {
-        type: Constant.CellType.IMAGE,
-        id: 'avatarUrl',
-        isAvatar: true,
-        hoverPointer: true,
-        style: {
-          color: theme.colors.secondary[1],
-          paddingTop: 5,
-          height: 65
-        },
-        others: {
-          style: {
-            width: 35,
-            height: 35,
-            borderRadius: '50%'
-          },
-          handleOnClick: toggleModal
-        }
-      }
-    },
-    {
-      width: 150,
-      align: 'center',
-      header: {
-        label: 'First Name'
-      },
-
-      cell: {
-        type: Constant.CellType.ACTION_CELL,
-        id: 'firstName',
-        style: {
-          color: theme.colors.secondary[1]
-        },
-        others: {
-          handleOnClick: toggleModal
-        }
-      }
-    },
-    {
-      width: 150,
-      align: 'left',
-      header: {
-        label: 'Last Name'
-      },
-
-      cell: {
-        type: Constant.CellType.ACTION_CELL,
-        id: 'lastName',
-        style: {
-          color: theme.colors.secondary[1]
-        },
-        others: {
-          handleOnClick: toggleModal
-        }
-      }
-    },
-    {
-      width: 200,
-      align: 'left',
-      header: {
-        label: 'email'
-      },
-      cell: {
-        type: Constant.CellType.ACTION_CELL,
-        id: 'email',
-        style: {
-          color: theme.colors.tertiary
-        },
-        others: {
-          handleOnClick: toggleModal
-        }
-      }
-    },
-    {
-      width: 100,
-      align: 'left',
-      header: {
-        label: 'Birthday'
-      },
-      cell: {
-        type: Constant.CellType.DATE_TIME,
-        id: 'dateOfBirth',
-        style: {
-          color: theme.colors.tertiary
-        },
-        others: {
-          handleOnClick: toggleModal,
-          format: 'YYYY/MM/DD'
-        }
-      }
-    },
-    // {
-    //   width: 80,
-    //   align: 'left',
-    //   header: {
-    //     label: 'Role'
-    //   },
-    //   cell: {
-    //     type: Constant.CellType.ACTION_CELL,
-    //     id: 'role',
-    //     style: {
-    //       color: theme.colors.tertiary
-    //     },
-    //     others: {
-    //       handleOnClick: toggleModal
-    //     }
-    //   }
-    // },
-    {
-      width: 80,
-      align: 'left',
-      header: {
-        label: 'Status'
-      },
-      cell: {
-        hoverPointer: true,
-        id: 'status',
-        type: Constant.CellType.COLOR_VIA_VALUE,
-        others: {
-          handleOnClick: toggleModal
-        }
-      }
-    },
-    {
-      width: 80,
-      align: 'left',
-      header: {
-        label: 'Toggle'
-      },
-      cell: {
-        id: 'status',
-        type: Constant.CellType.TOGGLE,
-        others: {
-          handleOnChange: toggleStatus
-        }
-      }
-    }
-  ]
 
   return (
     <Wrapper>
@@ -367,16 +354,15 @@ const Staffs = ({ t }) => {
         </BaseButton>
       </FilterBar>
       <TableAction
-        id='table3'
+        id='table-staffs'
         loading={loading}
-        height={600}
-        width={900}
+        height={window.innerHeight - 200}
         data={data}
         columns={columns}
         paginateProps={{
           activePage,
           displayLength,
-          total: 100,
+          total: total,
           onChangePage: page => onChangePage(page, setLoading),
           onChangeLength: length => onChangeLength(length, setLoading)
         }}
