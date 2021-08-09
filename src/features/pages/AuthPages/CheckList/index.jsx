@@ -31,6 +31,7 @@ const CheckList = () => {
   })
   const { onGetExecute } = useRequestManager()
   const units = useRecoilValue(globalUnitsState)
+  console.log(units)
 
   const columns = React.useMemo(() => {
     return [
@@ -104,13 +105,14 @@ const CheckList = () => {
       }
     ]
   }, [])
-  const getData = useCallback((offset, limit) => {
+  const getData = useCallback((offset, limit, ...other) => {
     setLoading(true)
     async function execute() {
       const response = await onGetExecute(EndPoint.FORMS, {
         params: {
           offset,
-          limit
+          limit,
+          ...other
         }
       })
       console.log(response)

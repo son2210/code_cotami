@@ -108,7 +108,7 @@ const Staffs = ({ t }) => {
         }
       },
       {
-        width: 100,
+        width: 180,
         align: 'left',
         header: {
           label: 'Birthday'
