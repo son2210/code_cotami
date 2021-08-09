@@ -31,7 +31,6 @@ const CheckList = () => {
   })
   const { onGetExecute } = useRequestManager()
   const units = useRecoilValue(globalUnitsState)
-  console.log(units)
 
   const columns = React.useMemo(() => {
     return [
@@ -115,7 +114,6 @@ const CheckList = () => {
           ...other
         }
       })
-      console.log(response)
       if (response) {
         setData(withArray('data', response))
         setTotal(withNumber('paging.total', response))
