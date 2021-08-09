@@ -1,12 +1,12 @@
 import React from 'react'
-import { CotamiWrapper } from './styled'
+import { CotamiWrapper, Logo } from './styled'
 import PropTypes from 'prop-types'
 import { IMAGES } from 'assets'
 
 const BaseCotami = ({ children, ...others }) => {
   return (
-    <CotamiWrapper source={IMAGES.COTAMI} {...others}>
-      {/* C<u>O</u>TAMI */}
+    <CotamiWrapper {...others}>
+      <Logo source={IMAGES.COTAMI} />
       {children}
     </CotamiWrapper>
   )
