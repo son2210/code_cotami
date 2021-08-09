@@ -15,58 +15,45 @@ import moment from 'moment'
 import { EndPoint } from 'config/api'
 import { globalUnitsState } from 'stores/Units/atom'
 import { useRecoilValue } from 'recoil'
+import { withArray, withNumber } from 'exp-value'
 
 const CheckInRequest = () => {
   const {
     activePage,
     displayLength,
-    // total,
-    // setTotal,
+    total,
+    setTotal,
     onChangePage,
     onChangeLength
   } = usePaginate()
   const theme = useTheme()
-  // useUnits()
   const [data, setData] = useState([])
+  const [loading, setLoading] = useState(false)
   const units = useRecoilValue(globalUnitsState)
   const modalRef = useRef(null)
   const modalInputRef = useRef(null)
   const [cell, setCell] = useState({ row: null, id: null, value: '' })
   const [modal, setModal] = useState(false)
   const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 })
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (modalRef.current && !modalRef.current.contains(event.target)) {
-        setModal(false)
-        setCell({ row: null, id: null })
-      }
-    }
-    function handleKeyPress(event) {
-      if (event.key === 'Enter') {
-        updateCell(cell, searchData.enterpriseUnitId)
-      }
-    }
-    document.addEventListener('keypress', handleKeyPress)
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-      document.removeEventListener('keypress', handleKeyPress)
-    }
-  }, [modalRef])
-  // ====================
-  const getOffSet = useCallback((event, rowData, id) => {
-    setModalPosition({ x: event.pageX - 20, y: event.pageY - 20 })
-    setCell({ row: rowData, id, value: rowData[id] })
-    setModal(true)
-  }, [])
 
-  const handleCellInput = useCallback(value => {
-    setCell(prev => {
-      return { ...prev, value }
-    })
-  }, [])
+  const getOffSet = useCallback(
+    (event, rowData, id) => {
+      setModalPosition({ x: event.pageX - 30, y: event.pageY - 30 })
+      setCell({ row: rowData, id, value: rowData[id] })
+      setModal(true)
+    },
+    [cell, modal]
+  )
 
-  // ====================
+  const handleCellInput = useCallback(
+    value => {
+      setCell(prev => {
+        return { ...prev, value }
+      })
+    },
+    [cell]
+  )
+
   const { onGetExecute, onPostExecute } = useRequestManager()
   const [searchData, setSearchData] = useState({
     enterpriseUnitId: null,
@@ -86,6 +73,7 @@ const CheckInRequest = () => {
       }
     })
   }, [])
+
   const getCheckIn = useCallback(
     (offset, limit, dateRange, enterpriseUnitId) => {
       return onGetExecute(EndPoint.CHECK_IN_REQ(enterpriseUnitId), {
@@ -101,8 +89,8 @@ const CheckInRequest = () => {
     []
   )
 
-  //Call 3 apis  and transform  with opacity  O(n^3) is not good way but i have no idea
   const transformData = useCallback((forms, checkIn) => {
+    console.log(forms, checkIn)
     let columId = forms.map(f => {
       return f.id
     })
@@ -163,34 +151,43 @@ const CheckInRequest = () => {
     return { columns, data }
   }, [])
 
-  const getData = useCallback((offset, limit, dateRange, enterpriseUnitId) => {
-    Promise.all([
-      getForms(offset, limit, enterpriseUnitId),
-      getCheckIn(offset, limit, dateRange, enterpriseUnitId)
-    ])
-      .then(conCurrentData => {
-        const [form, checkIn] = conCurrentData
-        const { columns, data } = transformData(form, checkIn)
-        setColumns(columns)
-        setData(data)
-      })
-      .catch(err => console.log(err))
-  }, [])
+  const getData = useCallback(
+    (offset, limit, dateRange, enterpriseUnitId) => {
+      Promise.all([
+        getForms(offset, limit, enterpriseUnitId),
+        getCheckIn(offset, limit, dateRange, enterpriseUnitId)
+      ])
+        .then(conCurrentData => {
+          setTotal(withNumber('paging.total', conCurrentData[1]))
+          const { columns, data } = transformData(
+            withArray('data', conCurrentData[0]),
+            withArray('data', conCurrentData[1])
+          )
+          setColumns(columns)
+          setData(data)
+        })
+        .catch(err => console.log(err))
+    },
+    [data, columns, total]
+  )
 
-  const updateCell = useCallback(async (cell, unit) => {
-    const { row, id, value } = cell
-    await onPostExecute(
-      EndPoint.UPDATE_CHECK_IN_REQ(unit, id),
-      {
-        params: {
-          requestAmount: value,
-          targetDate: row['targetDate']
-        }
-      },
-      true
-    )
-    setModal(false)
-  }, [])
+  const updateCell = useCallback(
+    async (cell, unit) => {
+      const { row, id, value } = cell
+      await onPostExecute(
+        EndPoint.UPDATE_CHECK_IN_REQ(unit, id),
+        {
+          params: {
+            requestAmount: value,
+            targetDate: row['targetDate']
+          }
+        },
+        true
+      )
+      setModal(false)
+    },
+    [modal, units]
+  )
 
   //initial
   useEffect(() => {
@@ -200,7 +197,7 @@ const CheckInRequest = () => {
       })
       getData(activePage, displayLength, searchData.dateRange, units[0].value)
     }
-  }, [])
+  }, [units, activePage, searchData, displayLength])
 
   useEffect(() => {
     if (units && units.length && searchData.enterpriseUnitId) {
@@ -212,6 +209,26 @@ const CheckInRequest = () => {
       )
     }
   }, [activePage, displayLength, units])
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        setModal(false)
+        setCell({ row: null, id: null })
+      }
+    }
+    function handleKeyPress(event) {
+      if (event.key === 'Enter') {
+        updateCell(cell, searchData.enterpriseUnitId)
+      }
+    }
+    document.addEventListener('keypress', handleKeyPress)
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('keypress', handleKeyPress)
+    }
+  }, [modalRef])
 
   return (
     <Wrapper>
@@ -283,16 +300,17 @@ const CheckInRequest = () => {
 
       <TableAction
         virtualized
-        id='table3'
-        height={600}
+        id='table--checkinRequest'
+        height={window.innerHeight - 200}
+        loading={loading}
         data={data}
         columns={columns}
         paginateProps={{
           activePage,
           displayLength,
-          total: 100,
-          onChangePage: page => onChangePage(page - 1),
-          onChangeLength: length => onChangeLength(length)
+          total: total,
+          onChangePage: page => onChangePage(page - 1, setLoading),
+          onChangeLength: length => onChangeLength(length, setLoading)
         }}
       />
     </Wrapper>

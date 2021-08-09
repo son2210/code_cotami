@@ -11,6 +11,7 @@ import { globalUnitsState } from 'stores/Units/atom'
 import { useSetRecoilState } from 'recoil'
 import { EndPoint } from 'config/api'
 import jwtDecode from 'jwt-decode'
+import { withArray } from 'exp-value'
 
 //  public page
 const LoginPage = lazy(() => import('pages/UnAuthPages/Login'))
@@ -54,30 +55,32 @@ const Routes = ({ isLoggedIn, ...rest }) => {
     setUserState(loggedAdmin)
   }, [])
 
-  const getUnitsArray = useCallback(async token => {
-    const loggedAdmin = jwtDecode(token)
-    const response = await onGetExecute(
-      EndPoint.UNITS_LIST(loggedAdmin.enterpriseId),
-      {
-        // Thinhさん will fixed this in future
-        params: { offset: 0, limit: 1000 }
-      }
-    )
-    if (response && response.length) {
-      setUnitsState(
-        response.map(u => {
-          return { ...u, label: u.name, value: u.id }
-        })
+  const getUnitsArray = useCallback(
+    async token => {
+      const loggedAdmin = jwtDecode(token)
+      const response = await onGetExecute(
+        EndPoint.UNITS_LIST(loggedAdmin.enterpriseId),
+        {
+          params: { offset: 0, limit: 1000 }
+        }
       )
-    }
-  })
+      if (response) {
+        setUnitsState(
+          withArray('data', response).map(u => {
+            return { ...u, label: u.name, value: u.enterpriseId }
+          })
+        )
+      }
+    },
+    [location.pathname, token, isLoggedIn]
+  )
 
   React.useEffect(() => {
     if (isLoggedIn) {
       getUserInfor(token)
       getUnitsArray(token)
     }
-  }, [isLoggedIn])
+  }, [isLoggedIn, token, location.pathname])
 
   React.useEffect(() => {
     const { pathname } = location
