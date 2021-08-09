@@ -13,6 +13,7 @@ import MONITOR from './logo/monitor.svg'
 import COMPANY from './logo/company.svg'
 import USER from './logo/user.svg'
 import LOCK from './logo/lock.svg'
+import LOADING from './loading.svg'
 
 export default {
   DEFAULT: DEFAULT_IMAGE,
@@ -22,6 +23,7 @@ export default {
   NOTE: NOTE,
   TRASH: TRASH,
   TRASH2: TRASH2,
+  LOADING: LOADING,
   LOGO: {
     CHECKED: CHECKED,
     MESSAGE: MESSAGE,

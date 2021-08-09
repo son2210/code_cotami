@@ -151,25 +151,22 @@ const CheckInRequest = () => {
     return { columns, data }
   }, [])
 
-  const getData = useCallback(
-    (offset, limit, dateRange, enterpriseUnitId) => {
-      Promise.all([
-        getForms(offset, limit, enterpriseUnitId),
-        getCheckIn(offset, limit, dateRange, enterpriseUnitId)
-      ])
-        .then(conCurrentData => {
-          setTotal(withNumber('paging.total', conCurrentData[1]))
-          const { columns, data } = transformData(
-            withArray('data', conCurrentData[0]),
-            withArray('data', conCurrentData[1])
-          )
-          setColumns(columns)
-          setData(data)
-        })
-        .catch(err => console.log(err))
-    },
-    [data, columns, total]
-  )
+  const getData = useCallback((offset, limit, dateRange, enterpriseUnitId) => {
+    Promise.all([
+      getForms(offset, limit, enterpriseUnitId),
+      getCheckIn(offset, limit, dateRange, enterpriseUnitId)
+    ])
+      .then(conCurrentData => {
+        setTotal(withNumber('paging.total', conCurrentData[1]))
+        const { columns, data } = transformData(
+          withArray('data', conCurrentData[0]),
+          withArray('data', conCurrentData[1])
+        )
+        setColumns(columns)
+        setData(data)
+      })
+      .catch(err => console.log(err))
+  }, [])
 
   const updateCell = useCallback(
     async (cell, unit) => {
@@ -197,7 +194,7 @@ const CheckInRequest = () => {
       })
       getData(activePage, displayLength, searchData.dateRange, units[0].value)
     }
-  }, [units, activePage, searchData, displayLength])
+  }, [])
 
   useEffect(() => {
     if (units && units.length && searchData.enterpriseUnitId) {
@@ -208,7 +205,7 @@ const CheckInRequest = () => {
         searchData.enterpriseUnitId
       )
     }
-  }, [activePage, displayLength, units])
+  }, [activePage, displayLength, units, searchData])
 
   useEffect(() => {
     function handleClickOutside(event) {
