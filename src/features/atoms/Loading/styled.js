@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { ClimbingBoxLoader } from 'react-spinners'
+import { CircleLoader } from 'react-spinners'
 
 export const LoadingWrapper = styled.div`
   position: absolute;
@@ -23,4 +23,4 @@ export const LoadingBox = styled.div`
   align-items: center;
   box-shadow: ${props => props.theme.shadow.shadow_1};
 `
-export const LoadingSpinner = styled(ClimbingBoxLoader)``
+export const LoadingSpinner = styled(CircleLoader)``
