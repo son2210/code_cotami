@@ -5,7 +5,8 @@ import {
   BaseTitle,
   BaseForm,
   BaseButton,
-  BaseIcon
+  BaseIcon,
+  BaseImage
 } from 'atoms'
 import { InputGroup, RadioForm } from 'molecules'
 
@@ -43,11 +44,17 @@ export const Title = styled(BaseTitle)`
 `
 export const ThemeBlock = styled.div`
   border-bottom: 2px solid ${props => props.theme.colors.secondary[6]};
-  padding: 20px 0;
+  padding: 20px 0 40px;
 `
 export const FlexBlock = styled.div`
   display: flex;
   flex-wrap: wrap;
+  max-height: calc(100vh - 200px);
+  overflow-x: scroll;
+  &::-webkit-scrollbar {
+    width: 0;
+  }
+  scrollbar-width: none;
   & div {
     margin-right: 20px;
   }
@@ -99,4 +106,8 @@ export const DisplayModeForm = styled(RadioForm)`
   width: 100%;
   display: flex;
   justify-content: space-between;
+`
+export const LoadingMore = styled(BaseImage)`
+  height: 40px;
+  margin: auto;
 `

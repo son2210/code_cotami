@@ -1,24 +1,24 @@
+import { IMAGES } from 'assets'
 import { EndPoint } from 'config/api'
 import { withArray, withEmpty, withNumber } from 'exp-value'
 import { useAlert, useRequestManager } from 'hooks'
 import { CreateModule } from 'organisms'
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useCallback } from 'react/cjs/react.development'
 import {
+  useRecoilState,
   useRecoilValue,
   useResetRecoilState,
-  useSetRecoilState,
-  useRecoilState
+  useSetRecoilState
 } from 'recoil'
 import {
   addModule,
   globalModulesState,
+  presentationConfig,
   removeModule,
-  updateModule,
-  presentationConfig
+  updateModule
 } from 'stores/CreateForm'
-
 import PresentationConfig from '../PresentationConfig'
 import PreviewCheckList from '../PreviewCheckList'
 import {
@@ -30,6 +30,8 @@ import {
   Icon,
   Input,
   Label,
+  LoadingMore,
+  Theme,
   ThemeBlock,
   Title,
   Wrapper,
@@ -37,15 +39,14 @@ import {
   WrapperButton,
   WrapperContent,
   WrapperForm,
-  WrapperItem,
-  Theme
+  WrapperItem
 } from './styled'
 import { formCheckListCreate } from './validation'
 
 const CheckListCreate = () => {
   const [step, setStep] = useState(1)
   const [showPreview, setShowPreview] = useState(false)
-  const [data, setData] = useState([])
+  const [templates, setTemplates] = useState([])
   const [formCheckList, setFormCheckList] = useState({
     title: '',
     description: '',
@@ -53,6 +54,9 @@ const CheckListCreate = () => {
     displayMode: '',
     templateId: ''
   })
+  const [page, setPage] = useState(0)
+  const listTemplatesRef = useRef(null)
+  const [loadMore, setLoadMore] = useState(false)
 
   const [modules, setModules] = useRecoilState(globalModulesState)
   const resetState = useResetRecoilState(globalModulesState)
@@ -77,22 +81,33 @@ const CheckListCreate = () => {
       })
       getDetailTemplate(item.id)
     },
-    [formCheckList, modules, data]
+    [formCheckList, modules, templates]
   )
-  const getData = useCallback((offset, limit) => {
-    async function execute() {
-      const response = await onGetExecute(EndPoint.TEMPLATE_LIST, {
-        params: {
-          offset,
-          limit
+  const getTemplates = useCallback(
+    (offset, limit) => {
+      setLoadMore(true)
+      async function execute() {
+        const response = await onGetExecute(
+          EndPoint.TEMPLATE_LIST,
+          {
+            params: {
+              offset,
+              limit
+            }
+          },
+          true
+        )
+        if (response) {
+          if (page == 0) setTemplates(withArray('data', response))
+          else setTemplates(prev => [...prev, ...withArray('data', response)])
+          setPage(withNumber('paging.next', response))
+          setLoadMore(false)
         }
-      })
-      if (response && response.length) {
-        setData(response)
       }
-    }
-    execute()
-  }, [])
+      execute()
+    },
+    [page, templates]
+  )
 
   const getDetailTemplate = useCallback(
     id => {
@@ -173,10 +188,21 @@ const CheckListCreate = () => {
     postData()
   }, [modules, formCheckList, presentConfig])
 
+  const scrollLoadMore = useCallback(() => {
+    if (
+      listTemplatesRef.current.clientHeight +
+        listTemplatesRef.current.scrollTop ===
+      listTemplatesRef.current.scrollHeight
+    ) {
+      if (page) getTemplates(page, 10)
+      console.log(page)
+    }
+  }, [page, templates])
+
   const _renderTheme = useCallback(() => {
     return (
-      <FlexBlock>
-        {data.map((item, index) => {
+      <FlexBlock ref={listTemplatesRef} onScroll={scrollLoadMore}>
+        {templates.map((item, index) => {
           return (
             <Theme
               key={index}
@@ -186,9 +212,10 @@ const CheckListCreate = () => {
             />
           )
         })}
+        {loadMore && page && <LoadingMore source={IMAGES.LOADING} />}
       </FlexBlock>
     )
-  }, [data, formCheckList, modules])
+  }, [templates, formCheckList, modules, listTemplatesRef, page])
 
   const _renderModalPreviewCheckList = useCallback(() => {
     return (
@@ -228,7 +255,7 @@ const CheckListCreate = () => {
         </WrapperContent>
       )
     return <PresentationConfig />
-  }, [step, modules, presentConfig, data])
+  }, [step, modules, presentConfig, templates, page])
 
   const _renderForm = useCallback(() => {
     if (step == 1)
@@ -326,8 +353,9 @@ const CheckListCreate = () => {
     )
   }, [step, formCheckList, modules, presentConfig])
 
-  useState(() => getData(0, 1000), [])
-
+  useEffect(() => {
+    getTemplates(page, 10)
+  }, [])
   return (
     <Wrapper>
       {_renderContent()}

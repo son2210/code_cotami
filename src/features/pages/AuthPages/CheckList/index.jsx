@@ -104,14 +104,13 @@ const CheckList = () => {
       }
     ]
   }, [])
-  const getData = useCallback((offset, limit, ...other) => {
+  const getData = useCallback((offset, limit) => {
     setLoading(true)
     async function execute() {
       const response = await onGetExecute(EndPoint.FORMS, {
         params: {
           offset,
-          limit,
-          ...other
+          limit
         }
       })
       if (response) {
@@ -129,7 +128,7 @@ const CheckList = () => {
 
   useEffect(() => {
     if (units && units.length) {
-      getData(activePage, displayLength, searchData.dateRange, units[0].value)
+      getData(activePage, displayLength)
       setSearchData(prev => {
         return { ...prev, enterpriseUnitId: units[0].value }
       })
@@ -138,7 +137,7 @@ const CheckList = () => {
 
   useEffect(() => {
     if (units && units.length) {
-      getData(activePage, displayLength, units[0].value)
+      getData(activePage, displayLength)
       setSearchData(prev => {
         return { ...prev, enterpriseUnitId: units[0].value }
       })
