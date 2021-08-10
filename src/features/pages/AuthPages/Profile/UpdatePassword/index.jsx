@@ -39,6 +39,7 @@ const UpdatePassword = ({ ...others }) => {
       oldPassword: data.oldPassword,
       newPassword: data.password
     })
+
     const response = await onPostExecute(
       EndPoint.ADMIN_RESET_PASSWORD,
       submitData

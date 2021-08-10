@@ -280,6 +280,7 @@ const Staffs = ({ t }) => {
       },
       disableLoading
     )
+
     if (response) {
       setData(withArray('data', response))
       setTotal(withNumber('paging.total', response))
@@ -306,10 +307,11 @@ const Staffs = ({ t }) => {
       dateOfBirth: ''
     })
   }, [])
-
+  
   useEffect(() => {
-    getData(activePage, displayLength)
-  }, [activePage, displayLength])
+    getData(activePage - 1, displayLength)
+  }, [activePage - 1, displayLength])
+ 
 
   return (
     <Wrapper>

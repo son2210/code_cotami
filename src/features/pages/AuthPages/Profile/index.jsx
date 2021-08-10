@@ -1,24 +1,24 @@
 import React, { useCallback } from 'react'
 import PropTypes from 'prop-types'
 import Routers from 'utils/Routers'
-import { DisplayField, AvatarBlock } from 'molecules/ProfileChange'
-import { ContainerWrapper, ColWrapper } from './styled'
-import { BaseButton } from 'atoms'
+import { DisplayField, AvatarBlock, WrapperRowText } from 'molecules/ProfileChange'
+import { ContainerWrapper, ColWrapper, ColWrapperPayment, WrapperButton, WrapperBottom ,WrapperHeader,WrapperNumber,Number,WrapperPaymentMethod,Text ,Icon} from './styled'
+import { BaseButton ,BaseImage} from 'atoms'
 import { useHistory } from 'react-router-dom'
 import { useToken } from 'hooks'
-
 import { useRecoilState } from 'recoil'
 import { globalUserState } from 'stores/profile/atom'
-
+import { IMAGES } from 'assets'
 const Profile = ({ ...others }) => {
   const history = useHistory()
   const goToPage = useCallback(route => history.push(route), [])
   const [userState, setUserState] = useRecoilState(globalUserState)
   const { clearToken } = useToken()
+
   return (
     <ContainerWrapper justify='start' {...others}>
       <ColWrapper colspan={9}>
-        <AvatarBlock hasUpload={false} />
+        <AvatarBlock hasUpload={false} disable={true} />
         <DisplayField title={'Company id'} content={'B0001'} />
         <DisplayField title={'Company name'} content={'Its Global'} />
         <DisplayField title={'Role'} content={'staff'} />
@@ -54,6 +54,32 @@ const Profile = ({ ...others }) => {
           Logout
         </BaseButton>
       </ColWrapper>
+      <ColWrapperPayment colspan={9} >
+      <WrapperRowText textLeft='Payment infomation' textRight='View transaction history' noneBorder header mgBottom={35} />
+        <WrapperHeader>
+        <WrapperRowText textLeft='Payment method' textLeftBold noneBorder icon='edit'/>
+        <WrapperNumber>
+          {/* <BaseImage source={IMAGES.MASTERCARD} width={60}/>
+          <Number>**** **** **** 6789</Number> */}
+          {/* payment  */}
+          <BaseImage source={IMAGES.PAYMENT} width={60}/>
+          <WrapperPaymentMethod>
+          <Text bold >Add A Payment Method</Text>
+          <Text>You need add a payment method for Cotami service.</Text>
+          </WrapperPaymentMethod>
+          <Icon icon='chevron-right' />
+        </WrapperNumber>
+        </WrapperHeader>
+        <WrapperBottom>
+          <WrapperRowText textLeft='Subscription info' textLeftBold mg textRight='Price Listing' button />
+          <WrapperRowText textLeft='Total users' textRight='6' />
+          <WrapperRowText textLeft='Price / a user' textRight='$50' />
+          <WrapperRowText textLeft='Next billing amount' textRight='$120' />
+          <WrapperRowText textLeft='Next billing on' textRight='2021/02/09' noneBorder={true} />
+          <WrapperButton>Cancel subscription</WrapperButton>
+        </WrapperBottom>
+
+      </ColWrapperPayment>
     </ContainerWrapper>
   )
 }

@@ -90,7 +90,7 @@ const CheckInRequest = () => {
   )
 
   const transformData = useCallback((forms, checkIn) => {
-    console.log(forms, checkIn)
+  
     let columId = forms.map(f => {
       return f.id
     })

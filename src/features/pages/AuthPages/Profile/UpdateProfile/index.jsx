@@ -20,11 +20,12 @@ const UpdateProfile = ({ ...others }) => {
   const { showSuccess } = useAlert()
   const history = useHistory()
   const goToPage = useCallback(route => history.push(route), [])
+
   const [data, setData] = useState({
-    email: '',
-    firstName: '',
-    lastName: '',
-    phone: ''
+    email: userState.email,
+    firstName: userState.firstName,
+    lastName: userState.lastName,
+    phone: userState.phone
   })
   const [error, setError] = useState({
     email: '',
@@ -34,9 +35,10 @@ const UpdateProfile = ({ ...others }) => {
   })
 
   const handleUpdateProfile = async () => {
+    
     const submitData = {
       ...trimStringFieldOfObject(data),
-      status: Constant.Status[0]
+      status: Constant.Status[0].value
     }
     const response = await onPatchExecute(
       `${EndPoint.UPDATE_STAFFS}/${userState.sub}`,
@@ -75,32 +77,23 @@ const UpdateProfile = ({ ...others }) => {
           onCheck={validateData}
           onSubmit={handleUpdateProfile}
         >
-          <AvatarBlock />
+          <AvatarBlock disable={true} />
 
           <InputBlock
             title='First Name'
             placeholder='First Name'
             onChange={value => handleInput('firstName', value)}
             value={data['firstName']}
-            helpText={error['lastName']}
-            isError={!error['lastName'] ? false : true}
-          />
-          <InputBlock
-            title='First Name'
-            placeholder='Last Name'
-            onChange={value => handleInput('lastName', value)}
-            value={data['lastName']}
             helpText={error['firstName']}
             isError={!error['firstName'] ? false : true}
           />
-          <BaseTitle style={{ marginTop: 10 }}> Date of Birth</BaseTitle>
-          <BaseDatePicker
-            placeholder='Date of Birth'
-            onChange={value => handleInput('dateOfBirth', value)}
-            value={data['dateOfBirth']}
-            helpText={error['dateOfBirth']}
-            isError={!error['dateOfBirth'] ? false : true}
-            style={{ marginTop: 10, marginBottom: 20, width: '100%' }}
+          <InputBlock
+            title='Last Name'
+            placeholder='Last Name'
+            onChange={value => handleInput('lastName', value)}
+            value={data['lastName']}
+            helpText={error['lastName']}
+            isError={!error['lastName'] ? false : true}
           />
           <InputBlock
             disabled={true}

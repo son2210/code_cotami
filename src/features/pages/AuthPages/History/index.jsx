@@ -43,6 +43,7 @@ const History = () => {
           endDate: moment(dateRange[1]).format('YYYY-MM-DD')
         }
       })
+  
       if (response) {
         const { data, paging } = response
         setData(
