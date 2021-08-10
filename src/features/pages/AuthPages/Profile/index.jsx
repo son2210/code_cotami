@@ -59,8 +59,9 @@ const Profile = ({ ...others }) => {
         <WrapperHeader>
         <WrapperRowText textLeft='Payment method' textLeftBold noneBorder icon='edit'/>
         <WrapperNumber>
-          {/* <BaseImage source={IMAGES.MASTERCARD} width={60}/>
-          <Number>**** **** **** 6789</Number> */}
+          {/* comment 1 trong 2 */}
+          <BaseImage source={IMAGES.MASTERCARD} width={60}/>
+          <Number>**** **** **** 6789</Number>
           {/* payment  */}
           <BaseImage source={IMAGES.PAYMENT} width={60}/>
           <WrapperPaymentMethod>

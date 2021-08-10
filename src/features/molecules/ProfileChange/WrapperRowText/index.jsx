@@ -31,13 +31,13 @@ const WrapperRowText = ({ textLeft , textRight , noneBorder ,button ,textLeftBol
 WrapperRowText.PropTypes= {
     textLeft: PropTypes.string,
     textRight: PropTypes.string,
-    noneBorder: PropTypes.Boolean,
+    noneBorder: PropTypes.bool,
     button: PropTypes.any,
     textLeftBold: PropTypes.any,
     icon: PropTypes.string,
-    mg : PropTypes.Boolean,
+    mg : PropTypes.bool,
     mgBottom : PropTypes.number,
-    header : PropTypes.Boolean
+    header : PropTypes.bool
   }
   
 
