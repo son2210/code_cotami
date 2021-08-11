@@ -26,7 +26,7 @@ const Statistics = () => {
 
   const { onGetExecute } = useRequestManager()
   const units = useRecoilValue(globalUnitsState)
-  const [forms, setForms] = useState()
+  const [forms, setForms] = useState([])
   const [column, setColumn] = useState([])
   const [data, setData] = useState([])
 
@@ -64,7 +64,7 @@ const Statistics = () => {
 
   const getFormsResults = useCallback(
     (offset, limit, dateRange, enterpriseUnitId, formId) => {
-      if (formId) return []
+      // if (formId) return []
       return onGetExecute(EndPoint.FORMS_RESULTS(formId), {
         params: {
           offset,
@@ -79,7 +79,7 @@ const Statistics = () => {
   )
   const getFormsProgress = useCallback(
     (offset, limit, dateRange, enterpriseUnitId, formId) => {
-      if (formId) return []
+      // if (formId) return []
       return onGetExecute(EndPoint.FORMS_RESULTS_PROGRESS(formId), {
         params: {
           offset,
@@ -197,7 +197,7 @@ const Statistics = () => {
       ])
         .then(conCurrentData => {
           const [progress, results] = conCurrentData
-          const { column, data } = dataTransform(progress, results)
+          const { column, data } = dataTransform(progress.data, results.data)
           setColumn(column)
           setData(data)
         })
@@ -220,8 +220,8 @@ const Statistics = () => {
           displayLength,
           searchData.dateRange,
           units[0].value,
-          280 // just one available
-          // listForm[0].value,
+          // 280 // just one available
+          listForm[0].value
         )
       }
     }
@@ -239,7 +239,7 @@ const Statistics = () => {
         // 280 // just one available
       )
     }
-  }, [activePage, displayLength])
+  }, [activePage, displayLength, units])
 
   return (
     <Wrapper>
