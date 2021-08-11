@@ -11,7 +11,7 @@ import { EndPoint } from 'config/api'
 import { globalUnitsState } from 'stores/Units/atom'
 import { useRecoilValue } from 'recoil'
 import moment from 'moment'
-// import { useTheme } from 'styled-components'
+import { withArray } from 'exp-value'
 
 const Statistics = () => {
   const {
@@ -23,7 +23,7 @@ const Statistics = () => {
     onChangeLength
   } = usePaginate()
   useUnits()
-  // const theme = useTheme()
+
   const { onGetExecute } = useRequestManager()
   const units = useRecoilValue(globalUnitsState)
   const [forms, setForms] = useState()
@@ -56,8 +56,9 @@ const Statistics = () => {
       },
       true
     )
-    if (response.length) {
-      return response.map(f => {
+
+    if (response) {
+      return withArray('data', response).map(f => {
         return { ...f, label: f.title, value: f.id }
       })
     }
@@ -199,7 +200,6 @@ const Statistics = () => {
         .then(conCurrentData => {
           const [progress, results] = conCurrentData
           const { column, data } = dataTransform(progress, results)
-          console.log(column, data)
           setColumn(column)
           setData(data)
         })
@@ -211,7 +211,7 @@ const Statistics = () => {
   useEffect(() => {
     async function execute() {
       const listForm = await getForms()
-      if (listForm.length * units.length !== 0) {
+      if (listForm?.length * units?.length !== 0) {
         setForms(listForm)
         setSearchData({
           formId: listForm[0].value,

@@ -29,7 +29,6 @@ const History = () => {
     ]
   })
   const { onGetExecute } = useRequestManager()
-  // useUnits()
   const units = useRecoilValue(globalUnitsState)
 
   const getData = useCallback(
