@@ -209,7 +209,7 @@ const Statistics = () => {
   )
 
   useEffect(() => {
-    (async () => {
+    async function execute() {
       const listForm = await getForms()
       if (listForm.length * units.length !== 0) {
         setForms(listForm)
@@ -226,7 +226,8 @@ const Statistics = () => {
           // listForm[0].value,
         )
       }
-    })()
+    }
+    execute()
   }, [])
 
   useEffect(() => {

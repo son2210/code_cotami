@@ -36,6 +36,16 @@ const CheckInRequest = () => {
   const [modal, setModal] = useState(false)
   const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 })
 
+  const { onGetExecute, onPostExecute } = useRequestManager()
+  const [searchData, setSearchData] = useState({
+    enterpriseUnitId: null,
+    dateRange: [
+      moment(Date.now()).subtract(30, 'days').format('YYYY-MM-DD'),
+      moment(Date.now()).format('YYYY-MM-DD')
+    ]
+  })
+  const [columns, setColumns] = useState([])
+
   const getOffSet = useCallback(
     (event, rowData, id) => {
       setModalPosition({ x: event.pageX - 30, y: event.pageY - 30 })
@@ -53,16 +63,6 @@ const CheckInRequest = () => {
     },
     [cell]
   )
-
-  const { onGetExecute, onPostExecute } = useRequestManager()
-  const [searchData, setSearchData] = useState({
-    enterpriseUnitId: null,
-    dateRange: [
-      moment(Date.now()).subtract(30, 'days').format('YYYY-MM-DD'),
-      moment(Date.now()).format('YYYY-MM-DD')
-    ]
-  })
-  const [columns, setColumns] = useState([])
 
   const getForms = useCallback((offset, limit, enterpriseUnitId) => {
     return onGetExecute(EndPoint.FORMS, {
@@ -274,7 +274,7 @@ const CheckInRequest = () => {
           value={searchData['enterpriseUnitId']}
           onChange={v =>
             setSearchData(prev => {
-              return { ...prev, ['enterpriseUnitId']: v }
+              return { ...prev, ['enterpriseUnitId']: v.id }
             })
           }
         />
