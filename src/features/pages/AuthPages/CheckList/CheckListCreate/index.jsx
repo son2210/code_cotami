@@ -198,7 +198,6 @@ const CheckListCreate = () => {
       listTemplatesRef.current.scrollHeight
     ) {
       if (page) getTemplates(page, 10)
-      console.log(page)
     }
   }, [page, templates])
 
