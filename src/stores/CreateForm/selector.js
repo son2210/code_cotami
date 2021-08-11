@@ -209,7 +209,6 @@ export const getImageSection = selector({
             screenMatchId: item.screenMatchId,
             screenType: 'image',
             screenName: 'Image',
-            id: item.screenMatchId,
             index: temp.length,
             duration: 10
           })
