@@ -79,7 +79,7 @@ const CustomCheckbox = ({
 
   useEffect(() => {
     if (sectionItems) {
-      if (withNumber('length', sectionItems) < 1) return
+      if (withNumber('length', sectionItems) < 1) return setData([])
       const temp = sectionItems.map((item, index) => {
         return {
           content: item.value,
