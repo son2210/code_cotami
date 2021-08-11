@@ -2,7 +2,7 @@ import { IMAGES } from 'assets'
 import { BaseButton, BaseInputPicker, BaseInput } from 'atoms'
 import { EndPoint } from 'config/api'
 import { usePaginate, useRequestManager } from 'hooks'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useTheme } from 'styled-components'
 import { Constant, Routers } from 'utils'
@@ -10,6 +10,7 @@ import { FilterWrapper, Table, Wrapper } from './styled'
 import { globalUnitsState } from 'stores/Units/atom'
 import { useRecoilValue } from 'recoil'
 import { withArray, withNumber } from 'exp-value'
+import { modifyPropsOfState } from 'utils/Helpers'
 
 const CheckList = () => {
   const {
@@ -23,16 +24,17 @@ const CheckList = () => {
   const theme = useTheme()
   const history = useHistory()
   const [data, setData] = useState([])
+
   const [loading, setLoading] = useState(false)
   const [searchData, setSearchData] = useState({
-    name: '',
-    enterpriseUnitId: '',
-    status: ''
+    name: null,
+    enterpriseUnitId: null,
+    status: null
   })
   const { onGetExecute } = useRequestManager()
   const units = useRecoilValue(globalUnitsState)
 
-  const columns = React.useMemo(() => {
+  const columns = useMemo(() => {
     return [
       {
         width: 100,
@@ -104,13 +106,39 @@ const CheckList = () => {
       }
     ]
   }, [])
-  const getData = useCallback((offset, limit) => {
+  console.log(data)
+  const filterStatus = useMemo(() => {
+    return [
+      {
+        label: 'Active',
+        value: 'active'
+      },
+      {
+        label: 'In Active',
+        value: 'in_active'
+      }
+    ]
+  }, [])
+
+  const handleInputSearch = useCallback(
+    (name, value) => {
+      modifyPropsOfState(searchData, setSearchData, name, value)
+    },
+    [searchData]
+  )
+  const getData = useCallback((offset, limit, others) => {
     setLoading(true)
+    console.log({
+      offset: offset,
+      limit: limit,
+      ...others
+    })
     async function execute() {
       const response = await onGetExecute(EndPoint.FORMS, {
         params: {
-          offset,
-          limit
+          offset: offset,
+          limit: limit,
+          ...others
         }
       })
       if (response) {
@@ -135,32 +163,25 @@ const CheckList = () => {
     }
   }, [activePage, displayLength, units])
 
-  useEffect(() => {
-    if (units && units.length) {
-      getData(activePage, displayLength)
-      setSearchData(prev => {
-        return { ...prev, enterpriseUnitId: units[0].value }
-      })
-    }
-  }, [activePage, displayLength, units])
-
   return (
     <Wrapper>
       <FilterWrapper
-        formOpt={{
-          formValue: searchData,
-          onSubmit: () =>
-            getData(activePage, displayLength, searchData.enterpriseUnitId)
-        }}
+        // formOpt={{
+        //   formValue: searchData,
+        //   onSubmit: () =>
+        //     getData(activePage, displayLength, searchData.enterpriseUnitId)
+        // }}
         onClick={goToCreateChecklist}
       >
         <BaseInput
           style={{ maxWidth: 170 }}
           placeholder='Keyword...'
           name='searchTerm'
+          value={searchData['name']}
+          onChange={v => handleInputSearch('name', v)}
         />
         <BaseInputPicker
-          placeholder='unit'
+          placeholder='units'
           style={{ marginLeft: 10 }}
           data={units}
           value={searchData['enterpriseUnitId']}
@@ -173,16 +194,17 @@ const CheckList = () => {
         <BaseInputPicker
           placeholder='status'
           style={{ marginLeft: 10 }}
-          data={[
-            { label: 'active', value: 'active' },
-            { label: 'inactive', value: 'inactive' }
-          ]}
+          onChange={v => handleInputSearch('status', v)}
+          data={filterStatus}
+          cleanable={false}
         />
         <BaseButton
           style={{ marginLeft: 10 }}
           secondary
           bold
-          onClick={() => {}}
+          onClick={() => {
+            getData(0, 10, searchData)
+          }}
         >
           Search
         </BaseButton>
