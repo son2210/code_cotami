@@ -192,14 +192,19 @@ const CheckInRequest = () => {
       setSearchData(prev => {
         return { ...prev, enterpriseUnitId: units[0].value }
       })
-      getData(activePage, displayLength, searchData.dateRange, units[0].value)
+      getData(
+        activePage - 1,
+        displayLength,
+        searchData.dateRange,
+        units[0].value
+      )
     }
   }, [])
 
   useEffect(() => {
     if (units && units.length && searchData.enterpriseUnitId) {
       getData(
-        activePage,
+        activePage - 1,
         displayLength,
         searchData.dateRange,
         searchData.enterpriseUnitId
@@ -259,7 +264,7 @@ const CheckInRequest = () => {
           formValue: searchData,
           onSubmit: () => {
             getData(
-              activePage,
+              0,
               displayLength,
               searchData.dateRange,
               searchData.enterpriseUnitId
@@ -303,10 +308,10 @@ const CheckInRequest = () => {
         data={data}
         columns={columns}
         paginateProps={{
-          activePage,
+          activePage: activePage - 1,
           displayLength,
           total: total,
-          onChangePage: page => onChangePage(page - 1, setLoading),
+          onChangePage: page => onChangePage(page, setLoading),
           onChangeLength: length => onChangeLength(length, setLoading)
         }}
       />

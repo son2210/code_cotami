@@ -10,7 +10,7 @@ import { useRequestManager, useUnits } from 'hooks'
 import { EndPoint } from 'config/api'
 import { globalUnitsState } from 'stores/Units/atom'
 import { useRecoilValue } from 'recoil'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import { withArray } from 'exp-value'
 
 const Statistics = () => {
@@ -34,10 +34,8 @@ const Statistics = () => {
     {
       enterpriseUnitId: null,
       dateRange: [
-        // '2020-07-07',
-        // '2021-08-30'
-        moment(Date.now()).subtract(30, 'days').format('YYYY-MM-DD'),
-        moment(Date.now()).format('YYYY-MM-DD')
+        dayjs().subtract(30, 'days').startOf('day').utc().format(),
+        dayjs().endOf('day').utc().format()
       ],
       formId: null
       // formId: 280 // just one available
@@ -72,8 +70,8 @@ const Statistics = () => {
           offset,
           limit,
           enterpriseUnitId,
-          startDate: moment(dateRange[0]).format('YYYY-MM-DD'),
-          endDate: moment(dateRange[1]).format('YYYY-MM-DD')
+          startDate: dayjs(dateRange[0]).utc().format(),
+          endDate: dayjs(dateRange[1]).utc().format()
         }
       })
     },
@@ -87,8 +85,8 @@ const Statistics = () => {
           offset,
           limit,
           enterpriseUnitId,
-          startDate: moment(dateRange[0]).format('YYYY-MM-DD'),
-          endDate: moment(dateRange[1]).format('YYYY-MM-DD')
+          startDate: dayjs(dateRange[0]).utc().format(),
+          endDate: dayjs(dateRange[1]).utc().format()
         }
       })
     },
@@ -218,7 +216,7 @@ const Statistics = () => {
           enterpriseUnitId: units[0].value
         })
         getData(
-          activePage,
+          activePage - 1,
           displayLength,
           searchData.dateRange,
           units[0].value,
@@ -233,7 +231,7 @@ const Statistics = () => {
   useEffect(() => {
     if (searchData.enterpriseUnitId && searchData.formId) {
       getData(
-        activePage,
+        activePage - 1,
         displayLength,
         searchData.dateRange,
         searchData.enterpriseUnitId,
@@ -253,7 +251,7 @@ const Statistics = () => {
           formValue: searchData,
           onSubmit: () => {
             getData(
-              activePage,
+              0,
               displayLength,
               searchData.dateRange,
               searchData.enterpriseUnitId,
@@ -288,37 +286,34 @@ const Statistics = () => {
         <BaseDateRangePicker
           placeholder='Select date range'
           style={{ marginLeft: 10 }}
-          onChange={v =>
+          onChange={range =>
             setSearchData(prev => {
-              return { ...prev, ['dateRange']: v }
+              const date = [
+                dayjs(range[0]).startOf('day').utc().format(),
+                dayjs(range[1]).endOf('day').utc().format()
+              ]
+              return { ...prev, ['dateRange']: date }
             })
           }
-          //fix warning Rsuit
           value={searchData['dateRange']}
         />
 
-        <BaseButton
-          // onClick={() => getUnits(activePage, displayLength)}
-          type='submit'
-          style={{ marginLeft: 10 }}
-          secondary
-          bold
-        >
+        <BaseButton type='submit' style={{ marginLeft: 10 }} secondary bold>
           Filter
         </BaseButton>
       </FilterBar>
 
       <TableAction
         virtualized
-        height={600}
+        height={window.innerHeight - 200}
         data={data}
         columns={column}
         hasSummary={true}
         paginateProps={{
-          activePage,
+          activePage: activePage - 1,
           displayLength,
           total: 100,
-          onChangePage: page => onChangePage(page - 1),
+          onChangePage: page => onChangePage(page),
           onChangeLength: length => onChangeLength(length)
         }}
       />
