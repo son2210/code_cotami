@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React, { useCallback , useState} from 'react'
 import PropTypes from 'prop-types'
 import Routers from 'utils/Routers'
 import { DisplayField, AvatarBlock, WrapperRowText } from 'molecules/ProfileChange'
@@ -14,7 +14,7 @@ const Profile = ({ ...others }) => {
   const goToPage = useCallback(route => history.push(route), [])
   const [userState, setUserState] = useRecoilState(globalUserState)
   const { clearToken } = useToken()
-
+  const [ togglePayment , setTogglePayment ] = useState(false)
   return (
     <ContainerWrapper justify='start' {...others}>
       <ColWrapper colspan={9}>
@@ -57,18 +57,27 @@ const Profile = ({ ...others }) => {
       <ColWrapperPayment colspan={9} >
       <WrapperRowText textLeft='Payment infomation' textRight='View transaction history' noneBorder header mgBottom={35} />
         <WrapperHeader>
-        <WrapperRowText textLeft='Payment method' textLeftBold noneBorder icon='edit'/>
+        <WrapperRowText textLeft='Payment method' textLeftBold noneBorder icon='edit' onClick={()=>setTogglePayment(!togglePayment)}/>
         <WrapperNumber>
-          {/* comment 1 trong 2 */}
+
+          { togglePayment 
+          ?
+          <>
           <BaseImage source={IMAGES.MASTERCARD} width={60}/>
           <Number>**** **** **** 6789</Number>
-          {/* payment  */}
+          </>
+          :
+          <>
           <BaseImage source={IMAGES.PAYMENT} width={60}/>
           <WrapperPaymentMethod>
           <Text bold >Add A Payment Method</Text>
           <Text>You need add a payment method for Cotami service.</Text>
           </WrapperPaymentMethod>
           <Icon icon='chevron-right' />
+          </>
+          }
+
+         
         </WrapperNumber>
         </WrapperHeader>
         <WrapperBottom>
