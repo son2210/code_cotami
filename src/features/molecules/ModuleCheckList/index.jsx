@@ -28,24 +28,19 @@ const ModuleCheckList = ({
   const handleAddSection = useSetRecoilState(addSection)
 
   const [showSection, setShowSection] = useState({})
-  const [dataModule, setDataModule] = useState({
-    id: index,
-    title: withEmpty('title', modules),
-    description: withEmpty('description', modules),
-    sections: sections
-  })
+  const [dataModule, setDataModule] = useState({})
 
   const onChangeData = useCallback(
     (field, value) => {
-      setDataModule(prev => ({
-        ...prev,
-        [field]: value
-      }))
       let temp = {
         ...dataModule,
         [field]: value
       }
       updateModule({ index, temp })
+      setDataModule(prev => ({
+        ...prev,
+        [field]: value
+      }))
     },
     [dataModule, index]
   )
@@ -58,10 +53,6 @@ const ModuleCheckList = ({
     },
     [showSection]
   )
-
-  useEffect(() => {
-    setSections(withArray('sections', modules))
-  }, [modules])
 
   const renderSection = useCallback(
     (module, index) => {
@@ -143,7 +134,8 @@ const ModuleCheckList = ({
       description: withEmpty('description', modules),
       sections: withArray('sections', modules)
     })
-  }, [modules])
+    setSections(withArray('sections', modules))
+  }, [modules, sections, index])
 
   return <Wrapper {...others}>{renderModule(dataModule, index)}</Wrapper>
 }

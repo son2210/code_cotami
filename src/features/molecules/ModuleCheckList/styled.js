@@ -13,7 +13,9 @@ export const Module = styled.div`
   position: relative;
   margin: 20px auto;
 `
-export const Title = styled(BaseTitle)``
+export const Title = styled(BaseTitle)`
+  width: 100%;
+`
 
 export const WrapperTop = styled.div``
 export const WrapperContent = styled.div``

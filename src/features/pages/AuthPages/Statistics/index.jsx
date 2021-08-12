@@ -10,8 +10,8 @@ import { useRequestManager, useUnits } from 'hooks'
 import { EndPoint } from 'config/api'
 import { globalUnitsState } from 'stores/Units/atom'
 import { useRecoilValue } from 'recoil'
-import moment from 'moment'
-// import { useTheme } from 'styled-components'
+import dayjs from 'dayjs'
+import { withArray } from 'exp-value'
 
 const Statistics = () => {
   const {
@@ -23,10 +23,10 @@ const Statistics = () => {
     onChangeLength
   } = usePaginate()
   useUnits()
-  // const theme = useTheme()
+
   const { onGetExecute } = useRequestManager()
   const units = useRecoilValue(globalUnitsState)
-  const [forms, setForms] = useState()
+  const [forms, setForms] = useState([])
   const [column, setColumn] = useState([])
   const [data, setData] = useState([])
 
@@ -34,10 +34,8 @@ const Statistics = () => {
     {
       enterpriseUnitId: null,
       dateRange: [
-        // '2020-07-07',
-        // '2021-08-30'
-        moment(Date.now()).subtract(30, 'days').format('YYYY-MM-DD'),
-        moment(Date.now()).format('YYYY-MM-DD')
+        dayjs().subtract(30, 'days').startOf('day').utc().format(),
+        dayjs().endOf('day').utc().format()
       ],
       formId: null
       // formId: 280 // just one available
@@ -56,8 +54,9 @@ const Statistics = () => {
       },
       true
     )
-    if (response.length) {
-      return response.map(f => {
+
+    if (response) {
+      return withArray('data', response).map(f => {
         return { ...f, label: f.title, value: f.id }
       })
     }
@@ -65,14 +64,14 @@ const Statistics = () => {
 
   const getFormsResults = useCallback(
     (offset, limit, dateRange, enterpriseUnitId, formId) => {
-      if (formId) return []
+      // if (formId) return []
       return onGetExecute(EndPoint.FORMS_RESULTS(formId), {
         params: {
           offset,
           limit,
           enterpriseUnitId,
-          startDate: moment(dateRange[0]).format('YYYY-MM-DD'),
-          endDate: moment(dateRange[1]).format('YYYY-MM-DD')
+          startDate: dayjs(dateRange[0]).utc().format(),
+          endDate: dayjs(dateRange[1]).utc().format()
         }
       })
     },
@@ -80,14 +79,14 @@ const Statistics = () => {
   )
   const getFormsProgress = useCallback(
     (offset, limit, dateRange, enterpriseUnitId, formId) => {
-      if (formId) return []
+      // if (formId) return []
       return onGetExecute(EndPoint.FORMS_RESULTS_PROGRESS(formId), {
         params: {
           offset,
           limit,
           enterpriseUnitId,
-          startDate: moment(dateRange[0]).format('YYYY-MM-DD'),
-          endDate: moment(dateRange[1]).format('YYYY-MM-DD')
+          startDate: dayjs(dateRange[0]).utc().format(),
+          endDate: dayjs(dateRange[1]).utc().format()
         }
       })
     },
@@ -198,8 +197,7 @@ const Statistics = () => {
       ])
         .then(conCurrentData => {
           const [progress, results] = conCurrentData
-          const { column, data } = dataTransform(progress, results)
-          console.log(column, data)
+          const { column, data } = dataTransform(progress.data, results.data)
           setColumn(column)
           setData(data)
         })
@@ -211,19 +209,19 @@ const Statistics = () => {
   useEffect(() => {
     async function execute() {
       const listForm = await getForms()
-      if (listForm.length * units.length !== 0) {
+      if (listForm?.length * units?.length !== 0) {
         setForms(listForm)
         setSearchData({
           formId: listForm[0].value,
           enterpriseUnitId: units[0].value
         })
         getData(
-          activePage,
+          activePage - 1,
           displayLength,
           searchData.dateRange,
           units[0].value,
-          280 // just one available
-          // listForm[0].value,
+          // 280 // just one available
+          listForm[0].value
         )
       }
     }
@@ -233,7 +231,7 @@ const Statistics = () => {
   useEffect(() => {
     if (searchData.enterpriseUnitId && searchData.formId) {
       getData(
-        activePage,
+        activePage - 1,
         displayLength,
         searchData.dateRange,
         searchData.enterpriseUnitId,
@@ -241,7 +239,7 @@ const Statistics = () => {
         // 280 // just one available
       )
     }
-  }, [activePage, displayLength])
+  }, [activePage, displayLength, units])
 
   return (
     <Wrapper>
@@ -253,7 +251,7 @@ const Statistics = () => {
           formValue: searchData,
           onSubmit: () => {
             getData(
-              activePage,
+              0,
               displayLength,
               searchData.dateRange,
               searchData.enterpriseUnitId,
@@ -288,37 +286,34 @@ const Statistics = () => {
         <BaseDateRangePicker
           placeholder='Select date range'
           style={{ marginLeft: 10 }}
-          onChange={v =>
+          onChange={range =>
             setSearchData(prev => {
-              return { ...prev, ['dateRange']: v }
+              const date = [
+                dayjs(range[0]).startOf('day').utc().format(),
+                dayjs(range[1]).endOf('day').utc().format()
+              ]
+              return { ...prev, ['dateRange']: date }
             })
           }
-          //fix warning Rsuit
           value={searchData['dateRange']}
         />
 
-        <BaseButton
-          // onClick={() => getUnits(activePage, displayLength)}
-          type='submit'
-          style={{ marginLeft: 10 }}
-          secondary
-          bold
-        >
+        <BaseButton type='submit' style={{ marginLeft: 10 }} secondary bold>
           Filter
         </BaseButton>
       </FilterBar>
 
       <TableAction
         virtualized
-        height={600}
+        height={window.innerHeight - 200}
         data={data}
         columns={column}
         hasSummary={true}
         paginateProps={{
-          activePage,
+          activePage: activePage - 1,
           displayLength,
           total: 100,
-          onChangePage: page => onChangePage(page - 1),
+          onChangePage: page => onChangePage(page),
           onChangeLength: length => onChangeLength(length)
         }}
       />

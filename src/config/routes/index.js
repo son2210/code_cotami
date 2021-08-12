@@ -67,7 +67,7 @@ const Routes = ({ isLoggedIn, ...rest }) => {
       if (response) {
         setUnitsState(
           withArray('data', response).map(u => {
-            return { ...u, label: u.name, value: u.enterpriseId }
+            return { ...u, label: u.name, value: u.id }
           })
         )
       }
