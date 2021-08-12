@@ -137,23 +137,18 @@ export const swapSection = selector({
 
     if (type == 'up') {
       if (idSection > 0 && idSection < temp.length) {
-        console.log(
-          ([temp[idSection], temp[idSection - 1]] = [
-            temp[idSection - 1],
-            temp[idSection]
-          ])
-        )
+        const a = temp[idSection]
+        temp[idSection] = temp[idSection - 1]
+        temp[idSection - 1] = a
       }
     }
 
     if (type == 'down') {
-      if (idSection < temp.length - 1 && idSection >= 0)
-        console.log(
-          ([temp[idSection], temp[idSection + 1]] = [
-            temp[idSection + 1],
-            temp[idSection]
-          ])
-        )
+      if (idSection < temp.length - 1 && idSection >= 0) {
+        const a = temp[idSection]
+        temp[idSection] = temp[idSection + 1]
+        temp[idSection + 1] = a
+      }
     }
 
     module[idModule].sections = temp
@@ -209,7 +204,6 @@ export const getImageSection = selector({
             screenMatchId: item.screenMatchId,
             screenType: 'image',
             screenName: 'Image',
-            id: item.screenMatchId,
             index: temp.length,
             duration: 10
           })

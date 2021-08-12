@@ -51,12 +51,12 @@ const SectionCheckList = ({
 
   const onChangeData = useCallback(
     (field, value) => {
+      const temp = { ...dataSection, [field]: value }
+      handleUpdateSection({ index, orderNumber, temp })
       setDataSection(prev => ({
         ...prev,
         [field]: value
       }))
-      const temp = { ...dataSection, [field]: value }
-      handleUpdateSection({ index, orderNumber, temp })
     },
     [dataSection]
   )
@@ -126,15 +126,7 @@ const SectionCheckList = ({
       inputTypeId: type,
       screenMatchId: withNull('screenMatchId', section)
     })
-  }, [
-    orderNumber,
-    index,
-    sectionTitle,
-    sectionItems,
-    description,
-    type,
-    modules
-  ])
+  }, [orderNumber, index, sectionTitle, sectionItems, description, type])
 
   return (
     <Wrapper {...others}>

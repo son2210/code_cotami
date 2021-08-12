@@ -130,42 +130,42 @@ const Constant = {
   ],
   presentationConfig: [
     {
-      id: 0,
+      // id: 0,
       index: 0,
       screenType: 'report_today',
       screenName: 'Report today',
       duration: 60
     },
     {
-      id: 1,
+      // id: 1,
       index: 1,
       screenType: 'report_yesterday',
       screenName: 'Report yesterday',
       duration: 60
     },
     {
-      id: 2,
+      // id: 2,
       index: 2,
-      screenType: 'month_report_by_week',
-      screenName: 'Month report by week',
+      screenType: 'report_this_week ',
+      screenName: 'Report this week ',
       duration: 60
     },
     {
-      id: 3,
+      // id: 3,
       index: 3,
       screenType: 'month_report_by_date',
       screenName: 'Month report by date',
       duration: 60
     },
     {
-      id: 4,
+      // id: 4,
       index: 4,
       screenType: 'weekly_report',
       screenName: 'Weekly report',
       duration: 60
     },
     {
-      id: 5,
+      // id: 5,
       index: 5,
       screenType: 'comment_today',
       screenName: 'Comment today',
@@ -174,7 +174,7 @@ const Constant = {
       duration: 60
     },
     {
-      id: 6,
+      // id: 6,
       index: 6,
       screenType: 'comment_yesterday',
       screenName: 'Comment yesterday',

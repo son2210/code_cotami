@@ -1,7 +1,7 @@
 import { IMAGES } from 'assets'
 import { EndPoint } from 'config/api'
 import { withArray, withEmpty, withNumber } from 'exp-value'
-import { useAlert, useRequestManager } from 'hooks'
+import { useAlert, useRequestManager, useModules } from 'hooks'
 import { CreateModule } from 'organisms'
 import React, { useEffect, useRef, useState } from 'react'
 import { useHistory } from 'react-router-dom'
@@ -66,7 +66,7 @@ const CheckListCreate = () => {
   const presentConfig = useRecoilValue(presentationConfig)
   const history = useHistory()
 
-  // const { handleError } = useModules()
+  const { handleError } = useModules()
 
   const { onPostExecute, onGetExecute } = useRequestManager()
   const { showError, showSuccess } = useAlert()
@@ -164,8 +164,11 @@ const CheckListCreate = () => {
   )
 
   const validateModules = useCallback(() => {
+    let temp = handleError(modules)
+    if (temp) return showError(temp)
+    showSuccess('Module ready!!!')
     navigationPage('next')
-  }, [modules, formCheckList, presentConfig])
+  }, [modules])
 
   const submit = useCallback(() => {
     async function postData() {
@@ -195,7 +198,6 @@ const CheckListCreate = () => {
       listTemplatesRef.current.scrollHeight
     ) {
       if (page) getTemplates(page, 10)
-      console.log(page)
     }
   }, [page, templates])
 
