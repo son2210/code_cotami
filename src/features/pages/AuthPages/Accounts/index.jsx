@@ -228,7 +228,7 @@ const Accounts = ({ t }) => {
   return (
     <Wrapper>
       <FilterBar
-        onClick={() => goToPage(Routers.SUPER_ADMIN.ACCOUNTS.CHILD[0].URL)}
+        onClick={() => goToPage(Routers.NORMAL_ADMIN.MENU[6].CHILD[0].URL)}
         hasButton={true}
         style={{ marginBottom: 20, width: '70%' }}
       >
