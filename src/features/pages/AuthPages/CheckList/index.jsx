@@ -128,16 +128,7 @@ const CheckList = () => {
 
   useEffect(() => {
     if (units && units.length) {
-      getData(activePage, displayLength)
-      setSearchData(prev => {
-        return { ...prev, enterpriseUnitId: units[0].value }
-      })
-    }
-  }, [activePage, displayLength, units])
-
-  useEffect(() => {
-    if (units && units.length) {
-      getData(activePage, displayLength)
+      getData(activePage - 1, displayLength)
       setSearchData(prev => {
         return { ...prev, enterpriseUnitId: units[0].value }
       })
@@ -149,8 +140,7 @@ const CheckList = () => {
       <FilterWrapper
         formOpt={{
           formValue: searchData,
-          onSubmit: () =>
-            getData(activePage, displayLength, searchData.enterpriseUnitId)
+          onSubmit: () => getData(0, displayLength, searchData.enterpriseUnitId)
         }}
         onClick={goToCreateChecklist}
       >
@@ -190,12 +180,12 @@ const CheckList = () => {
 
       <Table
         id='table__checklist-forms'
-        height={window.innerHeight - 150}
+        height={window.innerHeight - 200}
         data={data}
         loading={loading}
         columns={columns}
         paginateProps={{
-          activePage,
+          activePage: activePage - 1,
           displayLength,
           total: total,
           onChangePage: page => onChangePage(page, setLoading),
