@@ -184,15 +184,16 @@ const Routes = ({ isLoggedIn, ...rest }) => {
         <Route
           {...rest}
           exact
-          path={Routers.NORMAL_ADMIN.MENU[6].URL}
+          path={Routers.NORMAL_ADMIN.MENU[6].CHILD[0].URL}
           render={props => {
             return <CreateAccountPage {...rest} {...props} />
           }}
         />
+        <Route />
         <Route
           {...rest}
           exact
-          path={Routers.NORMAL_ADMIN.MENU.CHILD[0].URL}
+          path={Routers.NORMAL_ADMIN.PROFILE.URL}
           render={props => {
             return <ProfilePage {...rest} {...props} />
           }}
