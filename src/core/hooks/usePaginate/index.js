@@ -10,7 +10,7 @@ const usePaginate = () => {
 
   const onChangePage = useCallback(
     (page, setLoading) => {
-      setLoading(true)
+      if (setLoading) setLoading(true)
       setActivePage(page)
       history.push(location.pathname + '?page=' + page)
     },
@@ -19,7 +19,7 @@ const usePaginate = () => {
 
   const onChangeLength = useCallback(
     (length, setLoading) => {
-      setLoading(true)
+      if (setLoading) setLoading(true)
       setActivePage(1)
       setDisplayLength(length)
     },

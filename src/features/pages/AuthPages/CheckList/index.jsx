@@ -128,11 +128,6 @@ const CheckList = () => {
   )
   const getData = useCallback((offset, limit, others) => {
     setLoading(true)
-    console.log({
-      offset: offset,
-      limit: limit,
-      ...others
-    })
     async function execute() {
       const response = await onGetExecute(EndPoint.FORMS, {
         params: {
@@ -156,7 +151,7 @@ const CheckList = () => {
 
   useEffect(() => {
     if (units && units.length) {
-      getData(activePage, displayLength)
+      getData(activePage - 1, displayLength)
       setSearchData(prev => {
         return { ...prev, enterpriseUnitId: units[0].value }
       })
@@ -219,8 +214,8 @@ const CheckList = () => {
           activePage,
           displayLength,
           total: total,
-          onChangePage: page => onChangePage(page, setLoading),
-          onChangeLength: length => onChangeLength(length, setLoading)
+          onChangePage: page => onChangePage(page),
+          onChangeLength: length => onChangeLength(length)
         }}
       />
     </Wrapper>

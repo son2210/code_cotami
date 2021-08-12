@@ -187,9 +187,7 @@ const TableAction = ({
               ? paginateProps.lengthMenu
               : Constant.PaginateLengthMenu
           }
-          activePage={
-            paginateProps?.activePage ? paginateProps?.activePage + 1 : 0
-          }
+          activePage={paginateProps?.activePage}
           displayLength={paginateProps?.displayLength}
           total={paginateProps?.total}
           onChangePage={paginateProps?.onChangePage}

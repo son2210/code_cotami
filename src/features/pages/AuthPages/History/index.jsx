@@ -185,7 +185,7 @@ const History = () => {
           activePage,
           displayLength,
           total,
-          onChangePage: p => onChangePage(p - 1),
+          onChangePage: p => onChangePage(p),
           onChangeLength: l => onChangeLength(l)
         }}
       />
