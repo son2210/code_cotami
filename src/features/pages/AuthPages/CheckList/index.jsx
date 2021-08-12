@@ -106,7 +106,7 @@ const CheckList = () => {
       }
     ]
   }, [])
-  console.log(data)
+
   const filterStatus = useMemo(() => {
     return [
       {
@@ -196,7 +196,6 @@ const CheckList = () => {
           style={{ marginLeft: 10 }}
           onChange={v => handleInputSearch('status', v)}
           data={filterStatus}
-          cleanable={false}
         />
         <BaseButton
           style={{ marginLeft: 10 }}

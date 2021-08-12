@@ -64,10 +64,11 @@ const Routes = ({ isLoggedIn, ...rest }) => {
           params: { offset: 0, limit: 1000 }
         }
       )
+
       if (response) {
         setUnitsState(
           withArray('data', response).map(u => {
-            return { ...u, label: u.name, value: u.enterpriseId }
+            return { ...u, label: u.name, value: u.id }
           })
         )
       }
