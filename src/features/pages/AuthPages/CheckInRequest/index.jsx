@@ -309,7 +309,7 @@ const CheckInRequest = () => {
         data={data}
         columns={columns}
         paginateProps={{
-          activePage: activePage - 1,
+          activePage,
           displayLength,
           total: total,
           onChangePage: page => onChangePage(page),
