@@ -64,6 +64,7 @@ const Routes = ({ isLoggedIn, ...rest }) => {
           params: { offset: 0, limit: 1000 }
         }
       )
+
       if (response) {
         setUnitsState(
           withArray('data', response).map(u => {

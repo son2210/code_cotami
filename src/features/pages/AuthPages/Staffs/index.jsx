@@ -307,11 +307,10 @@ const Staffs = ({ t }) => {
       dateOfBirth: ''
     })
   }, [])
-  
+
   useEffect(() => {
     getData(activePage - 1, displayLength)
-  }, [activePage - 1, displayLength])
- 
+  }, [activePage, displayLength])
 
   return (
     <Wrapper>
@@ -364,9 +363,9 @@ const Staffs = ({ t }) => {
         paginateProps={{
           activePage,
           displayLength,
-          total: total,
-          onChangePage: page => onChangePage(page, setLoading),
-          onChangeLength: length => onChangeLength(length, setLoading)
+          total,
+          onChangePage: page => onChangePage(page),
+          onChangeLength: length => onChangeLength(length)
         }}
       />
 
