@@ -280,6 +280,7 @@ const Staffs = ({ t }) => {
       },
       disableLoading
     )
+
     if (response) {
       setData(withArray('data', response))
       setTotal(withNumber('paging.total', response))

@@ -43,6 +43,7 @@ const History = () => {
           endDate: dayjs(dateRange[1]).utc().format()
         }
       })
+  
       if (response) {
         const { data, paging } = response
         setData(

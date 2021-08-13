@@ -1,4 +1,4 @@
-import { BaseItemGrid, BaseWrapper } from 'atoms'
+import { BaseWrapper } from 'atoms'
 import { Container, Content } from 'rsuite'
 import styled from 'styled-components'
 
@@ -10,12 +10,6 @@ export const HeaderWrapper = styled.div`
   padding-top: 5vh;
 `
 
-export const GridItem = styled(BaseItemGrid)`
-  flex: 1;
-  display: flex;
-  margin-top: 5vh;
-`
-
 export const FooterWrapper = styled(BaseWrapper)`
   margin-top: 15px;
 `
@@ -23,7 +17,6 @@ export const FooterWrapper = styled(BaseWrapper)`
 export const WrapperContainer = styled(Container)`
   width: 100%;
   height: 100vh;
-  flex: 1;
   background: ${props => props.theme.colors.background};
   padding: 40px 20px;
   display: flex;

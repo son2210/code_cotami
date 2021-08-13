@@ -1,24 +1,24 @@
-import React, { useCallback } from 'react'
-import PropTypes from 'prop-types'
-import Routers from 'utils/Routers'
-import { DisplayField, AvatarBlock } from 'molecules/ProfileChange'
-import { ContainerWrapper, ColWrapper } from './styled'
-import { BaseButton } from 'atoms'
-import { useHistory } from 'react-router-dom'
 import { useToken } from 'hooks'
-
+import { AvatarBlock, DisplayField } from 'molecules/ProfileChange'
+import PropTypes from 'prop-types'
+import React, { useCallback } from 'react'
+import { useHistory } from 'react-router-dom'
 import { useRecoilState } from 'recoil'
 import { globalUserState } from 'stores/profile/atom'
+import Routers from 'utils/Routers'
+import Payment from './Payment'
+import { Break, Button, ColWrapper, ContainerWrapper } from './styled'
 
 const Profile = ({ ...others }) => {
   const history = useHistory()
   const goToPage = useCallback(route => history.push(route), [])
   const [userState, setUserState] = useRecoilState(globalUserState)
   const { clearToken } = useToken()
+
   return (
     <ContainerWrapper justify='start' {...others}>
-      <ColWrapper colspan={9}>
-        <AvatarBlock hasUpload={false} />
+      <ColWrapper xs={24} sm={16} md={16} lg={8}>
+        <AvatarBlock hasUpload={false} disable={true} />
         <DisplayField title={'Company id'} content={'B0001'} />
         <DisplayField title={'Company name'} content={'Its Global'} />
         <DisplayField title={'Role'} content={'staff'} />
@@ -28,22 +28,22 @@ const Profile = ({ ...others }) => {
         />
         <DisplayField title={'Last Name'} content={userState?.lastName || ''} />
         <DisplayField title={'Email'} content={userState?.email || ''} />
-        <br />
-        <BaseButton
+        <Break />
+        <Button
           primary
           bold
           onClick={() => goToPage(Routers.NORMAL_ADMIN.PROFILE.CHILD[1].URL)}
         >
           Update profile
-        </BaseButton>
-        <BaseButton
+        </Button>
+        <Button
           secondary
           bold
           onClick={() => goToPage(Routers.NORMAL_ADMIN.PROFILE.CHILD[0].URL)}
         >
           Change password
-        </BaseButton>
-        <BaseButton
+        </Button>
+        <Button
           bold
           onClick={async () => {
             setUserState({})
@@ -52,8 +52,9 @@ const Profile = ({ ...others }) => {
           }}
         >
           Logout
-        </BaseButton>
+        </Button>
       </ColWrapper>
+      <Payment />
     </ContainerWrapper>
   )
 }
