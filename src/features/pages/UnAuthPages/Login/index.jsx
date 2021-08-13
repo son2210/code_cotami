@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react'
-import { Wrapper, RadioFormWrapper } from './styled'
+import { Wrapper, RadioFormWrapper, GridItem } from './styled'
 import { UnAuthForm } from 'organisms'
 import { BaseImage } from 'atoms'
 import { InputGroup } from 'molecules'
@@ -61,71 +61,73 @@ const Login = () => {
   const goToPage = useCallback(route => history.push(route), [])
 
   return (
-    <Wrapper column={true}>
-      <UnAuthForm
-        formTitle={'Login'}
-        primaryBtn={{
-          name: 'Login',
-          onClick: handleLogin
-        }}
-        secondaryBtn={{
-          name: 'Register',
-          onClick: () => goToPage(Routers.REGISTER)
-        }}
-        tertiaryBtn={{
-          name: 'Forgot Password?',
-          onClick: () => goToPage(Routers.FORGOT_PASSWORD)
-        }}
-        formValue={data}
-        model={validateModel}
-        onCheck={validateData}
-        // onSubmit={handleLogin}
-      >
-        <InputGroup
-          placeholder='Company Id'
-          LeftSide={<BaseImage source={IMAGES.LOGO.COMPANY} />}
-          name='enterpriseId'
-          onChange={value => handleInput('enterpriseId', value)}
-          value={data['enterpriseId']}
-          helpText={error['enterpriseId']}
-          isError={!error['enterpriseId'] ? false : true}
-        />
-        <InputGroup
-          placeholder='Login id'
-          LeftSide={<BaseImage source={IMAGES.LOGO.USER} />}
-          name='loginId'
-          onChange={value => handleInput('loginId', value)}
-          value={data['loginId']}
-          helpText={error['loginId']}
-          isError={!error['loginId'] ? false : true}
-        />
+    <GridItem xs={24} sm={16} md={12} lg={6}>
+      <Wrapper column={true}>
+        <UnAuthForm
+          formTitle={'Login'}
+          primaryBtn={{
+            name: 'Login',
+            onClick: handleLogin
+          }}
+          secondaryBtn={{
+            name: 'Register',
+            onClick: () => goToPage(Routers.REGISTER)
+          }}
+          tertiaryBtn={{
+            name: 'Forgot Password?',
+            onClick: () => goToPage(Routers.FORGOT_PASSWORD)
+          }}
+          formValue={data}
+          model={validateModel}
+          onCheck={validateData}
+          // onSubmit={handleLogin}
+        >
+          <InputGroup
+            placeholder='Company Id'
+            LeftSide={<BaseImage source={IMAGES.LOGO.COMPANY} />}
+            name='enterpriseId'
+            onChange={value => handleInput('enterpriseId', value)}
+            value={data['enterpriseId']}
+            helpText={error['enterpriseId']}
+            isError={!error['enterpriseId'] ? false : true}
+          />
+          <InputGroup
+            placeholder='Login id'
+            LeftSide={<BaseImage source={IMAGES.LOGO.USER} />}
+            name='loginId'
+            onChange={value => handleInput('loginId', value)}
+            value={data['loginId']}
+            helpText={error['loginId']}
+            isError={!error['loginId'] ? false : true}
+          />
 
-        <InputGroup
-          LeftSide={<BaseImage source={IMAGES.LOGO.LOCK} />}
-          RightSide={{
-            onClick: () => setShowPassword(!showPassword),
-            icon: <BaseImage source={IMAGES.EYE} />
-          }}
-          placeholder='Password'
-          type={showPassword ? 'text' : 'password'}
-          name='password'
-          onChange={value => handleInput('password', value)}
-          value={data['password']}
-          helpText={error['password']}
-          isError={!error['password'] ? false : true}
-        />
-        <RadioFormWrapper
-          options={Constant.LOGIN_ROLE}
-          name='role'
-          onChange={value => {
-            setData(prv => {
-              return { ...prv, role: value }
-            })
-          }}
-          value={data['role']}
-        />
-      </UnAuthForm>
-    </Wrapper>
+          <InputGroup
+            LeftSide={<BaseImage source={IMAGES.LOGO.LOCK} />}
+            RightSide={{
+              onClick: () => setShowPassword(!showPassword),
+              icon: <BaseImage source={IMAGES.EYE} />
+            }}
+            placeholder='Password'
+            type={showPassword ? 'text' : 'password'}
+            name='password'
+            onChange={value => handleInput('password', value)}
+            value={data['password']}
+            helpText={error['password']}
+            isError={!error['password'] ? false : true}
+          />
+          <RadioFormWrapper
+            options={Constant.LOGIN_ROLE}
+            name='role'
+            onChange={value => {
+              setData(prv => {
+                return { ...prv, role: value }
+              })
+            }}
+            value={data['role']}
+          />
+        </UnAuthForm>
+      </Wrapper>
+    </GridItem>
   )
 }
 
