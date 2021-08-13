@@ -27,8 +27,8 @@ const CheckList = () => {
 
   const [loading, setLoading] = useState(false)
   const [searchData, setSearchData] = useState({
-    name: null,
-    enterpriseUnitIds: null,
+    name: '',
+    enterpriseUnitIds: [],
     status: null
   })
   const { onGetExecute } = useRequestManager()
@@ -127,13 +127,10 @@ const CheckList = () => {
     [searchData]
   )
   const getData = useCallback((offset, limit, others) => {
+    const params = { offset: offset, limit: limit, ...others }
     async function execute() {
       const response = await onGetExecute(EndPoint.FORMS, {
-        params: {
-          offset: offset,
-          limit: limit,
-          ...others
-        }
+        params: params
       })
       if (response) {
         setData(withArray('data', response))
@@ -148,22 +145,26 @@ const CheckList = () => {
     history.push(Routers.NORMAL_ADMIN.CHECKLIST.CHILD[0].URL)
   }, [])
 
+  const filterChecklist = useCallback(() => {
+    const { name, enterpriseUnitIds, status } = searchData
+    let temp = {}
+    if (name) temp = { ...temp, name: name }
+    if (enterpriseUnitIds)
+      temp = { ...temp, enterpriseUnitIds: enterpriseUnitIds }
+    if (status) temp = { ...temp, status: status }
+    getData(0, displayLength, temp)
+  }, [searchData, displayLength])
+
   useEffect(() => {
-    if (units && units.length) {
-      getData(activePage - 1, displayLength)
-      setSearchData(prev => {
-        return { ...prev, enterpriseUnitIds: units[0].value }
-      })
-    }
-  }, [activePage, displayLength, units])
+    getData(activePage - 1, displayLength)
+  }, [activePage, displayLength])
 
   return (
     <Wrapper>
       <FilterWrapper
         formOpt={{
           formValue: searchData,
-          onSubmit: () =>
-            getData(0, displayLength, searchData.enterpriseUnitIds)
+          onSubmit: () => filterChecklist()
         }}
         onClick={goToCreateChecklist}
       >
@@ -191,14 +192,7 @@ const CheckList = () => {
           onChange={v => handleInputSearch('status', v)}
           data={filterStatus}
         />
-        <BaseButton
-          style={{ marginLeft: 10 }}
-          secondary
-          bold
-          onClick={() => {
-            getData(0, 10, searchData)
-          }}
-        >
+        <BaseButton style={{ marginLeft: 10 }} secondary bold type={'submit'}>
           Search
         </BaseButton>
       </FilterWrapper>
