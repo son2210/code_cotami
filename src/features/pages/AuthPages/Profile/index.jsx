@@ -1,23 +1,23 @@
-import React, { useCallback , useState} from 'react'
-import PropTypes from 'prop-types'
-import Routers from 'utils/Routers'
-import { DisplayField, AvatarBlock, WrapperRowText } from 'molecules/ProfileChange'
-import { ContainerWrapper, ColWrapper, ColWrapperPayment, WrapperButton, WrapperBottom ,WrapperHeader,WrapperNumber,Number,WrapperPaymentMethod,Text ,Icon} from './styled'
-import { BaseButton ,BaseImage} from 'atoms'
-import { useHistory } from 'react-router-dom'
 import { useToken } from 'hooks'
+import { AvatarBlock, DisplayField } from 'molecules/ProfileChange'
+import PropTypes from 'prop-types'
+import React, { useCallback } from 'react'
+import { useHistory } from 'react-router-dom'
 import { useRecoilState } from 'recoil'
 import { globalUserState } from 'stores/profile/atom'
-import { IMAGES } from 'assets'
+import Routers from 'utils/Routers'
+import Payment from './Payment'
+import { Break, Button, ColWrapper, ContainerWrapper } from './styled'
+
 const Profile = ({ ...others }) => {
   const history = useHistory()
   const goToPage = useCallback(route => history.push(route), [])
   const [userState, setUserState] = useRecoilState(globalUserState)
   const { clearToken } = useToken()
-  const [ togglePayment , setTogglePayment ] = useState(false)
+
   return (
     <ContainerWrapper justify='start' {...others}>
-      <ColWrapper colspan={9}>
+      <ColWrapper xs={24} sm={16} md={16} lg={8}>
         <AvatarBlock hasUpload={false} disable={true} />
         <DisplayField title={'Company id'} content={'B0001'} />
         <DisplayField title={'Company name'} content={'Its Global'} />
@@ -28,22 +28,22 @@ const Profile = ({ ...others }) => {
         />
         <DisplayField title={'Last Name'} content={userState?.lastName || ''} />
         <DisplayField title={'Email'} content={userState?.email || ''} />
-        <br />
-        <BaseButton
+        <Break />
+        <Button
           primary
           bold
           onClick={() => goToPage(Routers.NORMAL_ADMIN.PROFILE.CHILD[1].URL)}
         >
           Update profile
-        </BaseButton>
-        <BaseButton
+        </Button>
+        <Button
           secondary
           bold
           onClick={() => goToPage(Routers.NORMAL_ADMIN.PROFILE.CHILD[0].URL)}
         >
           Change password
-        </BaseButton>
-        <BaseButton
+        </Button>
+        <Button
           bold
           onClick={async () => {
             setUserState({})
@@ -52,44 +52,9 @@ const Profile = ({ ...others }) => {
           }}
         >
           Logout
-        </BaseButton>
+        </Button>
       </ColWrapper>
-      <ColWrapperPayment colspan={9} >
-      <WrapperRowText textLeft='Payment infomation' textRight='View transaction history' noneBorder header mgBottom={35} />
-        <WrapperHeader>
-        <WrapperRowText textLeft='Payment method' textLeftBold noneBorder icon='edit' onClick={()=>setTogglePayment(!togglePayment)}/>
-        <WrapperNumber>
-
-          { togglePayment 
-          ?
-          <>
-          <BaseImage source={IMAGES.MASTERCARD} width={60}/>
-          <Number>**** **** **** 6789</Number>
-          </>
-          :
-          <>
-          <BaseImage source={IMAGES.PAYMENT} width={60}/>
-          <WrapperPaymentMethod>
-          <Text bold >Add A Payment Method</Text>
-          <Text>You need add a payment method for Cotami service.</Text>
-          </WrapperPaymentMethod>
-          <Icon icon='chevron-right' />
-          </>
-          }
-
-         
-        </WrapperNumber>
-        </WrapperHeader>
-        <WrapperBottom>
-          <WrapperRowText textLeft='Subscription info' textLeftBold mg textRight='Price Listing' button />
-          <WrapperRowText textLeft='Total users' textRight='6' />
-          <WrapperRowText textLeft='Price / a user' textRight='$50' />
-          <WrapperRowText textLeft='Next billing amount' textRight='$120' />
-          <WrapperRowText textLeft='Next billing on' textRight='2021/02/09' noneBorder={true} />
-          <WrapperButton>Cancel subscription</WrapperButton>
-        </WrapperBottom>
-
-      </ColWrapperPayment>
+      <Payment />
     </ContainerWrapper>
   )
 }
