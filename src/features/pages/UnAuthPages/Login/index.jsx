@@ -39,7 +39,7 @@ const Login = () => {
     if (response) {
       await saveToken(response.accessToken)
       goToPage(Routers.NORMAL_ADMIN.MENU[0].URL)
-    } 
+    }
   }, [data])
 
   const handleInput = useCallback(
@@ -70,7 +70,7 @@ const Login = () => {
         }}
         secondaryBtn={{
           name: 'Register',
-          onClick: () => console.log('to do next week')
+          onClick: () => goToPage(Routers.REGISTER)
         }}
         tertiaryBtn={{
           name: 'Forgot Password?',

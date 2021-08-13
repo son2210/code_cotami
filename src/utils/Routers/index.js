@@ -56,7 +56,7 @@ const Routers = {
           NAME: 'Change password'
         },
         {
-          URL: '/profile/update',
+          URL: '/profile/update-profile',
           NAME: 'Update password'
         }
       ]

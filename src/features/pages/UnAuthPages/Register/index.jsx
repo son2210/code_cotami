@@ -1,6 +1,12 @@
 import React, { useState, useCallback } from 'react'
-import { Wrapper, NameWrapper } from './styled'
-import { UnAuthForm } from 'organisms'
+import {
+  Wrapper,
+  NameWrapper,
+  ColWrapper,
+  FomRegister,
+  FlexGridWrapper
+} from './styled'
+
 import { BaseIcon } from 'atoms'
 import { InputGroup } from 'molecules'
 import { modifyPropsOfState } from 'utils/Helpers'
@@ -69,7 +75,7 @@ const Register = () => {
 
   return (
     <Wrapper>
-      <UnAuthForm
+      <FomRegister
         formTitle={'Register'}
         primaryBtn={{
           name: 'Register',
@@ -84,76 +90,151 @@ const Register = () => {
         onCheck={validateData}
         onSubmit={handleRegister}
       >
-        <InputGroup
-          placeholder='Company Name'
-          LeftSide={<BaseIcon icon='building-o' />}
-          onChange={value => handleInput('companyName', value)}
-          value={data['companyName']}
-          helpText={error['companyName']}
-          isError={!error['companyName'] ? false : true}
-        />
-        <InputGroup
-          placeholder='Business areas'
-          LeftSide={<BaseIcon icon='wpforms' />}
-          onChange={value => handleInput('businessArea', value)}
-          value={data['businessArea']}
-          helpText={error['businessArea']}
-          isError={!error['businessArea'] ? false : true}
-        />
-        <InputGroup
-          placeholder='Email'
-          LeftSide={<BaseIcon icon='envelope-o' />}
-          onChange={value => handleInput('email', value)}
-          value={data['email']}
-          helpText={error['email']}
-          isError={!error['email'] ? false : true}
-        />
+        <FlexGridWrapper>
+          <ColWrapper>
+            <InputGroup
+              placeholder='Company Name'
+              LeftSide={<BaseIcon icon='building-o' />}
+              onChange={value => handleInput('companyName', value)}
+              value={data['companyName']}
+              helpText={error['companyName']}
+              isError={!error['companyName'] ? false : true}
+            />
+            <InputGroup
+              placeholder='Business areas'
+              LeftSide={<BaseIcon icon='wpforms' />}
+              onChange={value => handleInput('businessArea', value)}
+              value={data['businessArea']}
+              helpText={error['businessArea']}
+              isError={!error['businessArea'] ? false : true}
+            />
+            <InputGroup
+              placeholder='Email'
+              LeftSide={<BaseIcon icon='envelope-o' />}
+              onChange={value => handleInput('email', value)}
+              value={data['email']}
+              helpText={error['email']}
+              isError={!error['email'] ? false : true}
+            />
 
-        <NameWrapper fluid>
-          <InputGroup
-            placeholder='First Name'
-            onChange={value => handleInput('firstName', value)}
-            value={data['firstName']}
-            helpText={error['lastName']}
-            isError={!error['lastName'] ? false : true}
-          />
-          {'　'}
-          <InputGroup
-            placeholder='Last Name'
-            onChange={value => handleInput('lastName', value)}
-            value={data['lastName']}
-            helpText={error['firstName']}
-            isError={!error['firstName'] ? false : true}
-          />
-        </NameWrapper>
+            <NameWrapper fluid>
+              <InputGroup
+                placeholder='First Name'
+                onChange={value => handleInput('firstName', value)}
+                value={data['firstName']}
+                helpText={error['lastName']}
+                isError={!error['lastName'] ? false : true}
+              />
 
-        <InputGroup
-          onChange={value => handleInput('password', value)}
-          LeftSide={<BaseIcon icon='lock' />}
-          RightSide={{
-            onClick: () => setShowPassword(!showPassword),
-            icon: <BaseIcon icon='eye' />
-          }}
-          placeholder='Password'
-          type={showPassword ? 'text' : 'password'}
-          value={data['password']}
-          helpText={error['password']}
-          isError={!error['password'] ? false : true}
-        />
-        <InputGroup
-          onChange={value => handleInput('cfPassword', value)}
-          LeftSide={<BaseIcon icon='lock' />}
-          RightSide={{
-            onClick: () => setShowPasswordCf(!showPasswordCf),
-            icon: <BaseIcon icon='eye' />
-          }}
-          value={data['cfPassword']}
-          placeholder='Confirm Password'
-          type={showPasswordCf ? 'text' : 'password'}
-          helpText={error['cfPassword']}
-          isError={!error['cfPassword'] ? false : true}
-        />
-      </UnAuthForm>
+              <InputGroup
+                placeholder='Last Name'
+                onChange={value => handleInput('lastName', value)}
+                value={data['lastName']}
+                helpText={error['firstName']}
+                isError={!error['firstName'] ? false : true}
+              />
+            </NameWrapper>
+
+            <InputGroup
+              onChange={value => handleInput('password', value)}
+              LeftSide={<BaseIcon icon='lock' />}
+              RightSide={{
+                onClick: () => setShowPassword(!showPassword),
+                icon: <BaseIcon icon='eye' />
+              }}
+              placeholder='Password'
+              type={showPassword ? 'text' : 'password'}
+              value={data['password']}
+              helpText={error['password']}
+              isError={!error['password'] ? false : true}
+            />
+            <InputGroup
+              onChange={value => handleInput('cfPassword', value)}
+              LeftSide={<BaseIcon icon='lock' />}
+              RightSide={{
+                onClick: () => setShowPasswordCf(!showPasswordCf),
+                icon: <BaseIcon icon='eye' />
+              }}
+              value={data['cfPassword']}
+              placeholder='Confirm Password'
+              type={showPasswordCf ? 'text' : 'password'}
+              helpText={error['cfPassword']}
+              isError={!error['cfPassword'] ? false : true}
+            />
+          </ColWrapper>
+          <ColWrapper>
+            <InputGroup
+              placeholder='Company Name'
+              LeftSide={<BaseIcon icon='building-o' />}
+              onChange={value => handleInput('companyName', value)}
+              value={data['companyName']}
+              helpText={error['companyName']}
+              isError={!error['companyName'] ? false : true}
+            />
+            <InputGroup
+              placeholder='Business areas'
+              LeftSide={<BaseIcon icon='wpforms' />}
+              onChange={value => handleInput('businessArea', value)}
+              value={data['businessArea']}
+              helpText={error['businessArea']}
+              isError={!error['businessArea'] ? false : true}
+            />
+            <InputGroup
+              placeholder='Email'
+              LeftSide={<BaseIcon icon='envelope-o' />}
+              onChange={value => handleInput('email', value)}
+              value={data['email']}
+              helpText={error['email']}
+              isError={!error['email'] ? false : true}
+            />
+
+            <NameWrapper fluid>
+              <InputGroup
+                placeholder='First Name'
+                onChange={value => handleInput('firstName', value)}
+                value={data['firstName']}
+                helpText={error['lastName']}
+                isError={!error['lastName'] ? false : true}
+              />
+
+              <InputGroup
+                placeholder='Last Name'
+                onChange={value => handleInput('lastName', value)}
+                value={data['lastName']}
+                helpText={error['firstName']}
+                isError={!error['firstName'] ? false : true}
+              />
+            </NameWrapper>
+
+            <InputGroup
+              onChange={value => handleInput('password', value)}
+              LeftSide={<BaseIcon icon='lock' />}
+              RightSide={{
+                onClick: () => setShowPassword(!showPassword),
+                icon: <BaseIcon icon='eye' />
+              }}
+              placeholder='Password'
+              type={showPassword ? 'text' : 'password'}
+              value={data['password']}
+              helpText={error['password']}
+              isError={!error['password'] ? false : true}
+            />
+            <InputGroup
+              onChange={value => handleInput('cfPassword', value)}
+              LeftSide={<BaseIcon icon='lock' />}
+              RightSide={{
+                onClick: () => setShowPasswordCf(!showPasswordCf),
+                icon: <BaseIcon icon='eye' />
+              }}
+              value={data['cfPassword']}
+              placeholder='Confirm Password'
+              type={showPasswordCf ? 'text' : 'password'}
+              helpText={error['cfPassword']}
+              isError={!error['cfPassword'] ? false : true}
+            />
+          </ColWrapper>
+        </FlexGridWrapper>
+      </FomRegister>
     </Wrapper>
   )
 }
