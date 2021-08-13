@@ -123,6 +123,7 @@ const TableAction = ({
           <RadioGroup
             value={rowData[id]}
             onClick={e => others.handleOnClick(e, rowData[id])}
+            onChange={value=>others.handleOnChange(value,rowData.id)}
           />
         )
       default:
