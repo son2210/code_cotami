@@ -163,7 +163,7 @@ const CheckList = () => {
         formOpt={{
           formValue: searchData,
           onSubmit: () =>
-            getData(activePage, displayLength, searchData.enterpriseUnitIds)
+            getData(0, displayLength, searchData.enterpriseUnitIds)
         }}
         onClick={goToCreateChecklist}
       >
@@ -205,12 +205,12 @@ const CheckList = () => {
 
       <Table
         id='table__checklist-forms'
-        height={window.innerHeight - 150}
+        height={window.innerHeight - 200}
         data={data}
         loading={loading}
         columns={columns}
         paginateProps={{
-          activePage,
+          activePage: activePage - 1,
           displayLength,
           total: total,
           onChangePage: page => onChangePage(page),

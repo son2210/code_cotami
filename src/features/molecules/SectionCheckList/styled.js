@@ -16,7 +16,9 @@ export const Wrapper = styled.div`
   padding: 20px 0;
   margin: 20px auto;
 `
-export const Title = styled(BaseTitle)``
+export const Title = styled(BaseTitle)`
+  width: 100%;
+`
 
 export const WrapperTop = styled.div`
   height: 30px;
@@ -95,6 +97,7 @@ export const CheckBox = styled(CustomCheckbox)`
   margin-left: -10px;
 `
 export const Input = styled(BaseInput)`
+  width: 100%;
   ${props =>
     props.borderNone &&
     `border: none !important;    
@@ -103,6 +106,7 @@ export const Input = styled(BaseInput)`
   ${props => props.h3 && `font-size: 14px !important;`}
 `
 export const Radio = styled(CustomRadio)`
+  width: 100%;
   display: block !important;
   margin-left: -10px;
   & .rs-radio {

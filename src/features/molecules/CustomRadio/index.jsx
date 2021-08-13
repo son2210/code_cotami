@@ -76,7 +76,7 @@ const CustomRadio = ({
   )
   useEffect(() => {
     if (sectionItems) {
-      if (withNumber('length', sectionItems) < 1) return
+      if (withNumber('length', sectionItems) < 1) return setData([])
       const temp = sectionItems.map(item => {
         return {
           value: item.value,

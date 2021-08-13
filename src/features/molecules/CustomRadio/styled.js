@@ -3,6 +3,7 @@ import { RadioGroup } from 'rsuite'
 import { BaseInput, BaseIcon } from 'atoms'
 
 export const Wrapper = styled(RadioGroup)`
+  width: 100%;
   ${props =>
     props.block &&
     css`

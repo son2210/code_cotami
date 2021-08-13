@@ -4,7 +4,7 @@ import { TableAction, FilterBar } from 'molecules'
 import { BaseButton, BaseDateRangePicker, BaseInputPicker } from 'atoms'
 import { usePaginate, useRequestManager } from 'hooks'
 import { useTheme } from 'styled-components'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import { EndPoint } from 'config/api'
 import { Constant } from 'utils'
 import { useRecoilValue } from 'recoil'
@@ -24,12 +24,12 @@ const History = () => {
   const [searchData, setSearchData] = useState({
     enterpriseUnitId: null,
     dateRange: [
-      moment(Date.now()).subtract(30, 'days').format('YYYY-MM-DD'),
-      moment(Date.now()).format('YYYY-MM-DD')
+      dayjs().subtract(30, 'days').startOf('day').utc().format(),
+      dayjs().endOf('day').utc().format()
     ]
   })
+
   const { onGetExecute } = useRequestManager()
-  // useUnits()
   const units = useRecoilValue(globalUnitsState)
 
   const getData = useCallback(
@@ -39,8 +39,8 @@ const History = () => {
           offset,
           limit,
           enterpriseUnitId,
-          startDate: moment(dateRange[0]).format('YYYY-MM-DD'),
-          endDate: moment(dateRange[1]).format('YYYY-MM-DD')
+          startDate: dayjs(dateRange[0]).utc().format(),
+          endDate: dayjs(dateRange[1]).utc().format()
         }
       })
       if (response) {
@@ -59,14 +59,19 @@ const History = () => {
   useEffect(() => {
     if (units && units.length) {
       if (!searchData.enterpriseUnitId) {
-        getData(activePage, displayLength, searchData.dateRange, units[0].value)
+        getData(
+          activePage - 1,
+          displayLength,
+          searchData.dateRange,
+          units[0].value
+        )
         setSearchData(prev => {
           return { ...prev, enterpriseUnitId: units[0].value }
         })
         return
       }
       getData(
-        activePage,
+        activePage - 1,
         displayLength,
         searchData.dateRange,
         searchData.enterpriseUnitId
@@ -140,7 +145,7 @@ const History = () => {
           formValue: searchData,
           onSubmit: () =>
             getData(
-              activePage,
+              0,
               displayLength,
               searchData.dateRange,
               searchData.enterpriseUnitId
@@ -163,12 +168,15 @@ const History = () => {
         <BaseDateRangePicker
           placeholder='Select date range'
           style={{ marginLeft: 10 }}
-          onChange={v =>
+          onChange={range =>
             setSearchData(prev => {
-              return { ...prev, ['dateRange']: v }
+              const date = [
+                dayjs(range[0]).startOf('day').utc().format(),
+                dayjs(range[1]).endOf('day').utc().format()
+              ]
+              return { ...prev, ['dateRange']: date }
             })
           }
-          //fix warning Rsuit
           value={searchData['dateRange']}
         />
         <BaseButton type='submit' style={{ marginLeft: 10 }} secondary bold>
@@ -177,12 +185,11 @@ const History = () => {
       </FilterBar>
 
       <TableAction
-        height={600}
-        width={800}
+        height={window.innerHeight - 200}
         data={data}
         columns={columns}
         paginateProps={{
-          activePage,
+          activePage: activePage - 1,
           displayLength,
           total,
           onChangePage: p => onChangePage(p),
