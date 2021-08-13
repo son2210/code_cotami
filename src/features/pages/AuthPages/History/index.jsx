@@ -191,9 +191,9 @@ const History = () => {
         paginateProps={{
           activePage: activePage - 1,
           displayLength,
-          total: total,
-          onChangePage: page => onChangePage(page),
-          onChangeLength: length => onChangeLength(length)
+          total,
+          onChangePage: p => onChangePage(p),
+          onChangeLength: l => onChangeLength(l)
         }}
       />
     </Wrapper>

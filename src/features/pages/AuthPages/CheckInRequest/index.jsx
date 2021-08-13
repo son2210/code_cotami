@@ -151,18 +151,20 @@ const CheckInRequest = () => {
   }, [])
 
   const getData = useCallback((offset, limit, dateRange, enterpriseUnitId) => {
+    setLoading(true)
     Promise.all([
       getForms(offset, limit, enterpriseUnitId),
       getCheckIn(offset, limit, dateRange, enterpriseUnitId)
     ])
       .then(conCurrentData => {
-        setTotal(withNumber('paging.total', conCurrentData[1]))
         const { columns, data } = transformData(
           withArray('data', conCurrentData[0]),
           withArray('data', conCurrentData[1])
         )
         setColumns(columns)
         setData(data)
+        setTotal(withNumber('paging.total', conCurrentData[1]))
+        setLoading(false)
       })
       .catch(err => console.log(err))
   }, [])
@@ -310,8 +312,8 @@ const CheckInRequest = () => {
           activePage: activePage - 1,
           displayLength,
           total: total,
-          onChangePage: page => onChangePage(page, setLoading),
-          onChangeLength: length => onChangeLength(length, setLoading)
+          onChangePage: page => onChangePage(page),
+          onChangeLength: length => onChangeLength(length)
         }}
       />
     </Wrapper>
