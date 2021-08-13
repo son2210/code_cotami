@@ -1,5 +1,5 @@
 import { IMAGES } from 'assets'
-import { BaseButton, BaseInputPicker, BaseInput } from 'atoms'
+import { BaseButton, BaseInputPicker, BaseInput, BaseCheckPicker } from 'atoms'
 import { EndPoint } from 'config/api'
 import { usePaginate, useRequestManager } from 'hooks'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
@@ -28,7 +28,7 @@ const CheckList = () => {
   const [loading, setLoading] = useState(false)
   const [searchData, setSearchData] = useState({
     name: null,
-    enterpriseUnitId: null,
+    enterpriseUnitIds: null,
     status: null
   })
   const { onGetExecute } = useRequestManager()
@@ -127,7 +127,6 @@ const CheckList = () => {
     [searchData]
   )
   const getData = useCallback((offset, limit, others) => {
-    setLoading(true)
     async function execute() {
       const response = await onGetExecute(EndPoint.FORMS, {
         params: {
@@ -153,7 +152,7 @@ const CheckList = () => {
     if (units && units.length) {
       getData(activePage - 1, displayLength)
       setSearchData(prev => {
-        return { ...prev, enterpriseUnitId: units[0].value }
+        return { ...prev, enterpriseUnitIds: units[0].value }
       })
     }
   }, [activePage, displayLength, units])
@@ -161,11 +160,11 @@ const CheckList = () => {
   return (
     <Wrapper>
       <FilterWrapper
-        // formOpt={{
-        //   formValue: searchData,
-        //   onSubmit: () =>
-        //     getData(activePage, displayLength, searchData.enterpriseUnitId)
-        // }}
+        formOpt={{
+          formValue: searchData,
+          onSubmit: () =>
+            getData(activePage, displayLength, searchData.enterpriseUnitIds)
+        }}
         onClick={goToCreateChecklist}
       >
         <BaseInput
@@ -173,18 +172,18 @@ const CheckList = () => {
           placeholder='Keyword...'
           name='searchTerm'
           value={searchData['name']}
-          onChange={v => handleInputSearch('name', v)}
+          onChange={v => handleInputSearch('name', v === '' ? null : v)}
         />
-        <BaseInputPicker
+        <BaseCheckPicker
           placeholder='units'
           style={{ marginLeft: 10 }}
           data={units}
-          value={searchData['enterpriseUnitId']}
-          onChange={v =>
+          defaultValue={searchData['enterpriseUnitIds']}
+          onChange={v => {
             setSearchData(prev => {
-              return { ...prev, ['enterpriseUnitId']: v }
+              return { ...prev, ['enterpriseUnitIds']: v }
             })
-          }
+          }}
         />
         <BaseInputPicker
           placeholder='status'
