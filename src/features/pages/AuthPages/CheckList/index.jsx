@@ -204,7 +204,7 @@ const CheckList = () => {
         loading={loading}
         columns={columns}
         paginateProps={{
-          activePage: activePage - 1,
+          activePage: activePage,
           displayLength,
           total: total,
           onChangePage: page => onChangePage(page),

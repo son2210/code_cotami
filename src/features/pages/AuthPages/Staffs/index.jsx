@@ -308,7 +308,7 @@ const Staffs = ({ t }) => {
   }, [])
 
   useEffect(() => {
-    getData(activePage, displayLength)
+    getData(activePage - 1, displayLength)
   }, [activePage, displayLength])
 
   return (
@@ -362,9 +362,9 @@ const Staffs = ({ t }) => {
         paginateProps={{
           activePage,
           displayLength,
-          total: total,
-          onChangePage: page => onChangePage(page, setLoading),
-          onChangeLength: length => onChangeLength(length, setLoading)
+          total,
+          onChangePage: page => onChangePage(page),
+          onChangeLength: length => onChangeLength(length)
         }}
       />
 

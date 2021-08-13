@@ -189,7 +189,7 @@ const History = () => {
         data={data}
         columns={columns}
         paginateProps={{
-          activePage: activePage - 1,
+          activePage,
           displayLength,
           total,
           onChangePage: p => onChangePage(p),
