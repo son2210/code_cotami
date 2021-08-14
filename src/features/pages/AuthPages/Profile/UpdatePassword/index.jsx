@@ -1,28 +1,28 @@
-import React, { useCallback, useState } from 'react'
+import { useAlert, useRequestManager } from 'hooks'
 import PropTypes from 'prop-types'
-import Routers from 'utils/Routers'
-import { ContainerWrapper, ColWrapper, FormWrapper } from '../styled'
-import { InputBlock } from 'molecules/ProfileChange'
+import React, { useCallback, useState } from 'react'
 import { useHistory } from 'react-router-dom'
-import { BaseButton, BaseIcon } from 'atoms'
-import { modifyPropsOfState, trimStringFieldOfObject } from 'utils/Helpers'
-import validateModel from './validateModel'
-import { useRequestManager, useToken, useAlert } from 'hooks'
+import { modifyPropsOfState } from 'utils/Helpers'
+import Routers from 'utils/Routers'
 import { EndPoint } from 'config/api'
-import { globalUserState } from 'stores/profile/atom'
-import { useSetRecoilState } from 'recoil'
+import {
+  Button,
+  ColWrapper,
+  ContainerWrapper,
+  FormWrapper,
+  Icon,
+  WrapperInputBlock
+} from './styled'
+import validateModel from './validateModel'
 
 const UpdatePassword = ({ ...others }) => {
   const history = useHistory()
   const [showPassword, setShowPassword] = useState(false)
   const [showOldPassword, setShowOldPassword] = useState(false)
   const [showPasswordCf, setShowPasswordCf] = useState(false)
-  const goToPage = useCallback(route => history.push(route), [])
-  const { clearToken } = useToken()
   const { onPostExecute } = useRequestManager()
+  const goToPage = useCallback(route => history.push(route), [])
   const { showSuccess } = useAlert()
-  const setUserState = useSetRecoilState(globalUserState)
-
   const [data, setData] = useState({
     oldPassword: '',
     password: '',
@@ -34,23 +34,19 @@ const UpdatePassword = ({ ...others }) => {
     cfPassword: ''
   })
 
-  const handleUpdatePassword = useCallback(async (data) => {
-    const submitData = trimStringFieldOfObject({
+  const handleUpdatePassword = async () => {
+    const submitData = {
       oldPassword: data.oldPassword,
-      newPassword: data.password
-    })
-
+      newPassword: data.cfPassword
+    }
     const response = await onPostExecute(
-      EndPoint.ADMIN_RESET_PASSWORD,
+      `${EndPoint.RESET_PASSWORD}`,
       submitData
     )
     if (response) {
-      setUserState({})
-      await clearToken()
-      showSuccess('Update Successfully')
-      goToPage(Routers.LOGIN)
+      showSuccess('Change Password Successfully')
     }
-  }, [])
+  }
 
   const handleInput = useCallback(
     (name, value) => {
@@ -80,68 +76,84 @@ const UpdatePassword = ({ ...others }) => {
           formValue={data}
           model={validateModel}
           onCheck={validateData}
-          onSubmit={()=>handleUpdatePassword(data)}
+          onSubmit={handleUpdatePassword}
         >
-          <InputBlock
-            title='Old password'
+          <WrapperInputBlock
+            label='Old password'
+            name='oldPassword'
             onChange={value => handleInput('oldPassword', value)}
-            RightSide={{
-              onClick: () => setShowOldPassword(!showOldPassword),
-              icon: <BaseIcon icon='eye' />
+            type={showOldPassword ? 'text' : 'password'}
+            rightIcon={{
+              click: () => setShowOldPassword(!showOldPassword),
+              icon: showOldPassword ? (
+                <Icon name='feather-eye-off' size={18} />
+              ) : (
+                <Icon name='feather-eye' size={18} />
+              )
             }}
             placeholder='Old Password'
-            type={showOldPassword ? 'text' : 'password'}
             value={data['oldPassword']}
             helpText={error['oldPassword']}
             isError={!error['oldPassword'] ? false : true}
           />
 
-          <InputBlock
-            title='New password'
+          <WrapperInputBlock
+            label='Password'
+            name='password'
             onChange={value => handleInput('password', value)}
-            RightSide={{
-              onClick: () => setShowPassword(!showPassword),
-              icon: <BaseIcon icon='eye' />
+            type={showPassword ? 'text' : 'password'}
+            rightIcon={{
+              click: () => setShowPassword(!showPassword),
+              icon: showPassword ? (
+                <Icon name='feather-eye-off' size={18} />
+              ) : (
+                <Icon name='feather-eye' size={18} />
+              )
             }}
             placeholder='Password'
-            type={showPassword ? 'text' : 'password'}
             value={data['password']}
             helpText={error['password']}
             isError={!error['password'] ? false : true}
           />
 
-          <InputBlock
-            title='Confirm password'
+          <WrapperInputBlock
+            label='Old password'
+            name='cfPassword'
             onChange={value => handleInput('cfPassword', value)}
-            RightSide={{
-              onClick: () => setShowPasswordCf(!showPasswordCf),
-              icon: <BaseIcon icon='eye' />
-            }}
-            value={data['cfPassword']}
-            placeholder='Confirm Password'
             type={showPasswordCf ? 'text' : 'password'}
+            rightIcon={{
+              click: () => setShowPasswordCf(!showPasswordCf),
+              icon: showPasswordCf ? (
+                <Icon name='feather-eye-off' size={18} />
+              ) : (
+                <Icon name='feather-eye' size={18} />
+              )
+            }}
+            placeholder='Confirm Password'
+            value={data['cfPassword']}
             helpText={error['cfPassword']}
             isError={!error['cfPassword'] ? false : true}
           />
 
           <ContainerWrapper justify='space-around'>
             <ColWrapper colspan={8}>
-              <BaseButton
+              <Button
                 secondary
                 bold
                 onClick={() => goToPage(Routers.NORMAL_ADMIN.PROFILE.URL)}
               >
                 Cancel
-              </BaseButton>
+              </Button>
             </ColWrapper>
             <ColWrapper colspan={12}>
-              <BaseButton
+              <Button
                 type='submit'
                 primary
                 bold
+                onSubmit={handleUpdatePassword}
               >
                 Update Password
-              </BaseButton>
+              </Button>
             </ColWrapper>
           </ContainerWrapper>
         </FormWrapper>

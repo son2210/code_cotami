@@ -15,7 +15,13 @@ export const ButtonWrapper = styled.div`
   display: flex;
 `
 
-export const FormWrapper = styled(BaseForm)``
+export const FormWrapper = styled(BaseForm)`
+  .bDPPCp {
+    font-size:16px;
+    color:#333333;
+    font-weight:400;
+  }
+`
 export const ColWrapperPayment = styled(BaseItemGrid)`
   margin-left:50px;
 `

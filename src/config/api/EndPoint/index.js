@@ -3,6 +3,7 @@ const EndPoint = {
   LOGIN_ADMIN: 'auth/login/admin',
   REGISTER_API: 'users/register',
   ADMIN_PROFILE: 'users/profile',
+  RESET_PASSWORD: 'auth/resetPassword',
   ADMIN_RESET_PASSWORD: 'auth/resetPassword',
   STAFFS: 'staffs',
   UNITS_LIST: id => `enterprises/${id}/units`,
