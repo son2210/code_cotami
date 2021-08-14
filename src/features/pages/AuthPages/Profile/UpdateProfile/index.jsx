@@ -82,25 +82,16 @@ const UpdateProfile = ({ ...others }) => {
             placeholder='First Name'
             onChange={value => handleInput('firstName', value)}
             value={data['firstName']}
-            helpText={error['lastName']}
-            isError={!error['lastName'] ? false : true}
-          />
-          <InputBlock
-            title='First Name'
-            placeholder='Last Name'
-            onChange={value => handleInput('lastName', value)}
-            value={data['lastName']}
             helpText={error['firstName']}
             isError={!error['firstName'] ? false : true}
           />
-          <BaseTitle style={{ marginTop: 10 }}> Date of Birth</BaseTitle>
-          <BaseDatePicker
-            placeholder='Date of Birth'
-            onChange={value => handleInput('dateOfBirth', value)}
-            value={data['dateOfBirth']}
-            helpText={error['dateOfBirth']}
-            isError={!error['dateOfBirth'] ? false : true}
-            style={{ marginTop: 10, marginBottom: 20, width: '100%' }}
+          <InputBlock
+            title='Last Name'
+            placeholder='Last Name'
+            onChange={value => handleInput('lastName', value)}
+            value={data['lastName']}
+            helpText={error['lastName']}
+            isError={!error['lastName'] ? false : true}
           />
           <InputBlock
             disabled={true}
