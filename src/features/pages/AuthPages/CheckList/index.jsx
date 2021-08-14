@@ -1,7 +1,7 @@
 import { IMAGES } from 'assets'
 import { BaseButton, BaseInputPicker, BaseInput, BaseCheckPicker } from 'atoms'
 import { EndPoint } from 'config/api'
-import { usePaginate, useRequestManager } from 'hooks'
+import { usePaginate, useRequestManager, useAlert } from 'hooks'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useTheme } from 'styled-components'
@@ -31,13 +31,35 @@ const CheckList = () => {
     enterpriseUnitIds: [],
     status: null
   })
-  const { onGetExecute } = useRequestManager()
+  const { onGetExecute, onPatchExecute } = useRequestManager()
   const units = useRecoilValue(globalUnitsState)
+  const { showSuccess } = useAlert()
+  const handleClickDisplay = async (display, id) => {
+    if (!id) return
+    const submitData = {
+      displayMode: display
+    }
+    const response = await onPatchExecute(
+      `${EndPoint.FORMS}/${id}/info`,
+      submitData
+    )
+    if (response) {
+      getData(activePage - 1, displayLength)
+      showSuccess('update success')
+    }
+  }
+
+  const actionTable = useCallback(id => {
+    async function execute(id) {
+      console.log(id)
+    }
+    execute(id)
+  }, [])
 
   const columns = useMemo(() => {
     return [
       {
-        width: 100,
+        width: 80,
         header: {
           label: 'ID'
         },
@@ -46,6 +68,9 @@ const CheckList = () => {
           style: {
             color: theme.colors.secondary[1]
           }
+        },
+        props: {
+          resizable: true
         }
       },
       {
@@ -59,6 +84,9 @@ const CheckList = () => {
           style: {
             color: theme.colors.secondary[1]
           }
+        },
+        props: {
+          resizable: true
         }
       },
       {
@@ -70,7 +98,13 @@ const CheckList = () => {
         cell: {
           type: Constant.CellType.DISPLAY,
           id: 'displayMode',
-          isCheckbox: true
+          isCheckbox: true,
+          others: {
+            handleOnChange: handleClickDisplay
+          }
+        },
+        props: {
+          resizable: true
         }
       },
       {
@@ -88,11 +122,14 @@ const CheckList = () => {
               height: 20
             }
           }
+        },
+        props: {
+          resizable: true
         }
       },
       {
         width: 200,
-        align: 'left',
+        align: 'center',
         header: {
           style: {
             textAlign: 'center'
@@ -101,7 +138,11 @@ const CheckList = () => {
         },
         cell: {
           type: Constant.CellType.ACTION_BUTTON_GROUP,
-          others: {}
+          others: {
+            preview: actionTable,
+            onClickDelete: actionTable,
+            onClickEdit: actionTable
+          }
         }
       }
     ]

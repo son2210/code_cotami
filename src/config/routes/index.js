@@ -40,8 +40,6 @@ const UpdatePasswordPage = lazy(() =>
   import('pages/AuthPages/Profile/UpdatePassword')
 )
 
-const PreviewsPage = lazy(() => import('pages/Previews'))
-
 const Routes = ({ isLoggedIn, ...rest }) => {
   const location = useLocation()
   const { token } = useToken()
@@ -107,14 +105,6 @@ const Routes = ({ isLoggedIn, ...rest }) => {
   const _renderPrivateNormalAdminRoute = React.useCallback(() => {
     return (
       <PrivateTemplate menuList={Routers.NORMAL_ADMIN.MENU}>
-        <Route
-          {...rest}
-          exact
-          path={Routers.PREVIEWS}
-          render={props => {
-            return <PreviewsPage {...rest} {...props} />
-          }}
-        />
         <Route
           {...rest}
           exact
