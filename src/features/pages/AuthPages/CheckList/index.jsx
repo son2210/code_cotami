@@ -1,7 +1,7 @@
 import { IMAGES } from 'assets'
 import { BaseButton, BaseInputPicker, BaseInput, BaseCheckPicker } from 'atoms'
 import { EndPoint } from 'config/api'
-import { usePaginate, useRequestManager } from 'hooks'
+import { usePaginate, useRequestManager, useAlert } from 'hooks'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useTheme } from 'styled-components'
@@ -31,8 +31,23 @@ const CheckList = () => {
     enterpriseUnitIds: [],
     status: null
   })
-  const { onGetExecute } = useRequestManager()
+  const { onGetExecute, onPatchExecute } = useRequestManager()
   const units = useRecoilValue(globalUnitsState)
+  const { showSuccess } = useAlert()
+  const handleClickDisplay = async (display, id) => {
+    if (!id) return
+    const submitData = {
+      displayMode: display
+    }
+    const response = await onPatchExecute(
+      `${EndPoint.FORMS}/${id}/info`,
+      submitData
+    )
+    if (response) {
+      getData(activePage - 1, displayLength)
+      showSuccess('update success')
+    }
+  }
 
   const actionTable = useCallback(id => {
     async function execute(id) {
@@ -83,7 +98,10 @@ const CheckList = () => {
         cell: {
           type: Constant.CellType.DISPLAY,
           id: 'displayMode',
-          isCheckbox: true
+          isCheckbox: true,
+          others: {
+            handleOnChange: handleClickDisplay
+          }
         },
         props: {
           resizable: true

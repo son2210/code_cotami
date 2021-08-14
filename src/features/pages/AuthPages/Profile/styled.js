@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import { BaseItemGrid, BaseButton, BaseForm } from 'atoms'
 import { FlexboxGrid } from 'rsuite'
-
+import { CustomInput } from 'molecules'
 export const ContainerWrapper = styled(FlexboxGrid)`
   flex: 1;
 `
@@ -17,4 +17,11 @@ export const ButtonWrapper = styled.div`
 export const Break = styled.br``
 export const Button = styled(BaseButton)``
 
-export const FormWrapper = styled(BaseForm)``
+export const FormWrapper = styled(BaseForm)`
+  .dWbTQq {
+    font-weight: 500;
+    font-size: 16px;
+    color: #333333;
+  }
+`
+export const InputBlock = styled(CustomInput)``

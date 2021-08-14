@@ -48,7 +48,7 @@ const Routes = ({ isLoggedIn, ...rest }) => {
   const setUnitsState = useSetRecoilState(globalUnitsState)
   const { onGetExecute } = useRequestManager()
 
-  const getUserInfor = useCallback(token => {
+  const getUserInfo = useCallback(token => {
     const loggedAdmin = jwtDecode(token)
     setUserState(loggedAdmin)
   }, [])
@@ -76,7 +76,7 @@ const Routes = ({ isLoggedIn, ...rest }) => {
 
   React.useEffect(() => {
     if (isLoggedIn) {
-      getUserInfor(token)
+      getUserInfo(token)
       getUnitsArray(token)
     }
   }, [isLoggedIn, token, location.pathname])
