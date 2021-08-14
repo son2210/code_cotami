@@ -1,10 +1,9 @@
+import { EndPoint } from 'config/api'
 import { useAlert, useRequestManager } from 'hooks'
 import PropTypes from 'prop-types'
 import React, { useCallback, useState } from 'react'
 import { useHistory } from 'react-router-dom'
-import { modifyPropsOfState } from 'utils/Helpers'
 import Routers from 'utils/Routers'
-import { EndPoint } from 'config/api'
 import {
   Button,
   ColWrapper,
@@ -28,11 +27,6 @@ const UpdatePassword = ({ ...others }) => {
     password: '',
     cfPassword: ''
   })
-  const [error, setError] = useState({
-    oldPassword: '',
-    password: '',
-    cfPassword: ''
-  })
 
   const handleUpdatePassword = async () => {
     const submitData = {
@@ -45,28 +39,15 @@ const UpdatePassword = ({ ...others }) => {
     )
     if (response) {
       showSuccess('Change Password Successfully')
+      goToPage(Routers.NORMAL_ADMIN.PROFILE.URL)
     }
   }
 
   const handleInput = useCallback(
     (name, value) => {
-      modifyPropsOfState(error, setError, name, '')
-      modifyPropsOfState(data, setData, name, value)
+      setData(prev => ({ ...prev, [name]: value }))
     },
     [data]
-  )
-  const validateData = useCallback(
-    err => {
-      let newError = { ...error }
-      if (data['cfPassword'] !== data['password']) {
-        newError['cfPassword'] = 'Confirm password is not match password'
-      }
-      for (const [key, value] of Object.entries(err)) {
-        newError[key] = value
-      }
-      setError(newError)
-    },
-    [error]
   )
 
   return (
@@ -75,7 +56,6 @@ const UpdatePassword = ({ ...others }) => {
         <FormWrapper
           formValue={data}
           model={validateModel}
-          onCheck={validateData}
           onSubmit={handleUpdatePassword}
         >
           <WrapperInputBlock
@@ -93,8 +73,6 @@ const UpdatePassword = ({ ...others }) => {
             }}
             placeholder='Old Password'
             value={data['oldPassword']}
-            helpText={error['oldPassword']}
-            isError={!error['oldPassword'] ? false : true}
           />
 
           <WrapperInputBlock
@@ -112,8 +90,6 @@ const UpdatePassword = ({ ...others }) => {
             }}
             placeholder='Password'
             value={data['password']}
-            helpText={error['password']}
-            isError={!error['password'] ? false : true}
           />
 
           <WrapperInputBlock
@@ -131,8 +107,6 @@ const UpdatePassword = ({ ...others }) => {
             }}
             placeholder='Confirm Password'
             value={data['cfPassword']}
-            helpText={error['cfPassword']}
-            isError={!error['cfPassword'] ? false : true}
           />
 
           <ContainerWrapper justify='space-around'>
@@ -146,12 +120,7 @@ const UpdatePassword = ({ ...others }) => {
               </Button>
             </ColWrapper>
             <ColWrapper colspan={12}>
-              <Button
-                type='submit'
-                primary
-                bold
-                onSubmit={handleUpdatePassword}
-              >
+              <Button type='submit' primary bold>
                 Update Password
               </Button>
             </ColWrapper>
