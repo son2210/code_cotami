@@ -7,6 +7,8 @@ export const Wrapper = styled(FormGroup)``
 export const Label = styled(ControlLabel)`
   font-weight: 500 !important;
   display: flex !important;
+  color: ${props => props.theme.colors.secondary[1]};
+  font-size: 1rem;
 `
 export const Control = styled(FormControl)`
   border-radius: 10px !important;
