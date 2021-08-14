@@ -1,7 +1,8 @@
+import { withEmpty } from 'exp-value'
 import { useToken } from 'hooks'
 import { AvatarBlock, DisplayField } from 'molecules/ProfileChange'
 import PropTypes from 'prop-types'
-import React, { useCallback } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useRecoilState } from 'recoil'
 import { globalUserState } from 'stores/profile/atom'
@@ -15,19 +16,34 @@ const Profile = ({ ...others }) => {
   const [userState, setUserState] = useRecoilState(globalUserState)
   const { clearToken } = useToken()
 
+  const [data, setData] = useState(userState)
+
+  useEffect(() => {
+    setData(userState)
+  }, [globalUserState])
+
   return (
     <ContainerWrapper justify='start' {...others}>
       <ColWrapper xs={24} sm={16} md={16} lg={8}>
         <AvatarBlock hasUpload={false} disable={true} />
-        <DisplayField title={'Company id'} content={'B0001'} />
-        <DisplayField title={'Company name'} content={'Its Global'} />
-        <DisplayField title={'Role'} content={'staff'} />
+        <DisplayField
+          title={'Company id'}
+          content={withEmpty('companyId', data)}
+        />
+        <DisplayField
+          title={'Company name'}
+          content={withEmpty('name', data)}
+        />
+        <DisplayField title={'Role'} content={withEmpty('role', data)} />
         <DisplayField
           title={'First name'}
-          content={userState?.firstName || ''}
+          content={withEmpty('firstName', data)}
         />
-        <DisplayField title={'Last Name'} content={userState?.lastName || ''} />
-        <DisplayField title={'Email'} content={userState?.email || ''} />
+        <DisplayField
+          title={'Last Name'}
+          content={withEmpty('lastName', data)}
+        />
+        <DisplayField title={'Email'} content={withEmpty('email', data)} />
         <Break />
         <Button
           primary

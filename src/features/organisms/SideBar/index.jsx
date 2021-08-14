@@ -11,6 +11,7 @@ import { ProfileBlock } from 'molecules'
 import { useRecoilValue } from 'recoil'
 import { globalUserState } from 'stores/profile/atom'
 import { withNamespaces } from 'react-i18next'
+import { withEmpty } from 'exp-value'
 
 const SideBar = ({ t, menuList, ...others }) => {
   const userState = useRecoilValue(globalUserState)
@@ -26,8 +27,11 @@ const SideBar = ({ t, menuList, ...others }) => {
       </MenuWrapper>
       <UserWrapper>
         <ProfileBlock
-          name={userState?.firstName || ''}
-          subText={userState?.role || ''}
+          name={[
+            withEmpty('firstName', userState),
+            withEmpty('lastName', userState)
+          ].join(' ')}
+          role={t(withEmpty('role', userState))}
         />
       </UserWrapper>
     </ContainerWrapper>
@@ -45,4 +49,4 @@ SideBar.propTypes = {
   )
 }
 
-export default withNamespaces('menu')(React.memo(SideBar))
+export default withNamespaces('common')(React.memo(SideBar))
