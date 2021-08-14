@@ -34,10 +34,17 @@ const CheckList = () => {
   const { onGetExecute } = useRequestManager()
   const units = useRecoilValue(globalUnitsState)
 
+  const actionTable = useCallback(id => {
+    async function execute(id) {
+      console.log(id)
+    }
+    execute(id)
+  }, [])
+
   const columns = useMemo(() => {
     return [
       {
-        width: 100,
+        width: 80,
         header: {
           label: 'ID'
         },
@@ -46,6 +53,9 @@ const CheckList = () => {
           style: {
             color: theme.colors.secondary[1]
           }
+        },
+        props: {
+          resizable: true
         }
       },
       {
@@ -59,6 +69,9 @@ const CheckList = () => {
           style: {
             color: theme.colors.secondary[1]
           }
+        },
+        props: {
+          resizable: true
         }
       },
       {
@@ -71,6 +84,9 @@ const CheckList = () => {
           type: Constant.CellType.DISPLAY,
           id: 'displayMode',
           isCheckbox: true
+        },
+        props: {
+          resizable: true
         }
       },
       {
@@ -88,11 +104,14 @@ const CheckList = () => {
               height: 20
             }
           }
+        },
+        props: {
+          resizable: true
         }
       },
       {
         width: 200,
-        align: 'left',
+        align: 'center',
         header: {
           style: {
             textAlign: 'center'
@@ -101,7 +120,11 @@ const CheckList = () => {
         },
         cell: {
           type: Constant.CellType.ACTION_BUTTON_GROUP,
-          others: {}
+          others: {
+            preview: actionTable,
+            onClickDelete: actionTable,
+            onClickEdit: actionTable
+          }
         }
       }
     ]
