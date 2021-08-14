@@ -11,8 +11,9 @@ const usePaginate = () => {
   const onChangePage = useCallback(
     (page, setLoading) => {
       if (setLoading) setLoading(true)
-      setActivePage(page)
-      history.push(location.pathname + '?page=' + page)
+      if (page < 1) setActivePage(1)
+      else setActivePage(page)
+      history.push(location.pathname + '?page=' + activePage)
     },
     [activePage]
   )

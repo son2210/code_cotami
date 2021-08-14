@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { BaseItemGrid, BaseForm } from 'atoms'
+import { BaseItemGrid, BaseButton, BaseForm } from 'atoms'
 import { FlexboxGrid } from 'rsuite'
 
 export const ContainerWrapper = styled(FlexboxGrid)`
@@ -14,6 +14,8 @@ export const ColWrapper = styled(BaseItemGrid)`
 export const ButtonWrapper = styled.div`
   display: flex;
 `
+export const Break = styled.br``
+export const Button = styled(BaseButton)``
 
 export const FormWrapper = styled(BaseForm)`
   .dWbTQq {

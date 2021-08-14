@@ -214,7 +214,7 @@ const CheckListCreate = () => {
             />
           )
         })}
-        {loadMore && page && <LoadingMore source={IMAGES.LOADING} />}
+        {loadMore && page ? <LoadingMore source={IMAGES.LOADING} /> : null}
       </FlexBlock>
     )
   }, [templates, formCheckList, modules, listTemplatesRef, page])

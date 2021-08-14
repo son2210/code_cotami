@@ -21,8 +21,8 @@ export const CenterWrapper = styled.div`
 `
 
 export const HeaderWrapper = styled(Header)`
-  margin: 0 -10px;
-  padding: 20px 10px 0px 10px;
+  margin: 0;
+  padding: 10px;
   position: sticky;
   top: 0;
   left: 0;

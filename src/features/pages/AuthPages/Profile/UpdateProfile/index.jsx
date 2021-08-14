@@ -1,17 +1,17 @@
-import React, { useCallback, useState } from 'react'
-import { ContainerWrapper, ColWrapper, FormWrapper } from '../styled'
-import PropTypes from 'prop-types'
-import { AvatarBlock, InputBlock } from 'molecules/ProfileChange'
-import { useHistory } from 'react-router-dom'
-import { BaseButton, BaseIcon, BaseDatePicker, BaseTitle } from 'atoms'
-import Routers from 'utils/Routers'
-import { modifyPropsOfState, trimStringFieldOfObject } from 'utils/Helpers'
-import validateModel from './validateModel'
+import { BaseButton, BaseIcon } from 'atoms'
 import { EndPoint } from 'config/api'
+import { useAlert, useRequestManager, useToken } from 'hooks'
+import { AvatarBlock, InputBlock } from 'molecules/ProfileChange'
+import PropTypes from 'prop-types'
+import React, { useCallback, useState } from 'react'
+import { useHistory } from 'react-router-dom'
 import { useRecoilState } from 'recoil'
 import { globalUserState } from 'stores/profile/atom'
-import { useToken, useRequestManager, useAlert } from 'hooks'
 import { Constant } from 'utils'
+import { modifyPropsOfState, trimStringFieldOfObject } from 'utils/Helpers'
+import Routers from 'utils/Routers'
+import { ColWrapper, ContainerWrapper, FormWrapper } from '../styled'
+import validateModel from './validateModel'
 
 const UpdateProfile = ({ ...others }) => {
   const [userState, setUserState] = useRecoilState(globalUserState)
@@ -20,11 +20,12 @@ const UpdateProfile = ({ ...others }) => {
   const { showSuccess } = useAlert()
   const history = useHistory()
   const goToPage = useCallback(route => history.push(route), [])
+
   const [data, setData] = useState({
-    email: '',
-    firstName: '',
-    lastName: '',
-    phone: ''
+    email: userState.email,
+    firstName: userState.firstName,
+    lastName: userState.lastName,
+    phone: userState.phone
   })
   const [error, setError] = useState({
     email: '',
@@ -34,9 +35,10 @@ const UpdateProfile = ({ ...others }) => {
   })
 
   const handleUpdateProfile = async () => {
+    
     const submitData = {
       ...trimStringFieldOfObject(data),
-      status: Constant.Status[0]
+      status: Constant.Status[0].value
     }
     const response = await onPatchExecute(
       `${EndPoint.UPDATE_STAFFS}/${userState.sub}`,
@@ -75,7 +77,7 @@ const UpdateProfile = ({ ...others }) => {
           onCheck={validateData}
           onSubmit={handleUpdateProfile}
         >
-          <AvatarBlock />
+          <AvatarBlock disable={true} />
 
           <InputBlock
             title='First Name'

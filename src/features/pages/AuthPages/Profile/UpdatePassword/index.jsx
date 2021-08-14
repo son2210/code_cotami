@@ -1,14 +1,20 @@
-import React, { useCallback, useState } from 'react'
+import { useAlert, useRequestManager } from 'hooks'
 import PropTypes from 'prop-types'
-import Routers from 'utils/Routers'
-import { ContainerWrapper, ColWrapper, FormWrapper, Button, Icon, WrapperInputBlock } from './styled'
+import React, { useCallback, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { modifyPropsOfState } from 'utils/Helpers'
+import Routers from 'utils/Routers'
+import { EndPoint } from 'config/api'
+import {
+  Button,
+  ColWrapper,
+  ContainerWrapper,
+  FormWrapper,
+  Icon,
+  WrapperInputBlock
+} from './styled'
 import validateModel from './validateModel'
-import { globalUserState } from 'stores/profile/atom'
-import {  useRequestManager ,useToken,useAlert} from 'hooks'
-import EndPoint from '../../../../../config/api/EndPoint'
-import { useSetRecoilState } from 'recoil'
+
 const UpdatePassword = ({ ...others }) => {
   const history = useHistory()
   const [showPassword, setShowPassword] = useState(false)
@@ -16,8 +22,6 @@ const UpdatePassword = ({ ...others }) => {
   const [showPasswordCf, setShowPasswordCf] = useState(false)
   const { onPostExecute } = useRequestManager()
   const goToPage = useCallback(route => history.push(route), [])
-  const  setUserState = useSetRecoilState(globalUserState)
-  const { clearToken } = useToken()
   const { showSuccess } = useAlert()
   const [data, setData] = useState({
     oldPassword: '',
@@ -30,18 +34,17 @@ const UpdatePassword = ({ ...others }) => {
     cfPassword: ''
   })
 
-  const handleUpdatePassword = async() => {
-   
+  const handleUpdatePassword = async () => {
     const submitData = {
-      oldPassword : data.oldPassword,
-      newPassword : data.cfPassword
+      oldPassword: data.oldPassword,
+      newPassword: data.cfPassword
     }
-    const response = await onPostExecute(`${EndPoint.RESET_PASSWORD}`,submitData)
-    if(response){
-      setUserState({})
-      await clearToken()
+    const response = await onPostExecute(
+      `${EndPoint.RESET_PASSWORD}`,
+      submitData
+    )
+    if (response) {
       showSuccess('Change Password Successfully')
-      goToPage(Routers.LOGIN)
     }
   }
 
@@ -75,7 +78,6 @@ const UpdatePassword = ({ ...others }) => {
           onCheck={validateData}
           onSubmit={handleUpdatePassword}
         >
-
           <WrapperInputBlock
             label='Old password'
             name='oldPassword'

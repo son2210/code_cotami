@@ -5,10 +5,7 @@ import { BaseText } from 'atoms'
 export const Wrapper = styled(FormGroup)``
 
 export const Label = styled(ControlLabel)`
-  ${props =>
-    props.bold &&
-    `font-weight: 700 ;
-    margin: 20px 0 ;`};
+  font-weight: 500 !important;
   display: flex !important;
 `
 export const Control = styled(FormControl)`

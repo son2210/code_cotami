@@ -14,7 +14,8 @@ import COMPANY from './logo/company.svg'
 import USER from './logo/user.svg'
 import LOCK from './logo/lock.svg'
 import LOADING from './loading.svg'
-
+import MASTERCARD from './mastercard.svg'
+import PAYMENT from './payment.svg'
 export default {
   DEFAULT: DEFAULT_IMAGE,
   AVATAR: AVATAR,
@@ -24,6 +25,8 @@ export default {
   TRASH: TRASH,
   TRASH2: TRASH2,
   LOADING: LOADING,
+  MASTERCARD:MASTERCARD,
+  PAYMENT:PAYMENT,
   LOGO: {
     CHECKED: CHECKED,
     MESSAGE: MESSAGE,

@@ -310,7 +310,7 @@ const Statistics = () => {
         columns={column}
         hasSummary={true}
         paginateProps={{
-          activePage: activePage - 1,
+          activePage,
           displayLength,
           total: 100,
           onChangePage: page => onChangePage(page),

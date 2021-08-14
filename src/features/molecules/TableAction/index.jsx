@@ -24,6 +24,7 @@ import { BaseTag } from 'atoms'
 import moment from 'moment'
 import { setColorViaValue } from 'utils/Helpers'
 import { useTheme } from 'styled-components'
+import { withEmpty } from 'exp-value'
 
 const TableAction = ({
   hasPaginate = true,
@@ -34,102 +35,130 @@ const TableAction = ({
   ...others
 }) => {
   const theme = useTheme()
-  const _renderCell = React.useCallback((type, id, rowData, others) => {
-    const {
-      ACTION_BUTTON_GROUP,
-      IMAGE,
-      RADIO_GROUP,
-      GROUP,
-      TOGGLE,
-      DATE_TIME,
-      ACTION_CELL,
-      ICON_BUTTON,
-      COLOR_VIA_VALUE,
-      DISPLAY
-    } = Constant.CellType
-    switch (type) {
-      case COLOR_VIA_VALUE:
-        return (
-          <CustomizeColorCell
-            onClick={e => others.handleOnClick(e, rowData)}
-            color={setColorViaValue(
-              rowData[id] ? rowData[id] : Constant.CellColor.INACTIVE,
-              theme
-            )}
-          >
-            {rowData[id]}
-          </CustomizeColorCell>
-        )
-      case IMAGE:
-        return (
-          <ImageCellWrapper
-            onClick={e => others.handleOnClick(e, rowData)}
-            source={rowData[id]}
-            {...others}
-          />
-        )
-      case TOGGLE:
-        return (
-          <ToggleCellWrapper
-            checked={rowData[id] === Constant.CellColor.ACTIVE ? true : false}
-            onChange={(checked, e) => {
-              others.handleOnChange(checked, e, rowData)
-            }}
-            {...others}
-          />
-        )
-      case RADIO_GROUP:
-        return <RadioCellWrapper {...others} />
-      case DATE_TIME: {
-        const format = others?.format ? others.format : 'YYYY/MM/DD'
-        const value = moment(rowData[id]).format(format)
-        const isToday = moment(value).isSame(moment(), 'day')
-        return (
-          <DateTimeCellWrapper onClick={e => others.handleOnClick(e, rowData)}>
-            {value}
-            {isToday && (
-              <BaseTag size={10} color='red' style={{ marginLeft: 10 }}>
-                Today
-              </BaseTag>
-            )}
-          </DateTimeCellWrapper>
-        )
+  const _renderCell = React.useCallback(
+    (type, id, rowData, others) => {
+      const {
+        ACTION_BUTTON_GROUP,
+        IMAGE,
+        RADIO_GROUP,
+        GROUP,
+        TOGGLE,
+        DATE_TIME,
+        ACTION_CELL,
+        ICON_BUTTON,
+        COLOR_VIA_VALUE,
+        DISPLAY
+      } = Constant.CellType
+      switch (type) {
+        case COLOR_VIA_VALUE:
+          return (
+            <CustomizeColorCell
+              onClick={e => others.handleOnClick(e, rowData)}
+              color={setColorViaValue(
+                rowData[id] ? rowData[id] : 'INACTIVE',
+                theme
+              )}
+              style={{
+                color:
+                  rowData[id] == 'active'
+                    ? theme.colors.status[1]
+                    : theme.colors.status[0]
+              }}
+            >
+              {rowData[id] == 'active'
+                ? 'Activated'
+                : rowData[id] == 'in_active'
+                ? 'Deactived'
+                : rowData[id]}
+            </CustomizeColorCell>
+          )
+        case IMAGE:
+          return (
+            <ImageCellWrapper
+              onClick={e => others.handleOnClick(e, rowData)}
+              source={rowData[id]}
+              {...others}
+            />
+          )
+        case TOGGLE:
+          return (
+            <ToggleCellWrapper
+              onChange={(checked, e) => {
+                if (typeof others.handleOnChange === 'function')
+                  others.handleOnChange(checked, e, rowData.id)
+              }}
+              checked={rowData[id] == 'active'}
+              {...others}
+            />
+          )
+        case RADIO_GROUP:
+          return <RadioCellWrapper {...others} />
+        case DATE_TIME: {
+          const format = others?.format ? others.format : 'YYYY/MM/DD'
+          const value = moment(rowData[id]).format(format)
+          const isToday = moment(value).isSame(moment(), 'day')
+          return (
+            <DateTimeCellWrapper
+              onClick={e => others.handleOnClick(e, rowData)}
+            >
+              {value}
+              {isToday && (
+                <BaseTag
+                  size={10}
+                  color='red'
+                  style={{ marginLeft: 5, fontSize: 8 }}
+                >
+                  Today
+                </BaseTag>
+              )}
+            </DateTimeCellWrapper>
+          )
+        }
+        case GROUP:
+          return
+        case ICON_BUTTON:
+          return (
+            <ActionCellWrapper
+              onClick={e => others.handleOnClick(e, rowData)}
+              {...others}
+            >
+              <ImageCellWrapper source={others.source} />
+              {others.label}
+            </ActionCellWrapper>
+          )
+        case ACTION_BUTTON_GROUP:
+          return (
+            <ActionButtonGroup
+              preview={others.preview}
+              onClickDelete={others.onClickDelete}
+              onClickEdit={others.onClickEdit}
+              copy={others.copy}
+              id={withEmpty('id', rowData)}
+              {...others}
+            />
+          )
+        case ACTION_CELL:
+          return (
+            <ActionCellWrapper
+              onClick={e => others.handleOnClick(e, rowData, id)}
+              {...others}
+            >
+              {rowData[id]}
+            </ActionCellWrapper>
+          )
+        case DISPLAY:
+          return (
+            <RadioGroup
+              value={rowData[id]}
+              onClick={e => others.handleOnClick(e, rowData[id])}
+            />
+          )
+        default:
+          return rowData[id]
       }
-      case GROUP:
-        return
-      case ICON_BUTTON:
-        return (
-          <ActionCellWrapper
-            onClick={e => others.handleOnClick(e, rowData)}
-            {...others}
-          >
-            <ImageCellWrapper source={others.source} />
-            {others.label}
-          </ActionCellWrapper>
-        )
-      case ACTION_BUTTON_GROUP:
-        return <ActionButtonGroup {...others} />
-      case ACTION_CELL:
-        return (
-          <ActionCellWrapper
-            onClick={e => others.handleOnClick(e, rowData, id)}
-            {...others}
-          >
-            {rowData[id]}
-          </ActionCellWrapper>
-        )
-      case DISPLAY:
-        return (
-          <RadioGroup
-            value={rowData[id]}
-            onClick={e => others.handleOnClick(e, rowData[id])}
-            onChange={value=>others.handleOnChange(value,rowData.id)}
-          />
-        )
-      default:
-        return rowData[id]
-    }
-  }, [])
+    },
+    [columns]
+  )
 
   const headerSummary = React.useCallback((main, sub, index, customStyle) => {
     const firstCol = index === 0 ? true : false
@@ -154,6 +183,7 @@ const TableAction = ({
             align={col?.align || 'left'}
             width={col?.width || 60}
             key={index}
+            {...col.props}
           >
             <HeaderCellWrapper style={col?.header?.style && col.header.style}>
               {hasSummary
@@ -188,9 +218,7 @@ const TableAction = ({
               ? paginateProps.lengthMenu
               : Constant.PaginateLengthMenu
           }
-          activePage={
-            paginateProps?.activePage ? paginateProps?.activePage + 1 : 0
-          }
+          activePage={paginateProps?.activePage}
           displayLength={paginateProps?.displayLength}
           total={paginateProps?.total}
           onChangePage={paginateProps?.onChangePage}

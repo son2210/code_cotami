@@ -15,7 +15,7 @@ import { withArray } from 'exp-value'
 
 //  public page
 const LoginPage = lazy(() => import('pages/UnAuthPages/Login'))
-// const RegisterPage = lazy(() => import('pages/UnAuthPages/Register'))
+const RegisterPage = lazy(() => import('pages/UnAuthPages/Register'))
 const ForgotPasswordPage = lazy(() =>
   import('pages/UnAuthPages/ForgotPassword')
 )
@@ -40,8 +40,6 @@ const UpdatePasswordPage = lazy(() =>
   import('pages/AuthPages/Profile/UpdatePassword')
 )
 
-const PreviewsPage = lazy(() => import('pages/Previews'))
-
 const Routes = ({ isLoggedIn, ...rest }) => {
   const location = useLocation()
   const { token } = useToken()
@@ -64,6 +62,7 @@ const Routes = ({ isLoggedIn, ...rest }) => {
           params: { offset: 0, limit: 1000 }
         }
       )
+
       if (response) {
         setUnitsState(
           withArray('data', response).map(u => {
@@ -106,14 +105,6 @@ const Routes = ({ isLoggedIn, ...rest }) => {
   const _renderPrivateNormalAdminRoute = React.useCallback(() => {
     return (
       <PrivateTemplate menuList={Routers.NORMAL_ADMIN.MENU}>
-        <Route
-          {...rest}
-          exact
-          path={Routers.PREVIEWS}
-          render={props => {
-            return <PreviewsPage {...rest} {...props} />
-          }}
-        />
         <Route
           {...rest}
           exact
@@ -217,14 +208,14 @@ const Routes = ({ isLoggedIn, ...rest }) => {
             return <LoginPage {...rest} {...props} />
           }}
         />
-        {/* <Route
+        <Route
           {...rest}
           exact
           path={Routers.REGISTER}
           render={props => {
             return <RegisterPage {...rest} {...props} />
           }}
-        /> */}
+        />
         <Route
           {...rest}
           exact

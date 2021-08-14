@@ -12,7 +12,7 @@ export const BreadItemWrapper = styled(Link)`
 `
 export const BreadWrapper = styled(Breadcrumb)`
   display: flex;
-  padding-left: 0px;
+  margin: 0;
   color: ${props => props.theme.colors.secondary[3]};
   & li,
   a {

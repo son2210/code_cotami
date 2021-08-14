@@ -43,6 +43,7 @@ const History = () => {
           endDate: dayjs(dateRange[1]).utc().format()
         }
       })
+  
       if (response) {
         const { data, paging } = response
         setData(
@@ -189,11 +190,11 @@ const History = () => {
         data={data}
         columns={columns}
         paginateProps={{
-          activePage: activePage - 1,
+          activePage,
           displayLength,
-          total: total,
-          onChangePage: page => onChangePage(page),
-          onChangeLength: length => onChangeLength(length)
+          total,
+          onChangePage: p => onChangePage(p),
+          onChangeLength: l => onChangeLength(l)
         }}
       />
     </Wrapper>
