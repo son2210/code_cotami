@@ -17,4 +17,10 @@ export const ButtonWrapper = styled.div`
 export const Break = styled.br``
 export const Button = styled(BaseButton)``
 
-export const FormWrapper = styled(BaseForm)``
+export const FormWrapper = styled(BaseForm)`
+  .dWbTQq {
+    font-weight:500;
+    font-size:16px;
+    color:#333333;
+  }
+`
