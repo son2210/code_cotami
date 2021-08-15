@@ -34,6 +34,7 @@ const CheckList = () => {
   const { onGetExecute, onPatchExecute } = useRequestManager()
   const units = useRecoilValue(globalUnitsState)
   const { showSuccess } = useAlert()
+
   const handleClickDisplay = async (display, id) => {
     if (!id) return
     const submitData = {
