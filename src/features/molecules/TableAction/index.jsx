@@ -53,7 +53,10 @@ const TableAction = ({
         case COLOR_VIA_VALUE:
           return (
             <CustomizeColorCell
-              onClick={e => others.handleOnClick(e, rowData)}
+              onClick={e => {
+                if (others.handleOnClick == 'function')
+                  others.handleOnClick(e, rowData, id)
+              }}
               color={setColorViaValue(
                 rowData[id] ? rowData[id] : 'INACTIVE',
                 theme
@@ -75,7 +78,10 @@ const TableAction = ({
         case IMAGE:
           return (
             <ImageCellWrapper
-              onClick={e => others.handleOnClick(e, rowData)}
+              onClick={e => {
+                if (others.handleOnClick == 'function')
+                  others.handleOnClick(e, rowData, id)
+              }}
               source={rowData[id]}
               {...others}
             />
@@ -99,7 +105,10 @@ const TableAction = ({
           const isToday = moment(value).isSame(moment(), 'day')
           return (
             <DateTimeCellWrapper
-              onClick={e => others.handleOnClick(e, rowData)}
+              onClick={e => {
+                if (others.handleOnClick == 'function')
+                  others.handleOnClick(e, rowData, id)
+              }}
             >
               {value}
               {isToday && (
@@ -119,7 +128,10 @@ const TableAction = ({
         case ICON_BUTTON:
           return (
             <ActionCellWrapper
-              onClick={e => others.handleOnClick(e, rowData)}
+              onClick={e => {
+                if (others.handleOnClick == 'function')
+                  others.handleOnClick(e, rowData, id)
+              }}
               {...others}
             >
               <ImageCellWrapper source={others.source} />
@@ -140,7 +152,10 @@ const TableAction = ({
         case ACTION_CELL:
           return (
             <ActionCellWrapper
-              onClick={e => others.handleOnClick(e, rowData, id)}
+              onClick={e => {
+                if (others.handleOnClick == 'function')
+                  others.handleOnClick(e, rowData, id)
+              }}
               {...others}
             >
               {rowData[id]}
@@ -150,7 +165,8 @@ const TableAction = ({
           return (
             <RadioGroup
               value={rowData[id]}
-              onClick={e => others.handleOnClick(e, rowData[id])}
+              id={withEmpty('id', rowData)}
+              onChange={others.handleOnChange}
             />
           )
         default:
