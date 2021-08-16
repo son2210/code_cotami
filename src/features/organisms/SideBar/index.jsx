@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   ContainerWrapper,
   LogoWrapper,
@@ -12,19 +12,23 @@ import { useRecoilValue } from 'recoil'
 import { globalUserState } from 'stores/profile/atom'
 import { withNamespaces } from 'react-i18next'
 import { withEmpty } from 'exp-value'
-import { useEffect } from 'react'
 
 const SideBar = ({ t, menuList, ...others }) => {
+  const [newMenuList, setNewMenuList] = useState(menuList)
   const userState = useRecoilValue(globalUserState)
-
   useEffect(() => {
-    console.log(userState)
-  }, [globalUserState])
+    if (userState.role && userState.role === 'agency') {
+      setNewMenuList(
+        menuList.filter(item => item.NAME !== 'account-management')
+      )
+    }
+  }, [userState.role])
+
   return (
     <ContainerWrapper {...others}>
       <LogoWrapper></LogoWrapper>
       <MenuWrapper>
-        {menuList.map((item, index) => (
+        {newMenuList.map((item, index) => (
           <NavItems key={index} strict={true} to={item.URL}>
             {t(item.NAME)}
           </NavItems>

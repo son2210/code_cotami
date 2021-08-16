@@ -6,6 +6,7 @@ const EndPoint = {
   RESET_PASSWORD: 'auth/resetPassword',
   ADMIN_RESET_PASSWORD: 'auth/resetPassword',
   STAFFS: 'staffs',
+  ACCOUNTS: 'accounts',
   UNITS_LIST: id => `enterprises/${id}/units`,
   UPDATE_STAFFS: 'users',
   RESULT_LOGS: 'results/changeLogs',

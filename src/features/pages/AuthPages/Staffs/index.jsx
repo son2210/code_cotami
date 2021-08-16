@@ -184,37 +184,22 @@ const Staffs = ({ t }) => {
     status: ''
   })
 
-  // ===========================================
-  const [error, setError] = useState({
-    email: '',
-    firstName: '',
-    lastName: '',
-    phone: ''
-  })
   const [data, setData] = useState([])
   const [loading, setLoading] = useState(true)
 
   const handleInput = useCallback(
     (name, value) => {
-      modifyPropsOfState(error, setError, name, '')
-      modifyPropsOfState(selectedRow, setSelectedRow, name, value)
+      setSelectedRow(prev => ({ ...prev, [name]: value }))
     },
-    [selectedRow, error]
+    [selectedRow]
   )
 
-  const validateData = useCallback(err => {
-    let newError = { ...error }
-    for (const [key, value] of Object.entries(err)) {
-      newError[key] = value
-    }
-    setError(newError)
-  }, [])
-
-  const handleInputSearch = useCallback((name, value) => {
-    modifyPropsOfState(searchTerm, setSearchTerm, name, value)
-  }, [])
-
-  // =========================================================
+  const handleInputSearch = useCallback(
+    (name, value) => {
+      setSearchTerm(prev => ({ ...prev, [name]: value }))
+    },
+    [searchTerm]
+  )
 
   const toggleModal = useCallback((e, rowData) => {
     setSelectedRow(rowData)
@@ -374,7 +359,7 @@ const Staffs = ({ t }) => {
         isUpdate={profileModal.isUpdate}
         show={profileModal.toggle}
         units={units}
-        staffData={{ handleInput, data: selectedRow, error }}
+        staffData={{ handleInput, data: selectedRow }}
         viewOnlyData={{ dataDisplay: displayStaff }}
         onHide={onCloseModal}
         footerHandle={{
@@ -384,8 +369,7 @@ const Staffs = ({ t }) => {
             : () => createProfile(selectedRow)
         }}
         formOthers={{
-          formTitle: 'staff profile',
-          onCheck: validateData
+          formTitle: 'staff profile'
         }}
       />
     </Wrapper>

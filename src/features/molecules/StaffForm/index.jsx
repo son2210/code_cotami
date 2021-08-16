@@ -89,7 +89,7 @@ const StaffForm = ({
             <RadioFormWrapper
               options={Constant.LOGIN_ROLE}
               name='role'
-              onChange={value => handleInput('lastName', value)}
+              onChange={value => handleInput('role', value)}
               value={data['role']}
             />
           </BlockFieldWrapper>

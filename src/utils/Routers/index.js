@@ -29,6 +29,16 @@ const Routers = {
       {
         URL: '/staff-management',
         NAME: 'staff-management'
+      },
+      {
+        URL: '/account-management',
+        NAME: 'account-management',
+        CHILD: [
+          {
+            URL: '/accounts-management/create-account',
+            NAME: 'Create an account'
+          }
+        ]
       }
     ],
 

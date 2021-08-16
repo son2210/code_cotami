@@ -31,7 +31,10 @@ const CheckListCreate = lazy(() =>
   import('pages/AuthPages/CheckList/CheckListCreate')
 )
 const StaffsPage = lazy(() => import('pages/AuthPages/Staffs'))
-
+const AccountsPage = lazy(() => import('pages/AuthPages/Accounts'))
+const CreateAccountPage = lazy(() =>
+  import('pages/AuthPages/Accounts/CreateAccount')
+)
 const ProfilePage = lazy(() => import('pages/AuthPages/Profile'))
 const ProfileUpdatePage = lazy(() =>
   import('pages/AuthPages/Profile/UpdateProfile')
@@ -161,6 +164,23 @@ const Routes = ({ isLoggedIn, ...rest }) => {
             return <StaffsPage {...rest} {...props} />
           }}
         />
+        <Route
+          {...rest}
+          exact
+          path={Routers.NORMAL_ADMIN.MENU[6].URL}
+          render={props => {
+            return <AccountsPage {...rest} {...props} />
+          }}
+        />
+        <Route
+          {...rest}
+          exact
+          path={Routers.NORMAL_ADMIN.MENU[6].CHILD[0].URL}
+          render={props => {
+            return <CreateAccountPage {...rest} {...props} />
+          }}
+        />
+        <Route />
         <Route
           {...rest}
           exact
