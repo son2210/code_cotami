@@ -22,15 +22,18 @@ const UnAuthForm = ({
       <BaseTitle H1 bold>
         {formTitle}
       </BaseTitle>
-      <FormWrapper onChange={onChange} {...others}>
+      <FormWrapper
+        onChange={onChange}
+        {...others}
+        onSubmit={
+          typeof primaryBtn.onClick == 'function' ? primaryBtn.onClick : null
+        }
+      >
         {children}
 
         <ActionButtonWrapper column={true}>
           {primaryBtn && (
-            <BaseButton 
-            
-            onClick={primaryBtn.onClick}
-            fluid primary uppercase bold type='submit'>
+            <BaseButton fluid primary uppercase bold type='submit'>
               {primaryBtn.name}
             </BaseButton>
           )}
