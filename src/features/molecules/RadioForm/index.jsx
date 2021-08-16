@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { Wrapper } from './styled'
 import { BaseRadio } from 'atoms'
@@ -18,8 +18,11 @@ const RadioForm = ({
       setVal(e)
       onChange(e, id)
     },
-    [options, val]
+    [options, value]
   )
+  useEffect(() => {
+    setVal(value)
+  }, [value])
   if (!options || options.length < 1) return null
   return (
     <Wrapper inline={inline} value={val} onChange={handleChange} {...others}>

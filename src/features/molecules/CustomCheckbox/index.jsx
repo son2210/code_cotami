@@ -27,7 +27,10 @@ const CustomCheckbox = ({
   const removeDataItem = useCallback(
     id => {
       if (id < 0 || id > sectionItems.length) return
-      setSectionItems(sectionItems.filter((_, index) => index !== id))
+      // setSectionItems(sectionItems.filter((_, index) => index !== id))
+      const temp = sectionItems
+      temp[id].markDelete = true
+      setSectionItems(temp)
       setData(data.filter((_, index) => index !== id))
     },
     [sectionItems]
@@ -44,7 +47,7 @@ const CustomCheckbox = ({
       tmp2[id].content = value
       setData(tmp2)
     },
-    [sectionItems]
+    [data]
   )
 
   const renderForm = useCallback(

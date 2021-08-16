@@ -12,7 +12,6 @@ export {
   swapSection,
   setDataPresentConfig,
   updateDefaultPresentation,
-  checkErrorModule,
   checkErrorPresentation,
   moduleGlobal
 } from './selector'

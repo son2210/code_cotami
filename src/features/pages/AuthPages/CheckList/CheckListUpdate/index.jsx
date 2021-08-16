@@ -1,5 +1,5 @@
 import { EndPoint } from 'config/api'
-import { withEmpty, withNumber } from 'exp-value'
+import { withArray, withEmpty, withNumber } from 'exp-value'
 import { useAlert, useModules, useRequestManager } from 'hooks'
 import { CreateModule } from 'organisms'
 import React, { useEffect, useState } from 'react'
@@ -36,18 +36,17 @@ import {
   WrapperForm,
   WrapperItem
 } from './styled'
-import { formCheckListCreate } from './validation'
+import { formCheckListUpdate } from './validation'
 
-const CheckListCreate = () => {
+const CheckListUpdate = () => {
   const [step, setStep] = useState(1)
+  const [formId, setFormId] = useState(null)
   const [showPreview, setShowPreview] = useState(false)
-  const [templates, setTemplates] = useState([])
   const [formCheckList, setFormCheckList] = useState({
     title: '',
     description: '',
     unit: '',
-    displayMode: '',
-    templateId: ''
+    displayMode: ''
   })
 
   const [modules, setModules] = useRecoilState(globalModulesState)
@@ -57,11 +56,11 @@ const CheckListCreate = () => {
   const handleRemoveModule = useSetRecoilState(removeModule)
   const presentConfig = useRecoilValue(presentationConfig)
   const history = useHistory()
-  const location = useLocation()
+  const { search } = useLocation()
 
   const { handleError } = useModules()
 
-  const { onPostExecute, onGetExecute } = useRequestManager()
+  const { onPatchExecute, onGetExecute } = useRequestManager()
   const { showError, showSuccess } = useAlert()
 
   const navigationPage = useCallback(
@@ -112,24 +111,28 @@ const CheckListCreate = () => {
 
   const submit = useCallback(() => {
     async function postData() {
-      const response = await onPostExecute(EndPoint.FORM_CREATE, {
+      const response = await onPatchExecute(EndPoint.UPDATE_FORM(formId), {
         ...formCheckList,
         modules: modules,
         presentationConfig: presentConfig
       })
       if (response) {
-        showSuccess('Success create form')
+        showSuccess('Success update form')
         setTimeout(() => {
           resetState()
           history.goBack()
         }, 3000)
-
         return
       }
       showError('Error !. Check data submit')
     }
     postData()
-  }, [modules, formCheckList, presentConfig])
+    console.log({
+      ...formCheckList,
+      modules: modules,
+      presentationConfig: presentConfig
+    })
+  }, [formId, modules, formCheckList, presentConfig])
 
   const _renderModalPreviewCheckList = useCallback(() => {
     return (
@@ -154,7 +157,7 @@ const CheckListCreate = () => {
         </WrapperContent>
       )
     return <PresentationConfig />
-  }, [step, modules, presentConfig, templates])
+  }, [step, modules, presentConfig])
 
   const _renderForm = useCallback(() => {
     if (step == 1)
@@ -166,7 +169,7 @@ const CheckListCreate = () => {
 
           <Form
             fluid
-            model={formCheckListCreate}
+            model={formCheckListUpdate}
             formValue={formCheckList}
             onCheck={validateForm}
           >
@@ -228,7 +231,7 @@ const CheckListCreate = () => {
         </WrapperItem>
 
         <WrapperButton>
-          {step == 3 ? (
+          {step == 2 ? (
             <Button blue onClick={() => navigationPage('prev')}>
               Continue Edit
             </Button>
@@ -238,7 +241,7 @@ const CheckListCreate = () => {
               Preview
             </Button>
           )}
-          {step == 3 ? (
+          {step == 2 ? (
             <Button primary onClick={submit}>
               Submit
             </Button>
@@ -252,7 +255,23 @@ const CheckListCreate = () => {
     )
   }, [step, formCheckList, modules, presentConfig])
 
-  useEffect(() => {}, [location])
+  useEffect(() => {
+    const formId = new URLSearchParams(search).get('formId')
+    if (!formId) return
+    setFormId(formId)
+    async function execute(id) {
+      const response = await onGetExecute(`${EndPoint.GET_FORM(id)}`, {})
+      if (response) {
+        setModules(withArray('modules', response))
+        setFormCheckList({
+          title: withEmpty('title', response),
+          description: withEmpty('description', response),
+          displayMode: withEmpty('displayMode', response)
+        })
+      }
+    }
+    execute(formId)
+  }, [search])
 
   return (
     <Wrapper>
@@ -263,4 +282,4 @@ const CheckListCreate = () => {
   )
 }
 
-export default CheckListCreate
+export default CheckListUpdate

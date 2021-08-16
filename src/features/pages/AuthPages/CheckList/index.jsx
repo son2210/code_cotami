@@ -46,25 +46,23 @@ const CheckList = () => {
       submitData,
       false
     )
-    if (response) {
-      // getData(activePage - 1, displayLength)
-      showSuccess('update success')
-    }
+    if (response) showSuccess('update success')
   }
 
   const actionTable = useCallback((id, type) => {
     if (!id || !type) return showError('Form not found ')
-    history.push({
-      pathname:
-        type == 'copy' || type == 'view'
-          ? Routers.SUPER_ADMIN.TEMPLATES.CHILD[0].URL
-          : Routers.SUPER_ADMIN.TEMPLATES.CHILD[1].URL,
-      search: `?formId=${id}&ref=${type}`,
-      state: {
-        type: type,
-        id: id
-      }
-    })
+    if (type == 'edit') {
+      return history.push({
+        pathname: Routers.NORMAL_ADMIN.CHECKLIST.CHILD[1].URL,
+        search: `?formId=${id}&ref=${type}`,
+        state: {
+          type: type,
+          id: id
+        }
+      })
+    }
+    console.log(id, type)
+    return
   }, [])
 
   const columns = useMemo(() => {

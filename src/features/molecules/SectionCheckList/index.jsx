@@ -42,7 +42,6 @@ const SectionCheckList = ({
   const modules = useRecoilValue(globalModulesState)
 
   const [dataSection, setDataSection] = useState({
-    id: null,
     title: '',
     description: '',
     sectionItems: [],
@@ -119,7 +118,6 @@ const SectionCheckList = ({
     )[orderNumber]
 
     setDataSection({
-      id: orderNumber,
       title: sectionTitle,
       description: description,
       sectionItems: sectionItems || [],

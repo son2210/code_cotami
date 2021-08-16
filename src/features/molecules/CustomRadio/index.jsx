@@ -15,7 +15,7 @@ const CustomRadio = ({
 }) => {
   const [data, setData] = useState([])
   const [item, setItem] = useState('')
-  const handleChangeItem = useCallback(e => setItem(e), [])
+  const handleChangeItem = useCallback(e => setItem(e), [item])
   const addDataItem = useCallback(() => {
     if (!item) return
     setItem('')
@@ -26,7 +26,10 @@ const CustomRadio = ({
   const removeDataItem = useCallback(
     id => {
       if (id < 0 || id > data.length) return
-      setSectionItems(sectionItems.filter((_, index) => index !== id))
+      // setSectionItems(sectionItems.filter((_, index) => index !== id))
+      const temp = sectionItems
+      temp[id].markDelete = true
+      setSectionItems(temp)
       setData(data.filter((_, index) => index !== id))
     },
     [sectionItems, data]
@@ -46,7 +49,7 @@ const CustomRadio = ({
       }
       setData(tmp2)
     },
-    [sectionItems, data]
+    [data]
   )
 
   const renderForm = useCallback(

@@ -26,7 +26,7 @@ const ActionButtonGroup = ({
       {copyAble && (
         <WrapperBlock
           onClick={() => {
-            if (typeof copy === 'function') copy(id)
+            if (typeof copy === 'function') copy(id, 'copy')
           }}
         >
           <Icon name={'copy-o'} /> <Title>Copy</Title>
@@ -36,19 +36,19 @@ const ActionButtonGroup = ({
         <IconWrapper
           source={IMAGES.EYE}
           onClick={() => {
-            if (typeof preview === 'function') preview(id)
+            if (typeof preview === 'function') preview(id, 'view')
           }}
         />
       )}
       <IconWrapper
         source={IMAGES.NOTE}
         onClick={() => {
-          if (typeof onClickEdit === 'function') onClickEdit(id)
+          if (typeof onClickEdit === 'function') onClickEdit(id, 'edit')
         }}
       />
       <ButtonWrapper
         onClick={() => {
-          if (typeof onClickDelete === 'function') onClickDelete(id)
+          if (typeof onClickDelete === 'function') onClickDelete(id, 'delete')
         }}
       >
         <IconWrapper btnIcon source={IMAGES.TRASH} />
