@@ -19,6 +19,11 @@ const SideBar = ({ t, menuList, ...others }) => {
   useEffect(() => {
     if (userState.role && userState.role === 'agency') {
       setNewMenuList(
+        menuList.filter(item => item.NAME !== 'staff-management')
+      )
+    }
+    else {
+      setNewMenuList(
         menuList.filter(item => item.NAME !== 'account-management')
       )
     }

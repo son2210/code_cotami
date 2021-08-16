@@ -90,7 +90,8 @@ const Routes = ({ isLoggedIn, ...rest }) => {
       ...Routers.NORMAL_ADMIN.MENU,
       ...Routers.NORMAL_ADMIN.PROFILE.CHILD,
       ...Routers.NORMAL_ADMIN.CHECKLIST.CHILD,
-      { URL: Routers.NORMAL_ADMIN.PROFILE.URL }
+      { URL: Routers.NORMAL_ADMIN.PROFILE.URL },
+      { URL: Routers.NORMAL_ADMIN.MENU[6].CHILD[0].URL }
     ]
     if (isLoggedIn) {
       let isValidPath = false
