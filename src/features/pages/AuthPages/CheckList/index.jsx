@@ -22,6 +22,7 @@ const CheckList = () => {
     onChangeLength
   } = usePaginate()
   const theme = useTheme()
+
   const history = useHistory()
   const [data, setData] = useState([])
 
@@ -33,7 +34,7 @@ const CheckList = () => {
   })
   const { onGetExecute, onPatchExecute } = useRequestManager()
   const units = useRecoilValue(globalUnitsState)
-  const { showSuccess } = useAlert()
+  const { showSuccess, showError } = useAlert()
 
   const handleClickDisplay = async (display, id) => {
     if (!id) return
@@ -42,19 +43,28 @@ const CheckList = () => {
     }
     const response = await onPatchExecute(
       `${EndPoint.FORMS}/${id}/info`,
-      submitData
+      submitData,
+      false
     )
     if (response) {
-      getData(activePage - 1, displayLength)
+      // getData(activePage - 1, displayLength)
       showSuccess('update success')
     }
   }
 
-  const actionTable = useCallback(id => {
-    async function execute(id) {
-      console.log(id)
-    }
-    execute(id)
+  const actionTable = useCallback((id, type) => {
+    if (!id || !type) return showError('Form not found ')
+    history.push({
+      pathname:
+        type == 'copy' || type == 'view'
+          ? Routers.SUPER_ADMIN.TEMPLATES.CHILD[0].URL
+          : Routers.SUPER_ADMIN.TEMPLATES.CHILD[1].URL,
+      search: `?formId=${id}&ref=${type}`,
+      state: {
+        type: type,
+        id: id
+      }
+    })
   }, [])
 
   const columns = useMemo(() => {

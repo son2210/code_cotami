@@ -3,7 +3,7 @@ import { withEmpty, withNumber } from 'exp-value'
 import { useAlert, useModules, useRequestManager } from 'hooks'
 import { CreateModule } from 'organisms'
 import React, { useEffect, useState } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useLocation } from 'react-router-dom'
 import { useCallback } from 'react/cjs/react.development'
 import {
   useRecoilState,
@@ -49,7 +49,6 @@ const CheckListCreate = () => {
     displayMode: '',
     templateId: ''
   })
-  const [page, setPage] = useState(0)
 
   const [modules, setModules] = useRecoilState(globalModulesState)
   const resetState = useResetRecoilState(globalModulesState)
@@ -58,6 +57,7 @@ const CheckListCreate = () => {
   const handleRemoveModule = useSetRecoilState(removeModule)
   const presentConfig = useRecoilValue(presentationConfig)
   const history = useHistory()
+  const location = useLocation()
 
   const { handleError } = useModules()
 
@@ -98,7 +98,6 @@ const CheckListCreate = () => {
         showError(listError[0].toString())
         return
       }
-
       return navigationPage('next')
     },
     [formCheckList]
@@ -155,7 +154,7 @@ const CheckListCreate = () => {
         </WrapperContent>
       )
     return <PresentationConfig />
-  }, [step, modules, presentConfig, templates, page])
+  }, [step, modules, presentConfig, templates])
 
   const _renderForm = useCallback(() => {
     if (step == 1)
@@ -253,9 +252,8 @@ const CheckListCreate = () => {
     )
   }, [step, formCheckList, modules, presentConfig])
 
-  useEffect(() => {
-    getTemplates(page, 10)
-  }, [])
+  useEffect(() => {}, [location])
+
   return (
     <Wrapper>
       {_renderContent()}
