@@ -124,6 +124,11 @@ const SectionCheckList = ({
       inputTypeId: type,
       screenMatchId: withNull('screenMatchId', section)
     })
+    if (withNull('id', section))
+      setDataSection(prev => ({
+        ...prev,
+        id: withNull('id', section)
+      }))
   }, [orderNumber, index, sectionTitle, sectionItems, description, type])
 
   return (

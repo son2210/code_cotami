@@ -135,6 +135,8 @@ const ModuleCheckList = ({
       description: withEmpty('description', modules),
       sections: withArray('sections', modules)
     })
+    if (withEmpty('title', modules))
+      setDataModule(prev => ({ ...prev, id: withEmpty('id', modules) }))
     setSections(withArray('sections', modules))
   }, [modules, sections, index])
 

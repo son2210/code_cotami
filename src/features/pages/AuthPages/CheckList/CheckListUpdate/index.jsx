@@ -92,6 +92,7 @@ const CheckListUpdate = () => {
 
   const validateForm = useCallback(
     errors => {
+      validateModules()
       let listError = [...new Set(Object.values(errors))]
       if (listError && withNumber('length', listError)) {
         showError(listError[0].toString())
@@ -127,11 +128,6 @@ const CheckListUpdate = () => {
       showError('Error !. Check data submit')
     }
     postData()
-    console.log({
-      ...formCheckList,
-      modules: modules,
-      presentationConfig: presentConfig
-    })
   }, [formId, modules, formCheckList, presentConfig])
 
   const _renderModalPreviewCheckList = useCallback(() => {
@@ -229,28 +225,21 @@ const CheckListUpdate = () => {
           <Title>Display</Title>
           <Content>{withEmpty('displayMode', formCheckList)}</Content>
         </WrapperItem>
+        <WrapperBlock>
+          <Button blue onClick={showModal}>
+            <Icon name='feather-eye' size={16} />
+            Preview
+          </Button>
 
-        <WrapperButton>
-          {step == 2 ? (
+          <WrapperButton>
             <Button blue onClick={() => navigationPage('prev')}>
               Continue Edit
             </Button>
-          ) : (
-            <Button blue onClick={showModal}>
-              <Icon name='feather-eye' size={16} />
-              Preview
-            </Button>
-          )}
-          {step == 2 ? (
             <Button primary onClick={submit}>
               Submit
             </Button>
-          ) : (
-            <Button primary onClick={validateModules}>
-              Next
-            </Button>
-          )}
-        </WrapperButton>
+          </WrapperButton>
+        </WrapperBlock>
       </WrapperForm>
     )
   }, [step, formCheckList, modules, presentConfig])
