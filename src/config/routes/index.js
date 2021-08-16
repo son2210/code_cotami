@@ -31,10 +31,12 @@ const CheckListCreate = lazy(() =>
   import('pages/AuthPages/CheckList/CheckListCreate')
 )
 const StaffsPage = lazy(() => import('pages/AuthPages/Staffs'))
+
 const AccountsPage = lazy(() => import('pages/AuthPages/Accounts'))
-const CreateAccountPage = lazy(() =>
-  import('pages/AuthPages/Accounts/CreateAccount')
+const AccountCreate = lazy(() =>
+  import('pages/AuthPages/Accounts/AccountCreate')
 )
+
 const ProfilePage = lazy(() => import('pages/AuthPages/Profile'))
 const ProfileUpdatePage = lazy(() =>
   import('pages/AuthPages/Profile/UpdateProfile')
@@ -90,8 +92,8 @@ const Routes = ({ isLoggedIn, ...rest }) => {
       ...Routers.NORMAL_ADMIN.MENU,
       ...Routers.NORMAL_ADMIN.PROFILE.CHILD,
       ...Routers.NORMAL_ADMIN.CHECKLIST.CHILD,
-      { URL: Routers.NORMAL_ADMIN.PROFILE.URL },
-      { URL: Routers.NORMAL_ADMIN.MENU[6].CHILD[0].URL }
+      ...Routers.NORMAL_ADMIN.ACCOUNT.CHILD,
+      { URL: Routers.NORMAL_ADMIN.PROFILE.URL }
     ]
     if (isLoggedIn) {
       let isValidPath = false
@@ -176,12 +178,11 @@ const Routes = ({ isLoggedIn, ...rest }) => {
         <Route
           {...rest}
           exact
-          path={Routers.NORMAL_ADMIN.MENU[6].CHILD[0].URL}
+          path={Routers.NORMAL_ADMIN.ACCOUNT.CHILD[0].URL}
           render={props => {
-            return <CreateAccountPage {...rest} {...props} />
+            return <AccountCreate {...rest} {...props} />
           }}
         />
-        <Route />
         <Route
           {...rest}
           exact

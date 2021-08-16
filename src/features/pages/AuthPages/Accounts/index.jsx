@@ -211,16 +211,16 @@ const Accounts = ({ t }) => {
 
   const pickerData = [
     {
-      value: '1',
+      value: 'admin',
       label: 'Admin'
     },
     {
-      value: '2',
+      value: 'agency',
       label: 'Agency'
     },
     {
-      value: '3',
-      label: 'Sys Admin'
+      value: 'staff',
+      label: 'Staff'
     }
   ]
   const goToPage = useCallback(route => history.push(route), [])
@@ -228,7 +228,7 @@ const Accounts = ({ t }) => {
   return (
     <Wrapper>
       <FilterBar
-        onClick={() => goToPage(Routers.NORMAL_ADMIN.MENU[6].CHILD[0].URL)}
+        onClick={() => goToPage(Routers.NORMAL_ADMIN.ACCOUNT.CHILD[0].URL)}
         hasButton={true}
         style={{ marginBottom: 20, width: '70%' }}
       >
@@ -243,7 +243,6 @@ const Accounts = ({ t }) => {
           data={pickerData}
           style={{ marginLeft: 10, maxWidth: 170 }}
           placeholder='Role'
-          cleanable={false}
         />
 
         <BaseButton
