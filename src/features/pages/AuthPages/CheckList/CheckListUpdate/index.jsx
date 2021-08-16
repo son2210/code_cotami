@@ -92,7 +92,10 @@ const CheckListUpdate = () => {
 
   const validateForm = useCallback(
     errors => {
-      validateModules()
+      let temp = handleError(modules)
+      if (temp) showError(temp)
+      else showSuccess('Module ready!!!')
+
       let listError = [...new Set(Object.values(errors))]
       if (listError && withNumber('length', listError)) {
         showError(listError[0].toString())
@@ -102,13 +105,6 @@ const CheckListUpdate = () => {
     },
     [formCheckList]
   )
-
-  const validateModules = useCallback(() => {
-    let temp = handleError(modules)
-    if (temp) return showError(temp)
-    showSuccess('Module ready!!!')
-    navigationPage('next')
-  }, [modules])
 
   const submit = useCallback(() => {
     async function postData() {
@@ -133,7 +129,8 @@ const CheckListUpdate = () => {
   const _renderModalPreviewCheckList = useCallback(() => {
     return (
       <PreviewCheckList
-        moduleName={'Checklist module name'}
+        moduleName={withEmpty('title', formCheckList)}
+        modules={modules}
         show={showPreview}
         onHide={hideModal}
       />
@@ -226,7 +223,7 @@ const CheckListUpdate = () => {
           <Content>{withEmpty('displayMode', formCheckList)}</Content>
         </WrapperItem>
         <WrapperBlock>
-          <Button blue onClick={showModal}>
+          <Button blue onClick={showModal} fluid>
             <Icon name='feather-eye' size={16} />
             Preview
           </Button>

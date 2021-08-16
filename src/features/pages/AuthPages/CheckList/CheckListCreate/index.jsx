@@ -222,7 +222,8 @@ const CheckListCreate = () => {
   const _renderModalPreviewCheckList = useCallback(() => {
     return (
       <PreviewCheckList
-        moduleName={'Checklist module name'}
+        moduleName={withEmpty('title', formCheckList)}
+        modules={modules}
         show={showPreview}
         onHide={hideModal}
       />
