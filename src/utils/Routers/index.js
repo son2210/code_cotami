@@ -32,13 +32,7 @@ const Routers = {
       },
       {
         URL: '/account-management',
-        NAME: 'account-management',
-        CHILD: [
-          {
-            URL: '/accounts-management/create-account',
-            NAME: 'Create an account'
-          }
-        ]
+        NAME: 'account-management'
       }
     ],
 
@@ -68,6 +62,17 @@ const Routers = {
         {
           URL: '/profile/update-profile',
           NAME: 'Update password'
+        }
+      ]
+    },
+
+    ACCOUNT: {
+      URL: '/account-management',
+      NAME: 'Checklist management',
+      CHILD: [
+        {
+          URL: '/account-management/create',
+          NAME: 'Create a account'
         }
       ]
     }
