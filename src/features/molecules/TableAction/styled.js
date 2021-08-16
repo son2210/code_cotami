@@ -68,7 +68,7 @@ export const ColumnWrapper = styled(BaseColumn)`
 export const HeaderCellWrapper = styled(BaseHeaderCell)`
   width: 100%;
   & .rs-table-cell-content {
-    padding: 0px;
+    padding: 0 10px;
   }
 `
 

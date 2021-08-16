@@ -43,4 +43,11 @@ export const Title = styled.p`
   padding: 2px 9px;
   margin-top: 10px;
   border-radius: 4px;
+  word-break: keep-all;
+  width: 130px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-align: center;
 `

@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react'
-import { Wrapper } from './styled'
+import { Wrapper, GridItem } from './styled'
 import { UnAuthForm } from 'organisms'
 import { BaseIcon } from 'atoms'
 import { InputGroup } from 'molecules'
@@ -39,33 +39,35 @@ const ForgotPassword = () => {
   const goToPage = useCallback(route => history.push(route), [])
 
   return (
-    <Wrapper>
-      <UnAuthForm
-        formTitle={'Forgot password'}
-        primaryBtn={{
-          name: 'Send',
-          onClick: handleForgotPassword
-        }}
-        secondaryBtn={{
-          name: 'Go back to Login Page',
-          onClick: () => goToPage(Routers.LOGIN)
-        }}
-        formValue={data}
-        model={validateModel}
-        onCheck={validateData}
-        onSubmit={handleForgotPassword}
-      >
-        <InputGroup
-          placeholder='Email'
-          LeftSide={<BaseIcon icon='envelope-o' />}
-          name='email'
-          onChange={value => handleInput('email', value)}
-          value={data['email']}
-          helpText={error['email']}
-          isError={!error['email'] ? false : true}
-        />
-      </UnAuthForm>
-    </Wrapper>
+    <GridItem xs={24} sm={16} md={12} lg={6}>
+      <Wrapper>
+        <UnAuthForm
+          formTitle={'Forgot password'}
+          primaryBtn={{
+            name: 'Send',
+            onClick: handleForgotPassword
+          }}
+          secondaryBtn={{
+            name: 'Go back to Login Page',
+            onClick: () => goToPage(Routers.LOGIN)
+          }}
+          formValue={data}
+          model={validateModel}
+          onCheck={validateData}
+          onSubmit={handleForgotPassword}
+        >
+          <InputGroup
+            placeholder='Email'
+            LeftSide={<BaseIcon icon='envelope-o' />}
+            name='email'
+            onChange={value => handleInput('email', value)}
+            value={data['email']}
+            helpText={error['email']}
+            isError={!error['email'] ? false : true}
+          />
+        </UnAuthForm>
+      </Wrapper>
+    </GridItem>
   )
 }
 

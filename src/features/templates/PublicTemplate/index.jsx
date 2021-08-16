@@ -1,22 +1,16 @@
 import React from 'react'
-import {
-  // BodyWrapper,
-  GridItem,
-  WrapperContainer,
-  HeaderWrapper
-} from './styled'
+import { WrapperContainer, HeaderWrapper } from './styled'
 import PropTypes from 'prop-types'
 import { BaseCotami } from 'atoms'
 
 const PublicTemplate = ({ children, ...others }) => {
   return (
-    <WrapperContainer>
+    <WrapperContainer {...others}>
       <HeaderWrapper>
         <BaseCotami />
       </HeaderWrapper>
-      <GridItem xs={24} sm={16} md={12} lg={6} {...others}>
-        {children}
-      </GridItem>
+
+      {children}
     </WrapperContainer>
   )
 }

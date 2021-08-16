@@ -1,20 +1,56 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-import { ContainerWrapper, ButtonWrapper, IconWrapper } from './styled'
+import {
+  ContainerWrapper,
+  ButtonWrapper,
+  IconWrapper,
+  WrapperBlock,
+  Icon,
+  Title
+} from './styled'
 import { IMAGES } from 'assets'
 
 const ActionButtonGroup = ({
-  onClickView,
+  preview,
   onClickDelete,
   onClickEdit,
+  hiddenEye = false,
+  copyAble = false,
+  copy,
+  id,
   ...others
 }) => {
   return (
     <ContainerWrapper {...others}>
-      <IconWrapper source={IMAGES.EYE} onClick={onClickView} />
-      <IconWrapper source={IMAGES.NOTE} onClick={onClickEdit} />
-      <ButtonWrapper onClick={onClickDelete}>
+      {copyAble && (
+        <WrapperBlock
+          onClick={() => {
+            if (typeof copy === 'function') copy(id)
+          }}
+        >
+          <Icon name={'copy-o'} /> <Title>Copy</Title>
+        </WrapperBlock>
+      )}
+      {!hiddenEye && (
+        <IconWrapper
+          source={IMAGES.EYE}
+          onClick={() => {
+            if (typeof preview === 'function') preview(id)
+          }}
+        />
+      )}
+      <IconWrapper
+        source={IMAGES.NOTE}
+        onClick={() => {
+          if (typeof onClickEdit === 'function') onClickEdit(id)
+        }}
+      />
+      <ButtonWrapper
+        onClick={() => {
+          if (typeof onClickDelete === 'function') onClickDelete(id)
+        }}
+      >
         <IconWrapper btnIcon source={IMAGES.TRASH} />
       </ButtonWrapper>
     </ContainerWrapper>
@@ -22,9 +58,13 @@ const ActionButtonGroup = ({
 }
 
 ActionButtonGroup.propTypes = {
-  onClickView: PropTypes.func,
   onClickEdit: PropTypes.func,
-  onClickDelete: PropTypes.func
+  onClickDelete: PropTypes.func,
+  hiddenEye: PropTypes.bool,
+  preview: PropTypes.func,
+  copyAble: PropTypes.bool,
+  copy: PropTypes.func,
+  id: PropTypes.any
 }
 
 export default React.memo(ActionButtonGroup)

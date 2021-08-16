@@ -1,8 +1,8 @@
 import { IMAGES } from 'assets'
-import { BaseButton, BaseInputPicker, BaseInput } from 'atoms'
+import { BaseButton, BaseInputPicker, BaseInput, BaseCheckPicker } from 'atoms'
 import { EndPoint } from 'config/api'
-import { usePaginate, useRequestManager } from 'hooks'
-import React, { useCallback, useEffect, useState } from 'react'
+import { usePaginate, useRequestManager, useAlert } from 'hooks'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useTheme } from 'styled-components'
 import { Constant, Routers } from 'utils'
@@ -10,6 +10,7 @@ import { FilterWrapper, Table, Wrapper } from './styled'
 import { globalUnitsState } from 'stores/Units/atom'
 import { useRecoilValue } from 'recoil'
 import { withArray, withNumber } from 'exp-value'
+import { modifyPropsOfState } from 'utils/Helpers'
 
 const CheckList = () => {
   const {
@@ -23,19 +24,43 @@ const CheckList = () => {
   const theme = useTheme()
   const history = useHistory()
   const [data, setData] = useState([])
+
   const [loading, setLoading] = useState(false)
   const [searchData, setSearchData] = useState({
     name: '',
-    enterpriseUnitId: '',
-    status: ''
+    enterpriseUnitIds: [],
+    status: null
   })
-  const { onGetExecute } = useRequestManager()
+  const { onGetExecute, onPatchExecute } = useRequestManager()
   const units = useRecoilValue(globalUnitsState)
+  const { showSuccess } = useAlert()
 
-  const columns = React.useMemo(() => {
+  const handleClickDisplay = async (display, id) => {
+    if (!id) return
+    const submitData = {
+      displayMode: display
+    }
+    const response = await onPatchExecute(
+      `${EndPoint.FORMS}/${id}/info`,
+      submitData
+    )
+    if (response) {
+      getData(activePage - 1, displayLength)
+      showSuccess('update success')
+    }
+  }
+
+  const actionTable = useCallback(id => {
+    async function execute(id) {
+      console.log(id)
+    }
+    execute(id)
+  }, [])
+
+  const columns = useMemo(() => {
     return [
       {
-        width: 100,
+        width: 80,
         header: {
           label: 'ID'
         },
@@ -44,6 +69,9 @@ const CheckList = () => {
           style: {
             color: theme.colors.secondary[1]
           }
+        },
+        props: {
+          resizable: true
         }
       },
       {
@@ -57,6 +85,9 @@ const CheckList = () => {
           style: {
             color: theme.colors.secondary[1]
           }
+        },
+        props: {
+          resizable: true
         }
       },
       {
@@ -68,7 +99,13 @@ const CheckList = () => {
         cell: {
           type: Constant.CellType.DISPLAY,
           id: 'displayMode',
-          isCheckbox: true
+          isCheckbox: true,
+          others: {
+            handleOnChange: handleClickDisplay
+          }
+        },
+        props: {
+          resizable: true
         }
       },
       {
@@ -86,11 +123,14 @@ const CheckList = () => {
               height: 20
             }
           }
+        },
+        props: {
+          resizable: true
         }
       },
       {
         width: 200,
-        align: 'left',
+        align: 'center',
         header: {
           style: {
             textAlign: 'center'
@@ -99,19 +139,40 @@ const CheckList = () => {
         },
         cell: {
           type: Constant.CellType.ACTION_BUTTON_GROUP,
-          others: {}
+          others: {
+            preview: actionTable,
+            onClickDelete: actionTable,
+            onClickEdit: actionTable
+          }
         }
       }
     ]
   }, [])
-  const getData = useCallback((offset, limit) => {
-    setLoading(true)
+
+  const filterStatus = useMemo(() => {
+    return [
+      {
+        label: 'Active',
+        value: 'active'
+      },
+      {
+        label: 'In Active',
+        value: 'in_active'
+      }
+    ]
+  }, [])
+
+  const handleInputSearch = useCallback(
+    (name, value) => {
+      modifyPropsOfState(searchData, setSearchData, name, value)
+    },
+    [searchData]
+  )
+  const getData = useCallback((offset, limit, others) => {
+    const params = { offset: offset, limit: limit, ...others }
     async function execute() {
       const response = await onGetExecute(EndPoint.FORMS, {
-        params: {
-          offset,
-          limit
-        }
+        params: params
       })
       if (response) {
         setData(withArray('data', response))
@@ -126,21 +187,26 @@ const CheckList = () => {
     history.push(Routers.NORMAL_ADMIN.CHECKLIST.CHILD[0].URL)
   }, [])
 
+  const filterChecklist = useCallback(() => {
+    const { name, enterpriseUnitIds, status } = searchData
+    let temp = {}
+    if (name) temp = { ...temp, name: name }
+    if (enterpriseUnitIds)
+      temp = { ...temp, enterpriseUnitIds: enterpriseUnitIds }
+    if (status) temp = { ...temp, status: status }
+    getData(0, displayLength, temp)
+  }, [searchData, displayLength])
+
   useEffect(() => {
-    if (units && units.length) {
-      getData(activePage - 1, displayLength)
-      setSearchData(prev => {
-        return { ...prev, enterpriseUnitId: units[0].value }
-      })
-    }
-  }, [activePage, displayLength, units])
+    getData(activePage - 1, displayLength)
+  }, [activePage, displayLength])
 
   return (
     <Wrapper>
       <FilterWrapper
         formOpt={{
           formValue: searchData,
-          onSubmit: () => getData(0, displayLength, searchData.enterpriseUnitId)
+          onSubmit: () => filterChecklist()
         }}
         onClick={goToCreateChecklist}
       >
@@ -148,32 +214,27 @@ const CheckList = () => {
           style={{ maxWidth: 170 }}
           placeholder='Keyword...'
           name='searchTerm'
+          value={searchData['name']}
+          onChange={v => handleInputSearch('name', v === '' ? null : v)}
         />
-        <BaseInputPicker
-          placeholder='unit'
+        <BaseCheckPicker
+          placeholder='units'
           style={{ marginLeft: 10 }}
           data={units}
-          value={searchData['enterpriseUnitId']}
-          onChange={v =>
+          defaultValue={searchData['enterpriseUnitIds']}
+          onChange={v => {
             setSearchData(prev => {
-              return { ...prev, ['enterpriseUnitId']: v }
+              return { ...prev, ['enterpriseUnitIds']: v }
             })
-          }
+          }}
         />
         <BaseInputPicker
           placeholder='status'
           style={{ marginLeft: 10 }}
-          data={[
-            { label: 'active', value: 'active' },
-            { label: 'inactive', value: 'inactive' }
-          ]}
+          onChange={v => handleInputSearch('status', v)}
+          data={filterStatus}
         />
-        <BaseButton
-          style={{ marginLeft: 10 }}
-          secondary
-          bold
-          onClick={() => {}}
-        >
+        <BaseButton style={{ marginLeft: 10 }} secondary bold type={'submit'}>
           Search
         </BaseButton>
       </FilterWrapper>
@@ -185,11 +246,11 @@ const CheckList = () => {
         loading={loading}
         columns={columns}
         paginateProps={{
-          activePage: activePage - 1,
+          activePage: activePage,
           displayLength,
           total: total,
-          onChangePage: page => onChangePage(page, setLoading),
-          onChangeLength: length => onChangeLength(length, setLoading)
+          onChangePage: page => onChangePage(page),
+          onChangeLength: length => onChangeLength(length)
         }}
       />
     </Wrapper>

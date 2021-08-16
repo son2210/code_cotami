@@ -17,7 +17,7 @@ const PrivateHeader = ({ t, paths, ...others }) => {
               to={href}
               className={active && 'active'}
             >
-              {t(label)}
+             {t(label)}
             </BreadItemWrapper>
           )
         })}
