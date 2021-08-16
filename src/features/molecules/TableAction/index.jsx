@@ -153,7 +153,7 @@ const TableAction = ({
           return (
             <ActionCellWrapper
               onClick={e => {
-                if (others.handleOnClick == 'function')
+                if (typeof others.handleOnClick === 'function')
                   others.handleOnClick(e, rowData, id)
               }}
               {...others}
