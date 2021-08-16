@@ -93,7 +93,7 @@ const UpdatePassword = ({ ...others }) => {
           />
 
           <WrapperInputBlock
-            label='Old password'
+            label='Confirm Password'
             name='cfPassword'
             onChange={value => handleInput('cfPassword', value)}
             type={showPasswordCf ? 'text' : 'password'}
