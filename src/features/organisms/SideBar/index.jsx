@@ -14,15 +14,13 @@ import { withNamespaces } from 'react-i18next'
 import { withEmpty } from 'exp-value'
 
 const SideBar = ({ t, menuList, ...others }) => {
-  const [newMenulist, setNewMenulist] = useState(menuList)
+  const [newMenuList, setNewMenuList] = useState(menuList)
   const userState = useRecoilValue(globalUserState)
   useEffect(() => {
-    if (userState.role && userState.role === 'admin') {
-      setNewMenulist(
+    if (userState.role && userState.role === 'agency') {
+      setNewMenuList(
         menuList.filter(item => item.NAME !== 'account-management')
       )
-    } else {
-      setNewMenulist(menuList.filter(item => item.NAME !== 'staff-management'))
     }
   }, [userState.role])
 
@@ -30,7 +28,7 @@ const SideBar = ({ t, menuList, ...others }) => {
     <ContainerWrapper {...others}>
       <LogoWrapper></LogoWrapper>
       <MenuWrapper>
-        {newMenulist.map((item, index) => (
+        {newMenuList.map((item, index) => (
           <NavItems key={index} strict={true} to={item.URL}>
             {t(item.NAME)}
           </NavItems>

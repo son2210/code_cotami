@@ -105,7 +105,7 @@ const Accounts = ({ t }) => {
     const response = await onGetExecute(EndPoint.ACCOUNTS, {
       params: { offset, limit }
     })
-    debugger
+
     if (response) {
       setData(withArray('data', response))
       setTotal(withNumber('paging.total', response))
@@ -140,7 +140,7 @@ const Accounts = ({ t }) => {
         id: 'firstName',
         style: {
           color: theme.colors.secondary[1]
-        },
+        }
         // others: {
         //   handleOnClick: toggleModal
         // }
@@ -158,7 +158,7 @@ const Accounts = ({ t }) => {
         hiddenEye: true,
         style: {
           color: theme.colors.tertiary
-        },
+        }
         // others: {
         //   handleOnClick: toggleModal
         // }
@@ -173,7 +173,7 @@ const Accounts = ({ t }) => {
       cell: {
         hoverPointer: true,
         id: 'status',
-        type: Constant.CellType.COLOR_VIA_VALUE,
+        type: Constant.CellType.COLOR_VIA_VALUE
         // others: {
         //   handleOnClick: toggleModal
         // }
@@ -260,8 +260,7 @@ const Accounts = ({ t }) => {
       <TableAction
         id='table--accounts'
         loading={loading}
-        height={window.innerHeight - 120}
-        width={'100%'}
+        height={window.innerHeight - 200}
         data={data}
         columns={columns}
         onRowClick={data => {
@@ -271,8 +270,8 @@ const Accounts = ({ t }) => {
           activePage,
           displayLength,
           total: total,
-          onChangePage: page => onChangePage(page, setLoading),
-          onChangeLength: length => onChangeLength(length, setLoading)
+          onChangePage: page => onChangePage(page),
+          onChangeLength: length => onChangeLength(length)
         }}
       />
 
