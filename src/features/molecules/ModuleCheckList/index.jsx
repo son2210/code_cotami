@@ -1,4 +1,4 @@
-import { withArray, withEmpty, withNumber } from 'exp-value'
+import { withArray, withBoolean, withEmpty, withNumber } from 'exp-value'
 import PropTypes from 'prop-types'
 import React, { useCallback, useState, useEffect } from 'react'
 import SectionCheckList from '../SectionCheckList'
@@ -59,6 +59,7 @@ const ModuleCheckList = ({
       return (
         <Collapse collapse={showSection[index]}>
           {withArray('sections', module).map((section, key) => {
+            if (withBoolean('markDelete', section)) return
             return (
               <SectionCheckList
                 type={withEmpty('inputTypeId', section)}
@@ -129,11 +130,13 @@ const ModuleCheckList = ({
   )
   useEffect(() => {
     setDataModule({
-      id: index,
+      // id: index,
       title: withEmpty('title', modules),
       description: withEmpty('description', modules),
       sections: withArray('sections', modules)
     })
+    if (withEmpty('title', modules))
+      setDataModule(prev => ({ ...prev, id: withEmpty('id', modules) }))
     setSections(withArray('sections', modules))
   }, [modules, sections, index])
 

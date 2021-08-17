@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { Wrapper, WrapperItem, Checkbox, Input, Icon } from './styled'
 import { BaseRadio } from 'atoms'
-import { withNumber } from 'exp-value'
+import { withNumber, withBoolean } from 'exp-value'
 
 const CustomRadio = ({
   inline = true,
@@ -15,7 +15,7 @@ const CustomRadio = ({
 }) => {
   const [data, setData] = useState([])
   const [item, setItem] = useState('')
-  const handleChangeItem = useCallback(e => setItem(e), [])
+  const handleChangeItem = useCallback(e => setItem(e), [item])
   const addDataItem = useCallback(() => {
     if (!item) return
     setItem('')
@@ -24,29 +24,30 @@ const CustomRadio = ({
   }, [item])
 
   const removeDataItem = useCallback(
-    id => {
-      if (id < 0 || id > data.length) return
-      setSectionItems(sectionItems.filter((_, index) => index !== id))
-      setData(data.filter((_, index) => index !== id))
+    indexItem => {
+      if (indexItem < 0 || indexItem > sectionItems.length) return
+      if (!withBoolean('id', sectionItems[indexItem]))
+        setSectionItems(sectionItems.filter((_, index) => index !== indexItem))
+      const temp = sectionItems
+      temp[indexItem].markDelete = true
+      setSectionItems(temp)
+      setData(data.filter((_, index) => index !== indexItem))
     },
-    [sectionItems, data]
+    [sectionItems]
   )
 
   const updateDataItem = useCallback(
-    (value, id) => {
-      if (id < 0 || id >= sectionItems.length) return
+    (value, indexItem) => {
+      if (indexItem < 0 || indexItem > sectionItems.length) return
       const temp = JSON.parse(JSON.stringify(sectionItems))
-      temp[id].value = value
+      temp[indexItem].value = value
       setSectionItems(temp)
 
-      const tmp2 = JSON.parse(JSON.stringify(data))
-      tmp2[id] = {
-        value: value,
-        label: value
-      }
+      const tmp2 = JSON.parse(JSON.stringify(sectionItems))
+      tmp2[indexItem].content = value
       setData(tmp2)
     },
-    [sectionItems, data]
+    [data]
   )
 
   const renderForm = useCallback(
@@ -78,6 +79,7 @@ const CustomRadio = ({
     if (sectionItems) {
       if (withNumber('length', sectionItems) < 1) return setData([])
       const temp = sectionItems.map(item => {
+        if (withBoolean('markDelete', item)) return
         return {
           value: item.value,
           label: item.value

@@ -8,5 +8,7 @@
   "account-management": "Account management",
   "profile": "Profile",
   "update-profile": "Update profile",
-  "change-password": "Change password"
+  "change-password": "Change password",
+  "checklist-create": "Create a checklist",
+  "checklist-update": "Update a checklist"
 }

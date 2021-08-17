@@ -1,4 +1,4 @@
-import { withNumber } from 'exp-value'
+import { withBoolean, withNumber } from 'exp-value'
 import PropTypes from 'prop-types'
 import React, { useCallback } from 'react'
 import {
@@ -27,7 +27,10 @@ const CreateModule = ({
               Choose a template
             </Title>
             <ModuleCount>
-              {`${withNumber('length', modules)} module`}
+              {`${withNumber(
+                'length',
+                modules.filter(mod => !withBoolean('markDelete', mod))
+              )} module`}
               <Button dashed={1} onClick={onCreateModule}>
                 <Icon name='feather-plus' size={16} />
                 New module
@@ -35,6 +38,7 @@ const CreateModule = ({
             </ModuleCount>
           </HeaderModule>
           {modules?.map((module, index) => {
+            if (withBoolean('markDelete', module)) return
             return (
               <WrapperModule
                 modules={module}

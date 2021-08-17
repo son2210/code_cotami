@@ -60,8 +60,9 @@ export const Body = styled(Modal.Body)`
   display: flex;
   flex-direction: column;
   min-width: 200px;
+  min-height: 300px;
   width: 100%;
-  height: 100%;
+  height: 90vh;
   margin: 0;
   padding: 0 20px;
   ::-webkit-scrollbar {

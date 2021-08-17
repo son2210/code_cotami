@@ -1,6 +1,6 @@
 import { Loading } from 'atoms'
 import PropTypes from 'prop-types'
-import React, { lazy, Suspense, useCallback } from 'react'
+import React, { lazy, Suspense, useCallback, useEffect } from 'react'
 import { Route, Switch, useLocation, useHistory } from 'react-router-dom'
 import { Routers } from 'utils'
 import { PublicTemplate, PrivateTemplate } from 'templates'
@@ -29,6 +29,9 @@ const CheckInRequestPage = lazy(() => import('pages/AuthPages/CheckInRequest'))
 const CheckListPage = lazy(() => import('pages/AuthPages/CheckList'))
 const CheckListCreate = lazy(() =>
   import('pages/AuthPages/CheckList/CheckListCreate')
+)
+const CheckListUpdate = lazy(() =>
+  import('pages/AuthPages/CheckList/CheckListUpdate')
 )
 const StaffsPage = lazy(() => import('pages/AuthPages/Staffs'))
 
@@ -79,14 +82,14 @@ const Routes = ({ isLoggedIn, ...rest }) => {
     [location.pathname, token, isLoggedIn]
   )
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (isLoggedIn) {
       getUserInfo(token)
       getUnitsArray(token)
     }
   }, [isLoggedIn, token, location.pathname])
 
-  React.useEffect(() => {
+  useEffect(() => {
     const { pathname } = location
     const validNormalAdminUrls = [
       ...Routers.NORMAL_ADMIN.MENU,
@@ -108,7 +111,7 @@ const Routes = ({ isLoggedIn, ...rest }) => {
     }
   }, [location, isLoggedIn])
 
-  const _renderPrivateNormalAdminRoute = React.useCallback(() => {
+  const _renderPrivateNormalAdminRoute = useCallback(() => {
     return (
       <PrivateTemplate menuList={Routers.NORMAL_ADMIN.MENU}>
         <Route
@@ -157,6 +160,14 @@ const Routes = ({ isLoggedIn, ...rest }) => {
           path={Routers.NORMAL_ADMIN.CHECKLIST.CHILD[0].URL}
           render={props => {
             return <CheckListCreate {...rest} {...props} />
+          }}
+        />
+        <Route
+          {...rest}
+          exact
+          path={Routers.NORMAL_ADMIN.CHECKLIST.CHILD[1].URL}
+          render={props => {
+            return <CheckListUpdate {...rest} {...props} />
           }}
         />
         <Route
@@ -211,7 +222,7 @@ const Routes = ({ isLoggedIn, ...rest }) => {
     )
   }, [isLoggedIn])
 
-  const _renderPublicRoute = React.useCallback(() => {
+  const _renderPublicRoute = useCallback(() => {
     return (
       <PublicTemplate>
         <Route

@@ -1,4 +1,4 @@
-import { withArray, withEmpty, withNumber } from 'exp-value'
+import { withArray, withEmpty, withNumber, withBoolean } from 'exp-value'
 import { SectionPreview } from 'molecules'
 import PropTypes from 'prop-types'
 import React, { useCallback, useState, useMemo } from 'react'
@@ -14,13 +14,13 @@ import {
   WrapperModal,
   WrapperProgress
 } from './styled'
-import { useRecoilValue } from 'recoil'
-import { globalModulesState } from 'stores/CreateForm'
+// import { useRecoilValue } from 'recoil'
+// import { globalModulesState } from 'stores/CreateForm'
 
-const PreviewCheckList = ({ moduleName, show, onHide, ...others }) => {
+const PreviewCheckList = ({ moduleName, modules, show, onHide, ...others }) => {
   const [step, setStep] = useState(1)
   const theme = useTheme()
-  const modules = useRecoilValue(globalModulesState)
+  // const modules = useRecoilValue(globalModulesState)
   const moduleNumber = useMemo(() => modules.length, [modules])
   const activeStep = useCallback(
     type => {
@@ -32,6 +32,7 @@ const PreviewCheckList = ({ moduleName, show, onHide, ...others }) => {
 
   const renderModule = useCallback(
     module => {
+      if (withBoolean('markDelete', module)) return
       return (
         <Wrapper>
           <WrapperProgress
@@ -41,6 +42,7 @@ const PreviewCheckList = ({ moduleName, show, onHide, ...others }) => {
             description={withEmpty('description', module)}
           />
           {withArray('sections', module).map((section, index) => {
+            if (withBoolean('markDelete', section)) return
             return (
               <SectionPreview
                 key={index + withEmpty('id', section)}
@@ -103,7 +105,11 @@ const PreviewCheckList = ({ moduleName, show, onHide, ...others }) => {
 
   return (
     <WrapperModal show={show} onHide={onHide} {...others}>
-      {!modules || withNumber('length', modules) == 0
+      {!modules ||
+      withNumber(
+        'length',
+        modules.filter(mod => !withBoolean('markDelete', mod))
+      ) == 0
         ? 'No modules'
         : _renderModal()}
     </WrapperModal>

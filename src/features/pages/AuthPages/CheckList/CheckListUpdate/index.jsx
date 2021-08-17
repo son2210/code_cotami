@@ -1,10 +1,9 @@
-import { IMAGES } from 'assets'
 import { EndPoint } from 'config/api'
 import { withArray, withEmpty, withNumber } from 'exp-value'
-import { useAlert, useRequestManager, useModules } from 'hooks'
+import { useAlert, useModules, useRequestManager } from 'hooks'
 import { CreateModule } from 'organisms'
-import React, { useEffect, useRef, useState } from 'react'
-import { useHistory } from 'react-router-dom'
+import React, { useEffect, useState } from 'react'
+import { useHistory, useLocation } from 'react-router-dom'
 import { useCallback } from 'react/cjs/react.development'
 import {
   useRecoilState,
@@ -25,14 +24,10 @@ import {
   Button,
   Content,
   DisplayModeForm,
-  FlexBlock,
   Form,
   Icon,
   Input,
   Label,
-  LoadingMore,
-  Theme,
-  ThemeBlock,
   Title,
   Wrapper,
   WrapperBlock,
@@ -41,22 +36,18 @@ import {
   WrapperForm,
   WrapperItem
 } from './styled'
-import { formCheckListCreate } from './validation'
+import { formCheckListUpdate } from './validation'
 
-const CheckListCreate = () => {
+const CheckListUpdate = () => {
   const [step, setStep] = useState(1)
+  const [formId, setFormId] = useState(null)
   const [showPreview, setShowPreview] = useState(false)
-  const [templates, setTemplates] = useState([])
   const [formCheckList, setFormCheckList] = useState({
     title: '',
     description: '',
     unit: '',
-    displayMode: '',
-    templateId: ''
+    displayMode: ''
   })
-  const [page, setPage] = useState(0)
-  const listTemplatesRef = useRef(null)
-  const [loadMore, setLoadMore] = useState(false)
 
   const [modules, setModules] = useRecoilState(globalModulesState)
   const resetState = useResetRecoilState(globalModulesState)
@@ -65,63 +56,12 @@ const CheckListCreate = () => {
   const handleRemoveModule = useSetRecoilState(removeModule)
   const presentConfig = useRecoilValue(presentationConfig)
   const history = useHistory()
+  const { search } = useLocation()
 
   const { handleError } = useModules()
 
-  const { onPostExecute, onGetExecute } = useRequestManager()
+  const { onPatchExecute, onGetExecute } = useRequestManager()
   const { showError, showSuccess } = useAlert()
-
-  const onChooseTemplate = useCallback(
-    item => {
-      setFormCheckList({
-        title: withEmpty('title', item),
-        description: withEmpty('description', item),
-        displayMode: withEmpty('displayMode', item),
-        templateId: withEmpty('id', item)
-      })
-      getDetailTemplate(item.id)
-    },
-    [formCheckList, modules, templates]
-  )
-  const getTemplates = useCallback(
-    (offset, limit) => {
-      setLoadMore(true)
-      async function execute() {
-        const response = await onGetExecute(
-          EndPoint.TEMPLATE_LIST,
-          {
-            params: {
-              offset,
-              limit
-            }
-          },
-          true
-        )
-        if (response) {
-          if (page == 0) setTemplates(withArray('data', response))
-          else setTemplates(prev => [...prev, ...withArray('data', response)])
-          setPage(withNumber('paging.next', response))
-          setLoadMore(false)
-        }
-      }
-      execute()
-    },
-    [page, templates]
-  )
-
-  const getDetailTemplate = useCallback(
-    id => {
-      async function execute(id) {
-        const response = await onGetExecute(
-          `${EndPoint.TEMPLATE_LIST}/${id}`,
-          {}
-        )
-        if (response) setModules(withArray('modules', response))
-      }
-      execute(id)
-    },
-    [formCheckList, modules]
-  )
 
   const navigationPage = useCallback(
     type => {
@@ -152,72 +92,39 @@ const CheckListCreate = () => {
 
   const validateForm = useCallback(
     errors => {
+      let temp = handleError(modules)
+      if (temp) showError(temp)
+      else showSuccess('Module ready!!!')
+
       let listError = [...new Set(Object.values(errors))]
       if (listError && withNumber('length', listError)) {
         showError(listError[0].toString())
         return
       }
-
       return navigationPage('next')
     },
     [formCheckList]
   )
 
-  const validateModules = useCallback(() => {
-    let temp = handleError(modules)
-    if (temp) return showError(temp)
-    showSuccess('Module ready!!!')
-    navigationPage('next')
-  }, [modules])
-
   const submit = useCallback(() => {
     async function postData() {
-      const response = await onPostExecute(EndPoint.FORM_CREATE, {
+      const response = await onPatchExecute(EndPoint.UPDATE_FORM(formId), {
         ...formCheckList,
         modules: modules,
         presentationConfig: presentConfig
       })
       if (response) {
-        showSuccess('Success create form')
+        showSuccess('Success update form')
         setTimeout(() => {
           resetState()
           history.goBack()
         }, 3000)
-
         return
       }
       showError('Error !. Check data submit')
     }
     postData()
-  }, [modules, formCheckList, presentConfig])
-
-  const scrollLoadMore = useCallback(() => {
-    if (
-      listTemplatesRef.current.clientHeight +
-        listTemplatesRef.current.scrollTop ===
-      listTemplatesRef.current.scrollHeight
-    ) {
-      if (page) getTemplates(page, 10)
-    }
-  }, [page, templates])
-
-  const _renderTheme = useCallback(() => {
-    return (
-      <FlexBlock ref={listTemplatesRef} onScroll={scrollLoadMore}>
-        {templates.map((item, index) => {
-          return (
-            <Theme
-              key={index}
-              content={item.title}
-              onClick={() => onChooseTemplate(item)}
-              active={formCheckList.templateId == item.id}
-            />
-          )
-        })}
-        {loadMore && page ? <LoadingMore source={IMAGES.LOADING} /> : null}
-      </FlexBlock>
-    )
-  }, [templates, formCheckList, modules, listTemplatesRef, page])
+  }, [formId, modules, formCheckList, presentConfig])
 
   const _renderModalPreviewCheckList = useCallback(() => {
     return (
@@ -231,22 +138,7 @@ const CheckListCreate = () => {
   }, [showPreview, hideModal])
 
   const _renderContent = useCallback(() => {
-    if (step == 1) {
-      return (
-        <WrapperContent>
-          <Title H2 bold>
-            Choose a template
-          </Title>
-
-          <ThemeBlock>
-            <Title H3>All template</Title>
-            {_renderTheme()}
-          </ThemeBlock>
-        </WrapperContent>
-      )
-    }
-
-    if (step == 2)
+    if (step == 1)
       return (
         <WrapperContent>
           <CreateModule
@@ -258,7 +150,7 @@ const CheckListCreate = () => {
         </WrapperContent>
       )
     return <PresentationConfig />
-  }, [step, modules, presentConfig, templates, page])
+  }, [step, modules, presentConfig])
 
   const _renderForm = useCallback(() => {
     if (step == 1)
@@ -270,7 +162,7 @@ const CheckListCreate = () => {
 
           <Form
             fluid
-            model={formCheckListCreate}
+            model={formCheckListUpdate}
             formValue={formCheckList}
             onCheck={validateForm}
           >
@@ -330,35 +222,43 @@ const CheckListCreate = () => {
           <Title>Display</Title>
           <Content>{withEmpty('displayMode', formCheckList)}</Content>
         </WrapperItem>
+        <WrapperBlock>
+          <Button blue onClick={showModal} fluid>
+            <Icon name='feather-eye' size={16} />
+            Preview
+          </Button>
 
-        <WrapperButton>
-          {step == 3 ? (
+          <WrapperButton>
             <Button blue onClick={() => navigationPage('prev')}>
               Continue Edit
             </Button>
-          ) : (
-            <Button blue onClick={showModal}>
-              <Icon name='feather-eye' size={16} />
-              Preview
-            </Button>
-          )}
-          {step == 3 ? (
             <Button primary onClick={submit}>
               Submit
             </Button>
-          ) : (
-            <Button primary onClick={validateModules}>
-              Next
-            </Button>
-          )}
-        </WrapperButton>
+          </WrapperButton>
+        </WrapperBlock>
       </WrapperForm>
     )
   }, [step, formCheckList, modules, presentConfig])
 
   useEffect(() => {
-    getTemplates(page, 10)
-  }, [])
+    const formId = new URLSearchParams(search).get('formId')
+    if (!formId) return
+    setFormId(formId)
+    async function execute(id) {
+      const response = await onGetExecute(`${EndPoint.GET_FORM(id)}`, {})
+      if (response) {
+        setModules(withArray('modules', response))
+        setFormCheckList({
+          title: withEmpty('title', response),
+          description: withEmpty('description', response),
+          displayMode: withEmpty('displayMode', response)
+        })
+      }
+    }
+    execute(formId)
+  }, [search])
+
   return (
     <Wrapper>
       {_renderContent()}
@@ -368,4 +268,4 @@ const CheckListCreate = () => {
   )
 }
 
-export default CheckListCreate
+export default CheckListUpdate

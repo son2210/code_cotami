@@ -12,6 +12,8 @@ const EndPoint = {
   RESULT_LOGS: 'results/changeLogs',
   FORM_CREATE: 'forms/create',
   FORMS: 'forms',
+  GET_FORM: formId => `/forms/${formId}`,
+  UPDATE_FORM: formId => `/forms/${formId}`,
   FORMS_RESULTS: id => `forms/${id}/results`,
   FORMS_RESULTS_PROGRESS: id => `forms/${id}/results/progress`,
   CHECK_IN_REQ: id => `enterpriseUnits/${id}/forms/checkInRequests`,
