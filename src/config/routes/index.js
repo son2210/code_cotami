@@ -1,6 +1,6 @@
 import { Loading } from 'atoms'
 import PropTypes from 'prop-types'
-import React, { lazy, Suspense, useCallback } from 'react'
+import React, { lazy, Suspense, useCallback, useEffect } from 'react'
 import { Route, Switch, useLocation, useHistory } from 'react-router-dom'
 import { Routers } from 'utils'
 import { PublicTemplate, PrivateTemplate } from 'templates'
@@ -30,11 +30,16 @@ const CheckListPage = lazy(() => import('pages/AuthPages/CheckList'))
 const CheckListCreate = lazy(() =>
   import('pages/AuthPages/CheckList/CheckListCreate')
 )
-const StaffsPage = lazy(() => import('pages/AuthPages/Staffs'))
-const AccountsPage = lazy(() => import('pages/AuthPages/Accounts'))
-const CreateAccountPage = lazy(() =>
-  import('pages/AuthPages/Accounts/CreateAccount')
+const CheckListUpdate = lazy(() =>
+  import('pages/AuthPages/CheckList/CheckListUpdate')
 )
+const StaffsPage = lazy(() => import('pages/AuthPages/Staffs'))
+
+const AccountsPage = lazy(() => import('pages/AuthPages/Accounts'))
+const AccountCreate = lazy(() =>
+  import('pages/AuthPages/Accounts/AccountCreate')
+)
+
 const ProfilePage = lazy(() => import('pages/AuthPages/Profile'))
 const ProfileUpdatePage = lazy(() =>
   import('pages/AuthPages/Profile/UpdateProfile')
@@ -77,21 +82,21 @@ const Routes = ({ isLoggedIn, ...rest }) => {
     [location.pathname, token, isLoggedIn]
   )
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (isLoggedIn) {
       getUserInfo(token)
       getUnitsArray(token)
     }
   }, [isLoggedIn, token, location.pathname])
 
-  React.useEffect(() => {
+  useEffect(() => {
     const { pathname } = location
     const validNormalAdminUrls = [
       ...Routers.NORMAL_ADMIN.MENU,
       ...Routers.NORMAL_ADMIN.PROFILE.CHILD,
       ...Routers.NORMAL_ADMIN.CHECKLIST.CHILD,
-      { URL: Routers.NORMAL_ADMIN.PROFILE.URL },
-      { URL: Routers.NORMAL_ADMIN.MENU[6].CHILD[0].URL }
+      ...Routers.NORMAL_ADMIN.ACCOUNT.CHILD,
+      { URL: Routers.NORMAL_ADMIN.PROFILE.URL }
     ]
     if (isLoggedIn) {
       let isValidPath = false
@@ -106,7 +111,7 @@ const Routes = ({ isLoggedIn, ...rest }) => {
     }
   }, [location, isLoggedIn])
 
-  const _renderPrivateNormalAdminRoute = React.useCallback(() => {
+  const _renderPrivateNormalAdminRoute = useCallback(() => {
     return (
       <PrivateTemplate menuList={Routers.NORMAL_ADMIN.MENU}>
         <Route
@@ -160,6 +165,14 @@ const Routes = ({ isLoggedIn, ...rest }) => {
         <Route
           {...rest}
           exact
+          path={Routers.NORMAL_ADMIN.CHECKLIST.CHILD[1].URL}
+          render={props => {
+            return <CheckListUpdate {...rest} {...props} />
+          }}
+        />
+        <Route
+          {...rest}
+          exact
           path={Routers.NORMAL_ADMIN.MENU[5].URL}
           render={props => {
             return <StaffsPage {...rest} {...props} />
@@ -176,12 +189,11 @@ const Routes = ({ isLoggedIn, ...rest }) => {
         <Route
           {...rest}
           exact
-          path={Routers.NORMAL_ADMIN.MENU[6].CHILD[0].URL}
+          path={Routers.NORMAL_ADMIN.ACCOUNT.CHILD[0].URL}
           render={props => {
-            return <CreateAccountPage {...rest} {...props} />
+            return <AccountCreate {...rest} {...props} />
           }}
         />
-        <Route />
         <Route
           {...rest}
           exact
@@ -210,7 +222,7 @@ const Routes = ({ isLoggedIn, ...rest }) => {
     )
   }, [isLoggedIn])
 
-  const _renderPublicRoute = React.useCallback(() => {
+  const _renderPublicRoute = useCallback(() => {
     return (
       <PublicTemplate>
         <Route

@@ -17,16 +17,16 @@ const SideBar = ({ t, menuList, ...others }) => {
   const [newMenuList, setNewMenuList] = useState(menuList)
   const userState = useRecoilValue(globalUserState)
   useEffect(() => {
-    if (userState.role && userState.role === 'agency') {
+    if (withEmpty('role', userState) === 'agency') {
       setNewMenuList(
-        menuList.filter(item => item.NAME !== 'staff-management')
+        menuList.filter(item => withEmpty('NAME', item) !== 'staff-management')
       )
+      return
     }
-    else {
-      setNewMenuList(
-        menuList.filter(item => item.NAME !== 'account-management')
-      )
-    }
+
+    setNewMenuList(
+      menuList.filter(item => withEmpty('NAME', item) !== 'account-management')
+    )
   }, [userState.role])
 
   return (

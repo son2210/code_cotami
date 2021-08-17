@@ -69,10 +69,14 @@ const Login = () => {
             name: 'Login',
             onClick: handleLogin
           }}
-          secondaryBtn={{
-            name: 'Register',
-            onClick: () => goToPage(Routers.REGISTER)
-          }}
+          secondaryBtn={
+            data.role == 'admin'
+              ? {
+                  name: 'Register',
+                  onClick: () => goToPage(Routers.REGISTER)
+                }
+              : false
+          }
           tertiaryBtn={{
             name: 'Forgot Password?',
             onClick: () => goToPage(Routers.FORGOT_PASSWORD)

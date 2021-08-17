@@ -8,7 +8,7 @@ import {
 } from './styled'
 import { TableAction, FilterBar } from 'molecules'
 import { BaseButton, BaseDateRangePicker, BaseInputPicker } from 'atoms'
-import { usePaginate, useRequestManager } from 'hooks'
+import { usePaginate, useRequestManager ,useAlert} from 'hooks'
 import { useTheme } from 'styled-components'
 import { Constant } from 'utils'
 import moment from 'moment'
@@ -35,7 +35,7 @@ const CheckInRequest = () => {
   const [cell, setCell] = useState({ row: null, id: null, value: '' })
   const [modal, setModal] = useState(false)
   const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 })
-
+  const { showSuccess } = useAlert()
   const { onGetExecute, onPostExecute } = useRequestManager()
   const [searchData, setSearchData] = useState({
     enterpriseUnitId: null,
@@ -170,19 +170,30 @@ const CheckInRequest = () => {
   }, [])
 
   const updateCell = useCallback(
+    
     async (cell, unit) => {
       const { row, id, value } = cell
-      await onPostExecute(
-        EndPoint.UPDATE_CHECK_IN_REQ(unit, id),
-        {
-          params: {
-            requestAmount: value,
-            targetDate: row['targetDate']
-          }
-        },
+      const submitData = {
+        requestAmount:Number(value),
+        targetDate: row['targetDate']
+      }
+      const response = await onPostExecute(
+        EndPoint.UPDATE_CHECK_IN_REQ(unit, id),submitData,
         true
       )
-      setModal(false)
+      
+      if(response){
+        setModal(false)
+        showSuccess('Update Successfully')
+        getData(
+          activePage - 1,
+          displayLength,
+          searchData.dateRange,
+          units[0].value
+        )
+      }
+      
+      
     },
     [modal, units]
   )

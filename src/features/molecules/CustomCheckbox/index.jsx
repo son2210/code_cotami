@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 
 import { Wrapper, WrapperItem, Checkbox, Input, Icon } from './styled'
 import { BaseCheckbox } from 'atoms'
-import { withNumber } from 'exp-value'
+import { withNumber, withBoolean } from 'exp-value'
 
 const CustomCheckbox = ({
   value,
@@ -25,26 +25,30 @@ const CustomCheckbox = ({
   }, [item])
 
   const removeDataItem = useCallback(
-    id => {
-      if (id < 0 || id > sectionItems.length) return
-      setSectionItems(sectionItems.filter((_, index) => index !== id))
-      setData(data.filter((_, index) => index !== id))
+    indexItem => {
+      if (indexItem < 0 || indexItem > sectionItems.length) return
+      if (!withBoolean('id', sectionItems[indexItem]))
+        setSectionItems(sectionItems.filter((_, index) => index !== indexItem))
+      const temp = sectionItems
+      temp[indexItem].markDelete = true
+      setSectionItems(temp)
+      setData(data.filter((_, index) => index !== indexItem))
     },
     [sectionItems]
   )
 
   const updateDataItem = useCallback(
-    (value, id) => {
-      if (id < 0 || id > sectionItems.length) return
+    (value, indexItem) => {
+      if (indexItem < 0 || indexItem > sectionItems.length) return
       const temp = JSON.parse(JSON.stringify(sectionItems))
-      temp[id].value = value
+      temp[indexItem].value = value
       setSectionItems(temp)
 
-      const tmp2 = JSON.parse(JSON.stringify(data))
-      tmp2[id].content = value
+      const tmp2 = JSON.parse(JSON.stringify(sectionItems))
+      tmp2[indexItem].content = value
       setData(tmp2)
     },
-    [sectionItems]
+    [data]
   )
 
   const renderForm = useCallback(
@@ -81,6 +85,7 @@ const CustomCheckbox = ({
     if (sectionItems) {
       if (withNumber('length', sectionItems) < 1) return setData([])
       const temp = sectionItems.map((item, index) => {
+        if (withBoolean('markDelete', item)) return
         return {
           content: item.value,
           id: index

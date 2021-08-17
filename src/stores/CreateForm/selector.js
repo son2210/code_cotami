@@ -1,4 +1,10 @@
-import { withArray, withEmpty, withNumber, withObject } from 'exp-value'
+import {
+  withArray,
+  withBoolean,
+  withEmpty,
+  withNumber,
+  withObject
+} from 'exp-value'
 import { selector } from 'recoil'
 import {
   globalModulesState,
@@ -48,8 +54,9 @@ export const removeModule = selector({
   key: 'CreateForm/remove-module',
   set: ({ get, set }, idModule) => {
     const modules = get(globalModulesState)
-    let temp = [...modules]
-    temp.splice(idModule, 1)
+    let temp = JSON.parse(JSON.stringify(modules))
+    if (!withBoolean('id', temp[idModule])) temp.splice(idModule, 1)
+    else temp[idModule].markDelete = true
     set(globalModulesState, temp)
   }
 })
@@ -115,9 +122,13 @@ export const removeSection = selector({
     const modules = get(globalModulesState)
 
     const temp = JSON.parse(JSON.stringify(modules))
-    temp[idModule].sections = temp[idModule].sections.filter(
-      (_, index) => index !== idSection
-    )
+
+    if (withBoolean('id', temp[idModule]))
+      temp[idModule].sections[idSection].markDelete = true
+    else
+      temp[idModule].sections = temp[idModule].sections.filter(
+        (_, index) => index !== idSection
+      )
 
     set(globalModulesState, temp)
   }
@@ -187,7 +198,10 @@ export const removeSectionItem = selector({
   set: ({ get, set }, data) => {
     const { idModule, idSection, idSectionItems } = data
     const modules = JSON.parse(JSON.stringify(get(globalModulesState)))
-    modules[idModule].sections[idSection].sectionItems.splice(idSectionItems, 1)
+    // modules[idModule].sections[idSection].sectionItems.splice(idSectionItems, 1)
+    modules[idModule].sections[idSection].sectionItems[
+      idSectionItems
+    ].markDelete = true
     set(globalModulesState, modules)
   }
 })
@@ -230,50 +244,6 @@ export const updateDefaultPresentation = selector({
     const defaultConfig = JSON.parse(JSON.stringify(get(defaultPresentation)))
     defaultConfig[index][type] = value
     set(defaultPresentation, defaultConfig)
-  }
-})
-
-export const checkErrorModule = selector({
-  key: 'handle-check-error-module',
-  set: ({ get, set }) => {
-    const modules = JSON.parse(JSON.stringify(get(globalModulesState)))
-    const tempError = []
-    modules.map((module, index) => {
-      if (!module.title)
-        return tempError.push({ message: `Module ${index + 1} hasn't title` })
-      if (!module.description)
-        return tempError.push({
-          message: `Module ${index + 1} hasn't description`
-        })
-      if (module.sections.length < 1)
-        return tempError.push({
-          message: `Section of module ${index + 1} is empty`
-        })
-      withArray('sections', module).map((section, order) => {
-        if (!section.title)
-          return tempError.push({
-            message: `Section ${order + 1} of module ${index + 1} hasn't title`
-          })
-        if (!section.description)
-          return tempError.push({
-            message: `Section ${order + 1} of module ${
-              index + 1
-            } hasn't description`
-          })
-        if (
-          (section.inputTypeId == 'multiple_choice' ||
-            section.inputTypeId == 'multiple_choice') &&
-          section.sectionItems.length < 1
-        )
-          return tempError.push({
-            message: `Section ${order + 1} of module ${
-              index + 1
-            } hasn't section items`
-          })
-      })
-    })
-
-    set(errorModule, tempError)
   }
 })
 

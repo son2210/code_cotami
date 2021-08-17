@@ -9,8 +9,9 @@ import { Constant, Routers } from 'utils'
 import { FilterWrapper, Table, Wrapper } from './styled'
 import { globalUnitsState } from 'stores/Units/atom'
 import { useRecoilValue } from 'recoil'
-import { withArray, withNumber } from 'exp-value'
+import { withArray, withNull, withNumber } from 'exp-value'
 import { modifyPropsOfState } from 'utils/Helpers'
+import PreviewCheckList from './PreviewCheckList'
 
 const CheckList = () => {
   const {
@@ -22,8 +23,11 @@ const CheckList = () => {
     onChangeLength
   } = usePaginate()
   const theme = useTheme()
+
   const history = useHistory()
   const [data, setData] = useState([])
+  const [form, setForm] = useState()
+  const [showPreview, setShowPreview] = useState(false)
 
   const [loading, setLoading] = useState(false)
   const [searchData, setSearchData] = useState({
@@ -33,7 +37,7 @@ const CheckList = () => {
   })
   const { onGetExecute, onPatchExecute } = useRequestManager()
   const units = useRecoilValue(globalUnitsState)
-  const { showSuccess } = useAlert()
+  const { showSuccess, showError } = useAlert()
 
   const handleClickDisplay = async (display, id) => {
     if (!id) return
@@ -42,19 +46,43 @@ const CheckList = () => {
     }
     const response = await onPatchExecute(
       `${EndPoint.FORMS}/${id}/info`,
-      submitData
+      submitData,
+      false
     )
-    if (response) {
-      getData(activePage - 1, displayLength)
-      showSuccess('update success')
-    }
+    if (response) showSuccess('update success')
   }
 
-  const actionTable = useCallback(id => {
-    async function execute(id) {
-      console.log(id)
+  const actionTable = useCallback((id, type) => {
+    if (!id || !type) return showError('Form not found ')
+    if (type == 'edit') {
+      return history.push({
+        pathname: Routers.NORMAL_ADMIN.CHECKLIST.CHILD[1].URL,
+        search: `?formId=${id}&ref=${type}`,
+        state: {
+          type: type,
+          id: id
+        }
+      })
     }
-    execute(id)
+    async function execute(id) {
+      const response = await onGetExecute(`${EndPoint.GET_FORM(id)}`, {}, false)
+      if (response) {
+        setForm({
+          formId: id,
+          title: withArray('title', response),
+          modules: withArray('modules', response)
+        })
+      }
+    }
+    if (type == 'view') {
+      if (!id) return
+      execute(id)
+      setShowPreview(true)
+      return
+    }
+
+    console.log(id, type)
+    return
   }, [])
 
   const columns = useMemo(() => {
@@ -197,6 +225,21 @@ const CheckList = () => {
     getData(0, displayLength, temp)
   }, [searchData, displayLength])
 
+  const showPreviewForm = useCallback(() => {
+    if (!form) return
+    return (
+      <PreviewCheckList
+        moduleName={withNull('title', form)}
+        modules={withArray('modules', form)}
+        show={showPreview}
+        onHide={() => {
+          setShowPreview(false)
+          setForm(null)
+        }}
+      />
+    )
+  }, [form, showPreview])
+
   useEffect(() => {
     getData(activePage - 1, displayLength)
   }, [activePage, displayLength])
@@ -253,6 +296,7 @@ const CheckList = () => {
           onChangeLength: length => onChangeLength(length)
         }}
       />
+      {showPreviewForm()}
     </Wrapper>
   )
 }
