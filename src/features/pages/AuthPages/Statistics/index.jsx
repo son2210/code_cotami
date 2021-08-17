@@ -94,7 +94,7 @@ const Statistics = () => {
   )
 
   const dataTransform = useCallback((progress, results) => {
-    if (!progress || !results) return { column: [], data: [] }
+    if (!progress.length || !results.length) return { column: [], data: [] }
     const columnIds = progress.map(c => c.sectionId)
     let column = [
       {
@@ -197,7 +197,7 @@ const Statistics = () => {
       ])
         .then(conCurrentData => {
           const [progress, results] = conCurrentData
-          const { column, data } = dataTransform(progress.data, results.data)
+          const { column, data } = dataTransform(progress, results.data)
           setColumn(column)
           setData(data)
         })
@@ -212,6 +212,7 @@ const Statistics = () => {
       if (listForm?.length * units?.length !== 0) {
         setForms(listForm)
         setSearchData({
+          ...searchData,
           formId: listForm[0].value,
           enterpriseUnitId: units[0].value
         })
