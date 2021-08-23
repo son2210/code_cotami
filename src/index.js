@@ -18,7 +18,6 @@ const AppWrapper = props => {
     </React.StrictMode>
   )
 }
-
 ReactDOM.render(<AppWrapper />, document.getElementById('app'))
 
 reportWebVitals(process.env.NODE_ENV === 'development' ? console.log : null)

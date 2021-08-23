@@ -6,16 +6,13 @@ export const isLoadingState = selector({
   key: 'App/loading-visible',
   get: ({ get }) => {
     const loadingCounter = get(globalLoadingState)
-
     return loadingCounter > 0
   }
 })
-
 export const showLoadingState = selector({
   key: 'App/show-loading',
   set: ({ get, set }) => {
     const loadingCounter = get(globalLoadingState)
-
     set(globalLoadingState, loadingCounter + 1)
   }
 })
@@ -25,7 +22,6 @@ export const hideLoadingState = selector({
   set: ({ get, set }) => {
     const loadingCounter = get(globalLoadingState)
     const newLoadingCounter = loadingCounter <= 0 ? 0 : loadingCounter - 1
-
     set(globalLoadingState, newLoadingCounter)
   }
 })
@@ -43,7 +39,6 @@ export const tokenState = selector({
         token: validToken
       }
     }
-
     return {
       isLoggedIn: false,
       token: null

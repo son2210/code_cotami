@@ -13,7 +13,6 @@ import PropTypes from 'prop-types'
 import { SideBar } from 'organisms'
 import i18next from 'i18next'
 import { Constant } from 'utils'
-
 const PrivateTemplate = ({ menuList, children, ...others }) => {
   const [path, setPath] = useState([])
   const [lang, setLang] = useState()

@@ -41,7 +41,6 @@ export const CellWrapper = styled(BaseCell)`
         padding-bottom: 0;
       }
     `}
-
   ${props =>
     props.isCheckbox &&
     css`
@@ -110,7 +109,7 @@ export const CustomizeColorCell = styled.span`
   ${props =>
     props.color &&
     css`
-      color: ${props.color};
+      color:  props.color};
     `};
 `
 export const RadioGroup = styled(RadioForm)``
